@@ -52,7 +52,6 @@ apply_dnf_upgrade() {
 }
 
 update_flatpak() {
-    flatpak update -y
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y
