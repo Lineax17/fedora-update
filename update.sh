@@ -101,15 +101,17 @@ run_success_message() {
 
 get_new_kernel_version() {
     local version
-    version=$(dnf5 --quiet --refresh list upgrades 'kernel-core' 2>/dev/null \
+    version=$(dnf5 check-update 'kernel-core' 2>/dev/null \
         | awk '/^kernel-core/ {print $2; exit}')
+    
     if [ -n "$version" ]; then
         echo "$version"
         return 0
     else
-        return 1 
+        return 1
     fi
 }
+
 
 
 # Call main entrypoint
