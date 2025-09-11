@@ -51,7 +51,7 @@ apply_dnf_upgrade() {
         esac
     fi
 
-    sudo dnf5 --refresh upgrade -y >/dev/null
+    sudo dnf5 --refresh upgrade -y >/dev/null 2>&1
 }
 
 
