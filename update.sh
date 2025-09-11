@@ -35,7 +35,7 @@ check_kernel_updates() {
 
 apply_dnf_upgrade() {
     if [ "$new_kernel_version" = true ]; then
-        kernel_update_version="$get_new_kernel_version"
+        kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
         read -r -n 1 confirm
         echo
@@ -104,7 +104,8 @@ get_new_kernel_version() {
     version=$(dnf5 --quiet --refresh list upgrades 'kernel-core' 2>/dev/null \
         | awk '/^kernel-core/ {print $2; exit}')
     if [ -n "$version" ]; then
-        return "$version"
+        echo "$version"
+        return 0
     else
         return 1 
     fi
