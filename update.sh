@@ -35,15 +35,16 @@ check_kernel_updates() {
 
 apply_dnf_upgrade() {
     if [ "$new_kernel_version" = true ]; then
-        echo "Kernel update detected. The following kernel packages have updates available:"
-        if ! dnf5 --refresh list upgrades 'kernel*'; then
-            echo "Error: Could not retrieve kernel upgrade list. Aborting." >&2
+        kernel_update=$(dnf5 --refresh list upgrades 'kernel*' 2>/dev/null | awk '/kernel/ {print $1; exit}')
+        if [ -z "$kernel_update" ]; then
+            echo "No kernel update found. Aborting." >&2
             exit 1
         fi
+        echo -n "Kernel update available: $kernel_update. Proceed? [y/N]: "
+        read -r -n 1 confirm
         echo
-        read -r -p "Proceed and install the kernel update? [y/N]: " confirm
         case "$confirm" in
-            [yY]|[yY][eE][sS]) ;;
+            [yY]) ;;
             *) echo "Aborted: Kernel update detected and not confirmed."; exit 1 ;;
         esac
     fi
