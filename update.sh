@@ -35,14 +35,8 @@ check_kernel_updates() {
 
 apply_dnf_upgrade() {
     if [ "$new_kernel_version" = true ]; then
-        kernel_update=$(dnf5 --refresh list upgrades 'kernel*' 2>/dev/null \
-            | awk '/^kernel\./ {print $2; exit}')
-
-        if [ -z "$kernel_update" ]; then
-            echo "No kernel update found. Aborting." >&2
-            exit 1
-        fi
-        echo -n "Kernel update available: $kernel_update. Proceed? [y/N]: "
+        kernel_update_version="$get_new_kernel_version"
+        echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
         read -r -n 1 confirm
         echo
         case "$confirm" in
@@ -51,14 +45,14 @@ apply_dnf_upgrade() {
         esac
     fi
 
-    sudo dnf5 --refresh upgrade -y >/dev/null 2>&1
+    sudo dnf5 --refresh upgrade -y
 }
 
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
-        flatpak update -y >/dev/null
+        flatpak update -y 
     else
         echo "flatpak is not installed."
     fi
