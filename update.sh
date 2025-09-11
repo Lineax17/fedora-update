@@ -35,7 +35,9 @@ check_kernel_updates() {
 
 apply_dnf_upgrade() {
     if [ "$new_kernel_version" = true ]; then
-        kernel_update=$(dnf5 --refresh list upgrades 'kernel*' 2>/dev/null | awk '/kernel/ {print $1; exit}')
+        kernel_update=$(dnf5 --refresh list upgrades 'kernel*' 2>/dev/null \
+            | awk '/^kernel\./ {print $2; exit}')
+
         if [ -z "$kernel_update" ]; then
             echo "No kernel update found. Aborting." >&2
             exit 1
@@ -49,13 +51,14 @@ apply_dnf_upgrade() {
         esac
     fi
 
-    sudo dnf5 --refresh upgrade -y
+    sudo dnf5 --refresh upgrade -y >/dev/null
 }
+
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
-        flatpak update -y
+        flatpak update -y >/dev/null
     else
         echo "flatpak is not installed."
     fi
@@ -64,7 +67,7 @@ update_flatpak() {
 update_snap() {
     if command -v snap >/dev/null 2>&1; then
         echo "snap is installed – run 'snap refresh'..."
-        sudo snap refresh
+        sudo snap refresh >/dev/null
     else
         echo "snap is not installed."
     fi
@@ -73,7 +76,7 @@ update_snap() {
 # Rebuild Nvidia drivers (Nvidia users only)
 check_nvidia_akmods() {
     if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
-        sudo akmods
+        sudo akmods >/dev/null
     else
         echo "Skipping akmods: no 'akmods' package installed."
     fi
