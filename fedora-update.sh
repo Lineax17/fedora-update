@@ -2,14 +2,13 @@
 
 new_kernel_version=true
 
-SPINNER_CHARS='-\|/'
+# Spinner characters
+SPINNER_CHARS=( '-' '\\' '|' '/' )
 
 # Draws a spinner while a given command is running
 run_with_spinner() {
     local message="$1"
     shift
-
-    printf "⏳ %s..." "$message"
 
     # Start command in background
     "$@" &
@@ -17,9 +16,11 @@ run_with_spinner() {
 
     # Spinner loop
     while kill -0 "$cmd_pid" 2>/dev/null; do
-        for c in $(echo "$SPINNER_CHARS" | sed -e 's/\(.\)/\1 /g'); do
+        for c in "${SPINNER_CHARS[@]}"; do
             printf "\r%s %s..." "$c" "$message"
             sleep 0.1
+            # Stop early if command finished during this frame
+            kill -0 "$cmd_pid" 2>/dev/null || break
         done
     done
 
