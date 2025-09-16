@@ -2,7 +2,6 @@
 
 new_kernel_version=true
 
-# Spinner characters (backslash escaped)
 SPINNER_CHARS=( '-' '\' '|' '/' )
 
 # Draws a spinner while a given command is running
@@ -52,7 +51,6 @@ setup_sudo_keepalive() {
     fi
 
     # Keep sudo timestamp updated in the background until this script exits
-    # Refresh every 60s which is safely below common sudo timestamp timeouts
     (
         while true; do
             sudo -n true 2>/dev/null || exit 0
@@ -120,14 +118,12 @@ apply_dnf_upgrade() {
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
-        #echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y >/dev/null 2>&1
     fi
 }
 
 update_snap() {
     if command -v snap >/dev/null 2>&1; then
-        #echo "snap is installed – run 'snap refresh'..."
         sudo snap refresh >/dev/null 2>&1
     fi
 }
@@ -141,7 +137,6 @@ check_nvidia_akmods() {
 
 ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
-        #echo "Rebuilding initramfs..."
         sudo dracut -f --regenerate-all
     fi
 }
