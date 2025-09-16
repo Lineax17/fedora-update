@@ -39,6 +39,7 @@ run_with_spinner() {
 main() {
     run_with_spinner "Require DNF5" require_dnf_5
     run_with_spinner "Check Kernel Updates" check_kernel_updates
+    confirm_kernel_upgrade_if_needed
     run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
     run_with_spinner "Update Flatpak" update_flatpak
     run_with_spinner "Update Snap" update_snap
@@ -67,37 +68,39 @@ check_kernel_updates() {
     fi
 }
 
-apply_dnf_upgrade() {
+confirm_kernel_upgrade_if_needed() {
     if [ "$new_kernel_version" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
         read -r -n 1 confirm
         echo
         case "$confirm" in
-            [yY]) ;;
+            [yY]) return 0 ;;
             *) echo "Aborted: Kernel update detected and not confirmed."; exit 1 ;;
         esac
     fi
+}
 
+apply_dnf_upgrade() {
     sudo dnf5 --refresh upgrade -y >/dev/null 2>&1
 }
 
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
-        echo "flatpak is installed – run 'flatpak update -y'..."
+        #echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y >/dev/null 2>&1
     else
-        echo "flatpak is not installed."
+        #echo "flatpak is not installed."
     fi
 }
 
 update_snap() {
     if command -v snap >/dev/null 2>&1; then
-        echo "snap is installed – run 'snap refresh'..."
+        #echo "snap is installed – run 'snap refresh'..."
         sudo snap refresh >/dev/null 2>&1
     else
-        echo "snap is not installed."
+        #echo "snap is not installed."
     fi
 }
 
@@ -106,16 +109,16 @@ check_nvidia_akmods() {
     if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
         sudo akmods >/dev/null 2>&1
     else
-        echo "Skipping akmods: no 'akmods' package installed."
+        #echo "Skipping akmods: no 'akmods' package installed."
     fi
 }
 
 ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
-        echo "Rebuilding initramfs..."
+        #echo "Rebuilding initramfs..."
         sudo dracut -f --regenerate-all
     else
-        echo "No kernel update detected. Skipping initramfs rebuild..."
+        #echo "No kernel update detected. Skipping initramfs rebuild..."
     fi
 }
 
