@@ -90,12 +90,14 @@ update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
         #echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y >/dev/null 2>&1
+    fi
 }
 
 update_snap() {
     if command -v snap >/dev/null 2>&1; then
         #echo "snap is installed – run 'snap refresh'..."
         sudo snap refresh >/dev/null 2>&1
+    fi
 }
 
 # Rebuild Nvidia drivers (Nvidia users only)
