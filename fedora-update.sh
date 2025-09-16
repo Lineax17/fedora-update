@@ -104,8 +104,6 @@ update_snap() {
 check_nvidia_akmods() {
     if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
         sudo akmods >/dev/null 2>&1
-    else
-        #echo "Skipping akmods: no 'akmods' package installed."
     fi
 }
 
@@ -113,8 +111,6 @@ ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
         #echo "Rebuilding initramfs..."
         sudo dracut -f --regenerate-all
-    else
-        #echo "No kernel update detected. Skipping initramfs rebuild..."
     fi
 }
 
