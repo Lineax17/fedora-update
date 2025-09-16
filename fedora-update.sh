@@ -36,7 +36,37 @@ run_with_spinner() {
     return $exit_code
 }
 
+# Ensure sudo is authenticated once and keep it alive for the duration of the script
+setup_sudo_keepalive() {
+    # If already root, nothing to do
+    if [ "$EUID" -eq 0 ]; then
+        return 0
+    fi
+
+    # Prompt once for sudo and validate we can escalate
+    if ! sudo -v; then
+        echo "Error: sudo privileges are required to continue." >&2
+        exit 1
+    fi
+
+    # Keep sudo timestamp updated in the background until this script exits
+    # Refresh every 60s which is safely below common sudo timestamp timeouts
+    (
+        while true; do
+            sudo -n true 2>/dev/null || exit 0
+            sleep 60
+            # Stop refreshing if parent script exits
+            kill -0 "$PPID" 2>/dev/null || exit 0
+        done
+    ) &
+    SUDO_KEEPALIVE_PID=$!
+
+    # Ensure background refresher is cleaned up on exit
+    trap 'kill $SUDO_KEEPALIVE_PID 2>/dev/null || true' EXIT
+}
+
 main() {
+    setup_sudo_keepalive
     run_with_spinner "Require DNF5" require_dnf_5
     run_with_spinner "Check Kernel Updates" check_kernel_updates
     confirm_kernel_upgrade_if_needed
