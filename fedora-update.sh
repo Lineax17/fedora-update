@@ -3,7 +3,7 @@
 new_kernel_version=true
 
 # Spinner characters
-SPINNER_CHARS=( '-' '\\' '|' '/' )
+SPINNER_CHARS=( '-' '\' '|' '/' )
 
 # Draws a spinner while a given command is running
 run_with_spinner() {
