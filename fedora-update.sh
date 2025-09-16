@@ -2,7 +2,7 @@
 
 new_kernel_version=true
 
-# Spinner characters
+# Spinner characters (backslash escaped)
 SPINNER_CHARS=( '-' '\' '|' '/' )
 
 # Draws a spinner while a given command is running
@@ -17,7 +17,8 @@ run_with_spinner() {
     # Spinner loop
     while kill -0 "$cmd_pid" 2>/dev/null; do
         for c in "${SPINNER_CHARS[@]}"; do
-            printf "\r%s %s..." "$c" "$message"
+            # Clear line and print spinner frame
+            printf "\r\033[2K%s %s..." "$c" "$message"
             sleep 0.1
             # Stop early if command finished during this frame
             kill -0 "$cmd_pid" 2>/dev/null || break
@@ -29,9 +30,9 @@ run_with_spinner() {
 
     # Clear spinner and show result
     if [[ $exit_code -eq 0 ]]; then
-        printf "\r✅ %s\n" "$message"
+        printf "\r\033[2K✅ %s\n" "$message"
     else
-        printf "\r❌ %s (failed)\n" "$message"
+        printf "\r\033[2K❌ %s (failed)\n" "$message"
     fi
 
     return $exit_code
