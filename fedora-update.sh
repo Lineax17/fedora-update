@@ -2,14 +2,48 @@
 
 new_kernel_version=true
 
+SPINNER_CHARS='-\|/'
+
+# Draws a spinner while a given command is running
+run_with_spinner() {
+    local message="$1"
+    shift
+
+    printf "⏳ %s..." "$message"
+
+    # Start command in background
+    "$@" &
+    local cmd_pid=$!
+
+    # Spinner loop
+    while kill -0 "$cmd_pid" 2>/dev/null; do
+        for c in $(echo "$SPINNER_CHARS" | sed -e 's/\(.\)/\1 /g'); do
+            printf "\r%s %s..." "$c" "$message"
+            sleep 0.1
+        done
+    done
+
+    wait "$cmd_pid"
+    local exit_code=$?
+
+    # Clear spinner and show result
+    if [[ $exit_code -eq 0 ]]; then
+        printf "\r✅ %s\n" "$message"
+    else
+        printf "\r❌ %s (failed)\n" "$message"
+    fi
+
+    return $exit_code
+}
+
 main() {
-    require_dnf_5
-    check_kernel_updates
-    apply_dnf_upgrade
-    update_flatpak
-    update_snap
-    check_nvidia_akmods
-    ensure_initramfs
+    run_with_spinner "Require DNF5" require_dnf_5
+    run_with_spinner "Check Kernel Updates" check_kernel_updates
+    run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
+    run_with_spinner "Update Flatpak" update_flatpak
+    run_with_spinner "Update Snap" update_snap
+    run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
+    run_with_spinner "Ensure Initramfs" ensure_initramfs
     run_success_message
 }
 
@@ -45,14 +79,14 @@ apply_dnf_upgrade() {
         esac
     fi
 
-    sudo dnf5 --refresh upgrade -y
+    sudo dnf5 --refresh upgrade -y >/dev/null 2>&1
 }
 
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
-        flatpak update -y 
+        flatpak update -y >/dev/null 2>&1
     else
         echo "flatpak is not installed."
     fi
@@ -61,7 +95,7 @@ update_flatpak() {
 update_snap() {
     if command -v snap >/dev/null 2>&1; then
         echo "snap is installed – run 'snap refresh'..."
-        sudo snap refresh >/dev/null
+        sudo snap refresh >/dev/null 2>&1
     else
         echo "snap is not installed."
     fi
@@ -70,7 +104,7 @@ update_snap() {
 # Rebuild Nvidia drivers (Nvidia users only)
 check_nvidia_akmods() {
     if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
-        sudo akmods >/dev/null
+        sudo akmods >/dev/null 2>&1
     else
         echo "Skipping akmods: no 'akmods' package installed."
     fi
@@ -111,8 +145,6 @@ get_new_kernel_version() {
         return 1
     fi
 }
-
-
 
 # Call main entrypoint
 main
