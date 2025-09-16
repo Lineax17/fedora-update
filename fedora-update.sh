@@ -69,7 +69,7 @@ main() {
     setup_sudo_keepalive
     run_with_spinner "Require DNF5" require_dnf_5
     run_with_spinner "Check Kernel Updates" check_kernel_updates
-    confirm_kernel_upgrade_if_needed
+    confirm_kernel_upgrade
     run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
     run_with_spinner "Update Flatpak" update_flatpak
     run_with_spinner "Update Snap" update_snap
@@ -98,7 +98,7 @@ check_kernel_updates() {
     fi
 }
 
-confirm_kernel_upgrade_if_needed() {
+confirm_kernel_upgrade() {
     if [ "$new_kernel_version" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "

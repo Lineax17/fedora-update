@@ -6,11 +6,13 @@ Unfortunately i am part of the crowd founding initiative that founded Jensens ne
 
 How the script works
 
+- Setup sudo background refresher
 - Check if DNF5 is available
 - Check if kernel update is available
-    - Flip boolean if it isnt
+    - Flip boolean ```new_kernel_version```to false if it isnt
+- Confirm kernel upgrade if ```new_kernel_version``` is true
+    - User is prompted with ```(y/N)```
 - Apply updates via ```dnf upgrade -y --refresh```
-    - If ```new_kernel_version``` is true ask user for manual confirmation of update
 - Update flatpak if available
 - Update snap if available
 - Check if Nvidia Driver is installed via ```akmods``` and run ```sudo akmods``` if is
