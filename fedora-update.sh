@@ -68,7 +68,7 @@ setup_sudo_keepalive() {
 main() {
     setup_sudo_keepalive
     run_with_spinner "Require DNF5" require_dnf_5
-    run_with_spinner "Check Kernel Updates" check_kernel_updates
+    check_kernel_updates
     confirm_kernel_upgrade
     run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
     run_with_spinner "Update Flatpak" update_flatpak
@@ -86,7 +86,7 @@ require_dnf_5() {
 }
 
 check_kernel_updates() {
-    dnf5 -q check-upgrade 'kernel*' >/dev/null 2>&1
+    dnf5 check-upgrade 'kernel*' >/dev/null 2>&1
     exit_code=$?
     if [ "$exit_code" -eq 0 ]; then
         new_kernel_version=false
