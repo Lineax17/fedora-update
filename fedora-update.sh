@@ -88,9 +88,7 @@ require_dnf_5() {
 check_kernel_updates() {
     dnf5 -q check-upgrade 'kernel*' >/dev/null 2>&1
     exit_code=$?
-    if [ "$exit_code" -eq 100 ]; then
-        new_kernel_version=true
-    elif [ "$exit_code" -eq 0 ]; then
+    if [ "$exit_code" -eq 0 ]; then
         new_kernel_version=false
     else
         echo "Error: 'dnf5 check-upgrade kernel*' failed (exit_code=$exit_code)." >&2
