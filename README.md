@@ -17,3 +17,23 @@ How the script works
 - Update snap if available
 - Check if Nvidia Driver is installed via ```akmods``` and run ```sudo akmods``` if is
 - Rebuild the initramfs if the ```new_kernel_version``` boolean is true
+
+## Installation
+
+### Add the repo and install the package
+
+Get the repo
+
+```sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo```
+
+Clear the dnf cache
+
+```sudo dnf clean all```
+
+Verify the repo with repolist command
+
+```sudo dnf repolist```
+
+Install the package
+
+```sudo dnf install fedora-update```
