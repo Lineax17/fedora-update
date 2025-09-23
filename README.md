@@ -24,7 +24,7 @@ How the script works
 
 Get the repo
 
-```sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo```
+```sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo```
 
 Clear the dnf cache
 
