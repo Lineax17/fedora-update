@@ -1,0 +1,44 @@
+name: Publish RPM Repository
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-repo:
+    runs-on: fedora-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Download Release Assets (RPMs)
+        uses: robinraju/release-downloader@v1.9
+        with:
+          latest: true
+          fileName: "*.rpm"
+          out-file-path: "repo"
+
+      - name: Install createrepo_c
+        run: |
+          sudo dnf -y install createrepo_c
+
+      - name: Generate repodata
+        run: |
+          createrepo_c repo
+
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: repo
+
+  deploy:
+    needs: build-repo
+    runs-on: fedora-latest
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
