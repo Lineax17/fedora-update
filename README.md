@@ -1,4 +1,4 @@
-# Fedora Updater ```fedora-update```
+# Fedora System Upgrade Utility
 
 Unfortunately i am part of the crowd founding initiative that founded Jensens new jacket aka user of an Nvidia GPU. This package will update your Fedora (or Fedora based) Linux System and ensure that everything (including your green crowd founding gift) is still working afterwards. It requires DNF5 which is found in Fedora 41+.
 
