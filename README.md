@@ -24,16 +24,24 @@ How the script works
 
 Get the repo
 
-```sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo```
+```
+sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo
+```
 
 Clear the dnf cache
 
-```sudo dnf clean all```
+```
+sudo dnf clean all
+```
 
 Verify the repo with repolist command
 
-```sudo dnf repolist```
+```
+sudo dnf repolist
+```
 
 Install the package
 
-```sudo dnf install fedora-update```
+```
+sudo dnf install fedora-update
+```
