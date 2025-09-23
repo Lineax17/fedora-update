@@ -1,6 +1,7 @@
 name: Publish RPM Repository
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -27,7 +28,7 @@ jobs:
         run: |
           createrepo_c repo
 
-      - name: Upload GitHub Pages Artifact
+      - name: Upload GitHub Pages Artifactc
         uses: actions/upload-pages-artifact@v3
         with:
           path: repo
