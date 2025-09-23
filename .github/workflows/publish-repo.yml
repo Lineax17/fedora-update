@@ -1,41 +1,50 @@
 name: Publish RPM Repository
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:      # manuell auslösen
   release:
-    types: [published]
+    types: [published]    # automatisch bei neuem Release
 
 jobs:
   build-repo:
-    runs-on: fedora-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Download Release Assets (RPMs)
+      - name: Install Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+
+      - name: Download Release RPMs
         uses: robinraju/release-downloader@v1.9
         with:
           latest: true
           fileName: "*.rpm"
           out-file-path: "repo"
 
-      - name: Install createrepo_c
+      - name: Generate repodata inside Fedora container
         run: |
-          sudo dnf -y install createrepo_c
+          podman pull docker.io/library/fedora:40
+          podman run --rm \
+            -v $PWD:/workspace \
+            -w /workspace \
+            docker.io/library/fedora:40 \
+            bash -c "
+              dnf -y install createrepo_c && \
+              createrepo_c repo
+            "
 
-      - name: Generate repodata
-        run: |
-          createrepo_c repo
-
-      - name: Upload GitHub Pages Artifactc
+      - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: repo
 
   deploy:
     needs: build-repo
-    runs-on: fedora-latest
+    runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
