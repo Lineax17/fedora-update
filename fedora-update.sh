@@ -53,6 +53,8 @@ setup_sudo_keepalive() {
     # Keep sudo timestamp updated in the background until this script exits
     (
         while true; do
+            # Ensure we're still the child of the original script
+            [ -d "/proc/$PPID" ] || exit 0
             sudo -n true 2>/dev/null || exit 0
             sleep 60
             # Stop refreshing if parent script exits
@@ -61,8 +63,8 @@ setup_sudo_keepalive() {
     ) &
     SUDO_KEEPALIVE_PID=$!
 
-    # Ensure background refresher is cleaned up on exit
-    trap 'kill $SUDO_KEEPALIVE_PID 2>/dev/null || true' EXIT
+    # Ensure background refresher is cleaned up on exit and all signals
+    trap 'kill $SUDO_KEEPALIVE_PID 2>/dev/null || true' EXIT INT TERM
 }
 
 main() {
@@ -71,6 +73,7 @@ main() {
     check_kernel_updates
     confirm_kernel_upgrade
     run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
+    run_with_spinner "Clean DNF Cache" clean_dnf_cache
     run_with_spinner "Update Flatpak" update_flatpak
     run_with_spinner "Update Snap" update_snap
     run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
@@ -115,10 +118,19 @@ apply_dnf_upgrade() {
     sudo dnf5 --refresh upgrade -y >/dev/null 2>&1
 }
 
+# Clean DNF cache to prevent accumulation (Fedora 42 specific)
+clean_dnf_cache() {
+    # Keep only the most recent metadata, clean package cache
+    sudo dnf5 clean packages >/dev/null 2>&1
+    sudo dnf5 clean metadata --setopt=metadata_expire=1d >/dev/null 2>&1
+}
+
 
 update_flatpak() {
     if command -v flatpak >/dev/null 2>&1; then
         flatpak update -y >/dev/null 2>&1
+        # Clean old Flatpak cache files
+        find /var/tmp -name "flatpak-cache-*" -type d -mtime +7 -exec rm -rf {} + 2>/dev/null || true
     fi
 }
 
@@ -137,7 +149,15 @@ check_nvidia_akmods() {
 
 ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
+        # Clean old initramfs files before regenerating (keep only current + 1 backup)
+        sudo find /boot -name "initramfs-*.img" -not -name "*rescue*" | \
+            sort -V | head -n -2 | \
+            xargs -r sudo rm -f
+        
         sudo dracut -f --regenerate-all
+        
+        # Clean temporary dracut files
+        sudo find /tmp /var/tmp -name "dracut.*" -mtime +1 -delete 2>/dev/null || true
     fi
 }
 
