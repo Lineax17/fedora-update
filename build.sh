@@ -19,7 +19,7 @@ fi
 
 echo "Building version: $VERSION"
 
-BUILD_DIR="$HOME/fedora-update"
+BUILD_DIR="$HOME/fedora-update-${VERSION}"
 
 # Copy the spec file
 cp fedora-update.spec ~/rpmbuild/SPECS/
@@ -38,7 +38,7 @@ cp README.md "$BUILD_DIR/"
 
 # Create tar.gz archive
 echo "Creating tar.gz archive..."
-tar czf ~/rpmbuild/SOURCES/fedora-update-${VERSION}.tar.gz -C ~ fedora-update
+tar czf ~/rpmbuild/SOURCES/fedora-update-${VERSION}.tar.gz -C ~ fedora-update-${VERSION}
 
 # Clean up temporary build directory
 rm -rf "$BUILD_DIR"
