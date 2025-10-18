@@ -1,6 +1,6 @@
 Name:           fedora-update
 Version:        1.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Simple Fedora system update script
 
 License:        MIT
@@ -31,5 +31,5 @@ install -D -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
 %{_bindir}/fedora-update
 
 %changelog
-* Tue Sep 16 2025 Lineax17 <lineax17@gmail.com> - 1.1-3
-- Fixing bug with kernel update detection
+* Tue Oct 18 2025 Lineax17 <lineax17@gmail.com> - 1.1-4
+- Adding storage cleanup
