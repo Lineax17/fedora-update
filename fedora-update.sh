@@ -149,14 +149,10 @@ check_nvidia_akmods() {
 
 ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
-        # Clean old initramfs files before regenerating (keep only current + 1 backup)
-        sudo find /boot -name "initramfs-*.img" -not -name "*rescue*" | \
-            sort -V | head -n -2 | \
-            xargs -r sudo rm -f
-        
+        # Regenerate initramfs for all installed kernels
         sudo dracut -f --regenerate-all
         
-        # Clean temporary dracut files
+        # Clean temporary dracut files older than 1 day
         sudo find /tmp /var/tmp -name "dracut.*" -mtime +1 -delete 2>/dev/null || true
     fi
 }
