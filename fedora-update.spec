@@ -1,6 +1,6 @@
 Name:           fedora-update
-Version:        1.1
-Release:        4%{?dist}
+Version:        1.2
+Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
 License:        MIT
@@ -41,5 +41,5 @@ install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 %{_bindir}/fedora-update-verbose.sh
 
 %changelog
-* Tue Oct 18 2025 Lineax17 <lineax17@gmail.com> - 1.1-4
-- Adding storage cleanup
+* Sat Oct 25 2025 Lineax17 <lineax17@gmail.com> - 1.2-1
+- Adding verbose mode which prints detailed output of upgrade process into the terminal
