@@ -24,8 +24,10 @@ print_header() {
 
 main() {
     setup_sudo_keepalive
+    run_start_message
     require_dnf_5
     check_kernel_updates
+    confirm_kernel_upgrade
     apply_dnf_upgrade
     clean_dnf_cache
     update_flatpak
@@ -33,6 +35,10 @@ main() {
     check_nvidia_akmods
     ensure_initramfs
     run_success_message
+}
+
+run_start_message() {
+    print_header "Performing full system upgrade"
 }
 
 require_dnf_5() {
@@ -73,32 +79,34 @@ setup_sudo_keepalive() {
 
 check_kernel_updates() {
     print_header "Check Kernel Updates"
-    dnf5 -q check-upgrade 'kernel*' >/dev/null 2>&1
+    dnf5 check-upgrade -q 'kernel*' >/dev/null 2>&1
     exit_code=$?
-    if [ "$exit_code" -eq 100 ]; then
-        new_kernel_version=true
-    elif [ "$exit_code" -eq 0 ]; then
+    if [ "$exit_code" -eq 0 ]; then
         new_kernel_version=false
-        echo "No new kernel available."
+        echo "No new kernel version detected."
+    elif [ "$exit_code" -eq 100 ]; then
+        new_kernel_version=true
     else
         echo "Error: 'dnf5 check-upgrade kernel*' failed (exit_code=$exit_code)." >&2
         exit 1
     fi
 }
 
-apply_dnf_upgrade() {
-    print_header "Apply DNF Upgrade"
+confirm_kernel_upgrade() {
     if [ "$new_kernel_version" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
         read -r -n 1 confirm
         echo
         case "$confirm" in
-            [yY]) ;;
+            [yY]) return 0 ;;
             *) echo "Aborted: Kernel update detected and not confirmed."; exit 1 ;;
         esac
     fi
+}
 
+apply_dnf_upgrade() {
+    print_header "Apply DNF Upgrade"
     sudo dnf5 --refresh upgrade -y
 }
 
