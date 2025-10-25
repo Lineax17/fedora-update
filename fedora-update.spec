@@ -23,12 +23,16 @@ runs a full system upgrade on Fedora with a single command.
 %install
 # Install script to /usr/bin (using RPM macro %{_bindir})
 mkdir -p %{buildroot}%{_bindir}
-cd %{_builddir}/fedora-update-%{version}  # optional, falls du sicher gehen willst
+cd %{_builddir}/fedora-update-%{version}  
 install -D -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
+install -m 0755 fedora-update-silent.sh %{buildroot}%{_bindir}/fedora-update-silent.sh
+install -m 0755 fedora-update-verbose.sh %{buildroot}%{_bindir}/fedora-update-verbose.sh
 
 
 %files
 %{_bindir}/fedora-update
+%{_bindir}/fedora-update-silent.sh
+%{_bindir}/fedora-update-verbose.sh
 
 %changelog
 * Tue Oct 18 2025 Lineax17 <lineax17@gmail.com> - 1.1-4

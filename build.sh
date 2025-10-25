@@ -33,6 +33,8 @@ fi
 # Create fresh build directory with all required files
 mkdir -p "$BUILD_DIR"
 cp fedora-update.sh "$BUILD_DIR/"
+cp fedora-update-silent.sh "$BUILD_DIR/"
+cp fedora-update-verbose.sh "$BUILD_DIR/"
 cp LICENSE "$BUILD_DIR/"
 cp README.md "$BUILD_DIR/"
 
