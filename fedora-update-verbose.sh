@@ -27,6 +27,7 @@ main() {
     require_dnf_5
     check_kernel_updates
     apply_dnf_upgrade
+    clean_dnf_cache
     update_flatpak
     update_snap
     check_nvidia_akmods
@@ -35,7 +36,6 @@ main() {
 }
 
 require_dnf_5() {
-    print_header "Require DNF5"
     if ! command -v dnf5 >/dev/null 2>&1; then
 	    echo "Error: dnf5 is required but not found in PATH."
 	    exit 1
@@ -79,6 +79,7 @@ check_kernel_updates() {
         new_kernel_version=true
     elif [ "$exit_code" -eq 0 ]; then
         new_kernel_version=false
+        echo "No new kernel available."
     else
         echo "Error: 'dnf5 check-upgrade kernel*' failed (exit_code=$exit_code)." >&2
         exit 1
@@ -101,12 +102,24 @@ apply_dnf_upgrade() {
     sudo dnf5 --refresh upgrade -y
 }
 
+# Clean DNF cache to prevent accumulation (Fedora 42 specific)
+clean_dnf_cache() {
+    print_header "Clean DNF Cache"
+    echo "Cleaning DNF package cache..."
+    sudo dnf5 clean packages
+    echo "Cleaning old DNF metadata..."
+    sudo dnf5 clean metadata --setopt=metadata_expire=1d
+}
+
 
 update_flatpak() {
     print_header "Update Flatpak"
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y 
+        # Clean old Flatpak cache files
+        echo "Cleaning old Flatpak cache files (>7 days)..."
+        find /var/tmp -name "flatpak-cache-*" -type d -mtime +7 -exec rm -rf {} + 2>/dev/null || true
     else
         echo "flatpak is not installed."
     fi

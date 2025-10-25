@@ -151,9 +151,6 @@ ensure_initramfs() {
     if [ "$new_kernel_version" = true ]; then
         # Regenerate initramfs for all installed kernels
         sudo dracut -f --regenerate-all
-        
-        # Clean temporary dracut files older than 1 day
-        sudo find /tmp /var/tmp -name "dracut.*" -mtime +1 -delete 2>/dev/null || true
     fi
 }
 
