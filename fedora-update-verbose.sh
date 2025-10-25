@@ -2,6 +2,26 @@
 
 new_kernel_version=true
 
+# Print a section header with figlet if available, otherwise ASCII art
+print_header() {
+    local title="$1"
+    echo
+    if command -v figlet >/dev/null 2>&1; then
+        figlet "$title"
+    else
+        local title_upper=$(echo "$title" | tr '[:lower:]' '[:upper:]')
+        local line_length=${#title_upper}
+        local total_length=$((line_length + 12))
+        
+        printf '#%.0s' $(seq 1 $total_length)
+        echo
+        echo "#     $title_upper     #"
+        printf '#%.0s' $(seq 1 $total_length)
+        echo
+    fi
+    echo
+}
+
 main() {
     setup_sudo_keepalive
     require_dnf_5
@@ -15,6 +35,7 @@ main() {
 }
 
 require_dnf_5() {
+    print_header "Require DNF5"
     if ! command -v dnf5 >/dev/null 2>&1; then
 	    echo "Error: dnf5 is required but not found in PATH."
 	    exit 1
@@ -51,6 +72,7 @@ setup_sudo_keepalive() {
 }
 
 check_kernel_updates() {
+    print_header "Check Kernel Updates"
     dnf5 -q check-upgrade 'kernel*' >/dev/null 2>&1
     exit_code=$?
     if [ "$exit_code" -eq 100 ]; then
@@ -64,6 +86,7 @@ check_kernel_updates() {
 }
 
 apply_dnf_upgrade() {
+    print_header "Apply DNF Upgrade"
     if [ "$new_kernel_version" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
@@ -80,6 +103,7 @@ apply_dnf_upgrade() {
 
 
 update_flatpak() {
+    print_header "Update Flatpak"
     if command -v flatpak >/dev/null 2>&1; then
         echo "flatpak is installed – run 'flatpak update -y'..."
         flatpak update -y 
@@ -89,9 +113,10 @@ update_flatpak() {
 }
 
 update_snap() {
+    print_header "Update Snap"
     if command -v snap >/dev/null 2>&1; then
         echo "snap is installed – run 'snap refresh'..."
-        sudo snap refresh >/dev/null
+        sudo snap refresh
     else
         echo "snap is not installed."
     fi
@@ -99,14 +124,16 @@ update_snap() {
 
 # Rebuild Nvidia drivers (Nvidia users only)
 check_nvidia_akmods() {
+    print_header "Check NVIDIA Akmods"
     if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
-        sudo akmods >/dev/null
+        sudo akmods
     else
         echo "Skipping akmods: no 'akmods' package installed."
     fi
 }
 
 ensure_initramfs() {
+    print_header "Ensure Initramfs"
     if [ "$new_kernel_version" = true ]; then
         echo "Rebuilding initramfs..."
         sudo dracut -f --regenerate-all
@@ -116,17 +143,7 @@ ensure_initramfs() {
 }
 
 run_success_message() {
-    if command -v figlet >/dev/null 2>&1; then
-        figlet "System Upgrade Finished"
-    else
-        echo
-        echo "########################################"
-        echo "#                                      #"
-        echo "#        SYSTEM UPGRADE FINISHED       #"
-        echo "#                                      #"
-        echo "########################################"
-        echo
-    fi
+    print_header "System Upgrade Finished"
 }
 
 get_new_kernel_version() {

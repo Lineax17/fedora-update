@@ -23,13 +23,19 @@ runs a full system upgrade on Fedora with a single command.
 %install
 # Install script to /usr/bin (using RPM macro %{_bindir})
 mkdir -p %{buildroot}%{_bindir}
-cd %{_builddir}/fedora-update-%{version}  
-install -D -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
+mkdir -p %{buildroot}%{_datadir}/licenses/%{name}
+mkdir -p %{buildroot}%{_datadir}/doc/%{name}
+
+install -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
 install -m 0755 fedora-update-silent.sh %{buildroot}%{_bindir}/fedora-update-silent.sh
 install -m 0755 fedora-update-verbose.sh %{buildroot}%{_bindir}/fedora-update-verbose.sh
+install -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
+install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 
 
 %files
+%license LICENSE
+%doc README.md
 %{_bindir}/fedora-update
 %{_bindir}/fedora-update-silent.sh
 %{_bindir}/fedora-update-verbose.sh
