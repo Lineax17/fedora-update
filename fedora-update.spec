@@ -1,6 +1,6 @@
 Name:           fedora-update
 Version:        1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Simple Fedora system update script
 
 License:        MIT
@@ -12,7 +12,8 @@ Requires:       bash
 
 %description
 This package provides the "fedora-update" command, a small Bash script that
-runs a full system upgrade on Fedora with a single command.
+runs a full system upgrade on Fedora with a single command. Supports both
+silent mode (default with spinner) and verbose mode (-l flag) for detailed output.
 
 %prep
 %setup -q
@@ -27,8 +28,6 @@ mkdir -p %{buildroot}%{_datadir}/licenses/%{name}
 mkdir -p %{buildroot}%{_datadir}/doc/%{name}
 
 install -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
-install -m 0755 fedora-update-silent.sh %{buildroot}%{_bindir}/fedora-update-silent.sh
-install -m 0755 fedora-update-verbose.sh %{buildroot}%{_bindir}/fedora-update-verbose.sh
 install -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 
@@ -37,9 +36,8 @@ install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 %license LICENSE
 %doc README.md
 %{_bindir}/fedora-update
-%{_bindir}/fedora-update-silent.sh
-%{_bindir}/fedora-update-verbose.sh
 
 %changelog
-* Sat Oct 25 2025 Lineax17 <lineax17@gmail.com> - 1.2-1
-- Adding verbose mode which prints detailed output of upgrade process into the terminal
+* Sun Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2-2
+- Merged silent and verbose scripts into single unified script
+- Improved code maintainability and reduced duplication
