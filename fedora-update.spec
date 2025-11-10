@@ -15,6 +15,8 @@ This package provides the "fedora-update" command, a small Bash script that
 runs a full system upgrade on Fedora with a single command. Supports both
 silent mode (default with spinner) and verbose mode (-l flag) for detailed output.
 
+Alternative commands: fsu, fedora-upgrade
+
 %prep
 %setup -q
 
@@ -31,11 +33,17 @@ install -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
 install -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 
+# Create symlinks for alternative command names
+ln -s fedora-update %{buildroot}%{_bindir}/fsu
+ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
+
 
 %files
 %license LICENSE
 %doc README.md
 %{_bindir}/fedora-update
+%{_bindir}/fsu
+%{_bindir}/fedora-upgrade
 
 %changelog
 * Sun Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2.1-1
@@ -43,3 +51,4 @@ install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 - Improved code maintainability and reduced duplication
 - Add documentation
 - Add --help flag
+- Add alternative command names: fsu, fedora-upgrade
