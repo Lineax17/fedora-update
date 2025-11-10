@@ -46,9 +46,11 @@ ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
 %{_bindir}/fedora-upgrade
 
 %changelog
-* Sun Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2.1-1
+* Mon Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2.1-1
 - Merged silent and verbose scripts into single unified script
 - Improved code maintainability and reduced duplication
 - Add documentation
 - Add --help flag
 - Add alternative command names: fsu, fedora-upgrade
+- Add Homebrew updating and upgrading
+- Add -b, --brew-upgrade flag

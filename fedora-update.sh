@@ -19,40 +19,50 @@ set -euo pipefail
 ## Global variables
 new_kernel_version=true
 VERBOSE=false
+UPDATE_BREW=false
 SPINNER_CHARS=( '-' '\' '|' '/' )
 
 ## Parse command line arguments
-case "${1:-}" in
-    -l|--log|--verbose)
-        VERBOSE=true
-        ;;
-    "")
-        VERBOSE=false
-        ;;
-    -h|--help)
-        cat << EOF
-Usage: fedora-update [-l|--log|--verbose]
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -l|--log|--verbose)
+            VERBOSE=true
+            shift
+            ;;
+        -b|--brew|--brew-upgrade)
+            UPDATE_BREW=true
+            shift
+            ;;
+        -h|--help)
+            cat << EOF
+Usage: fedora-update [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 
 Automated system upgrade script for Fedora Linux.
 
 Options:
-  -l, --log, --verbose    Show detailed output during upgrade process
-  -h, --help              Display this help message
+  -l, --log, --verbose       Show detailed output during upgrade process
+  -b, --brew, --brew-upgrade Update Homebrew packages (if installed)
+  -h, --help                 Display this help message
 
 Examples:
-  fedora-update           # Run in silent mode with spinner
-  fedora-update -l        # Run in verbose mode with detailed output
+  fedora-update              # Run in silent mode with spinner
+  fedora-update -l           # Run in verbose mode with detailed output
+  fedora-update -b           # Update Homebrew packages
+
+Note:
+  Multiple options can be combined. The -b flag only runs if Homebrew is installed.
 
 EOF
-        exit 0
-        ;;
-    *)
-        echo "Error: Unknown option '$1'" >&2
-        echo "Usage: fedora-update [-l|--log|--verbose]" >&2
-        echo "Try 'fedora-update --help' for more information." >&2
-        exit 1
-        ;;
-esac
+            exit 0
+            ;;
+        *)
+            echo "Error: Unknown option '$1'" >&2
+            echo "Usage: fedora-update [-l|--log|--verbose] [-b|--brew|--brew-upgrade]" >&2
+            echo "Try 'fedora-update --help' for more information." >&2
+            exit 1
+            ;;
+    esac
+done
 
 ################################################################################
 ## Helper Functions
@@ -234,6 +244,11 @@ main() {
     run_with_spinner "Clean DNF Cache" clean_dnf_cache
     run_with_spinner "Update Flatpak" update_flatpak
     run_with_spinner "Update Snap" update_snap
+    
+    if [ "$UPDATE_BREW" = true ]; then
+        run_with_spinner "Update Homebrew" update_brew
+    fi
+    
     run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
     run_with_spinner "Ensure Initramfs" ensure_initramfs
     print_header "System Upgrade Finished"
@@ -376,6 +391,30 @@ update_snap() {
         redirect_output sudo snap refresh
     else
         print_verbose "snap is not installed."
+    fi
+}
+
+## Update Homebrew packages
+## Updates Homebrew and all installed packages if Homebrew is installed
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   update_brew
+update_brew() {
+    print_header "Update Homebrew"
+    
+    if command -v brew >/dev/null 2>&1; then
+        print_verbose "Homebrew is installed – updating..."
+        redirect_output brew update
+        print_verbose "Upgrading Homebrew packages..."
+        redirect_output brew upgrade
+        print_verbose "Cleaning up old Homebrew versions..."
+        redirect_output brew cleanup
+    else
+        print_verbose "Homebrew is not installed."
     fi
 }
 
