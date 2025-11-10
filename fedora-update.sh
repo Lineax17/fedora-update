@@ -27,20 +27,16 @@ print_header() {
     fi
 
     local title="$1"
+    local title_upper=$(echo "$title" | tr '[:lower:]' '[:upper:]')
+    local line_length=${#title_upper}
+    local total_length=$((line_length + 12))
+    
     echo
-    if command -v figlet >/dev/null 2>&1; then
-        figlet "$title"
-    else
-        local title_upper=$(echo "$title" | tr '[:lower:]' '[:upper:]')
-        local line_length=${#title_upper}
-        local total_length=$((line_length + 12))
-        
-        printf '#%.0s' $(seq 1 $total_length)
-        echo
-        echo "#     $title_upper     #"
-        printf '#%.0s' $(seq 1 $total_length)
-        echo
-    fi
+    printf '#%.0s' $(seq 1 $total_length)
+    echo
+    echo "#     $title_upper     #"
+    printf '#%.0s' $(seq 1 $total_length)
+    echo
     echo
 }
 
@@ -132,9 +128,7 @@ setup_sudo_keepalive() {
 main() {
     setup_sudo_keepalive
     
-    if [ "$VERBOSE" = true ]; then
-        print_header "Performing full system upgrade"
-    fi
+    print_header "Performing full system upgrade"
     
     run_with_spinner "Require DNF5" require_dnf_5
     check_kernel_updates
@@ -145,7 +139,7 @@ main() {
     run_with_spinner "Update Snap" update_snap
     run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
     run_with_spinner "Ensure Initramfs" ensure_initramfs
-    run_success_message
+    print_header "System Upgrade Finished"
 }
 
 require_dnf_5() {
@@ -247,24 +241,6 @@ ensure_initramfs() {
         fi
     else
         print_verbose "No kernel update detected. Skipping initramfs rebuild..."
-    fi
-}
-
-run_success_message() {
-    print_header "System Upgrade Finished"
-    
-    if [ "$VERBOSE" = false ]; then
-        if command -v figlet >/dev/null 2>&1; then
-            figlet "System Upgrade Finished"
-        else
-            echo
-            echo "########################################"
-            echo "#                                      #"
-            echo "#        SYSTEM UPGRADE FINISHED       #"
-            echo "#                                      #"
-            echo "########################################"
-            echo
-        fi
     fi
 }
 
