@@ -1,5 +1,5 @@
 Name:           fedora-update
-Version:        1.2.1
+Version:        1.3.0
 Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
@@ -13,7 +13,7 @@ Requires:       bash
 %description
 This package provides the "fedora-update" command, a small Bash script that
 runs a full system upgrade on Fedora with a single command. Supports both
-silent mode (default with spinner) and verbose mode (-l flag) for detailed output.
+silent mode (default with spinner animation) and verbose mode (-l flag) for detailed output.
 
 Alternative commands: fsu, fedora-upgrade
 
@@ -46,7 +46,7 @@ ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
 %{_bindir}/fedora-upgrade
 
 %changelog
-* Mon Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2.1-1
+* Mon Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.3.0-1
 - Merged silent and verbose scripts into single unified script
 - Improved code maintainability and reduced duplication
 - Add documentation
