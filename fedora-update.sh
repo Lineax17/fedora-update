@@ -7,7 +7,7 @@
 ##                silent mode (with spinner) and verbose mode (detailed output).
 ## Usage:         fedora-update [-l|--log|--verbose]
 ## Author:        Lineax17
-## Version:       1.2.1
+## Version:       1.3.0
 ## Requirements:  - Bash 4.0+
 ##                - dnf5
 ##                - sudo privileges
