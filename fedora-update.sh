@@ -58,8 +58,10 @@ esac
 ## Helper Functions
 ################################################################################
 
-## Print a section header (verbose mode only)
+## Print a section header
 ## Displays formatted ASCII art header for section identification
+## In verbose mode: Shows header for all sections
+## In silent mode: Only shows first and final header
 ##
 ## Arguments:
 ##   $1 - Section title to display
@@ -68,14 +70,15 @@ esac
 ## Example:
 ##   print_header "System Update"
 print_header() {
-    if [ "$VERBOSE" = false ]; then
-        return
-    fi
-
     local title="$1"
     local title_upper=$(echo "$title" | tr '[:lower:]' '[:upper:]')
     local line_length=${#title_upper}
     local total_length=$((line_length + 12))
+    
+    # In silent mode, only show the first and final header
+    if [ "$VERBOSE" = false ] && [ "$title" != "Performing full system upgrade" ] && [ "$title" != "System Upgrade Finished" ]; then
+        return
+    fi
     
     echo
     printf '#%.0s' $(seq 1 $total_length)
