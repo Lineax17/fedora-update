@@ -1,6 +1,6 @@
 Name:           fedora-update
-Version:        1.2
-Release:        2%{?dist}
+Version:        1.2.1
+Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
 License:        MIT
@@ -38,6 +38,8 @@ install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
 %{_bindir}/fedora-update
 
 %changelog
-* Sun Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2-2
+* Sun Nov 10 2025 Lineax17 <lineax17@gmail.com> - 1.2.1-1
 - Merged silent and verbose scripts into single unified script
 - Improved code maintainability and reduced duplication
+- Add documentation
+- Add --help flag

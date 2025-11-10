@@ -1,26 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Global variables
+################################################################################
+## Script Name:   fedora-update
+## Description:   Automated system upgrade script for Fedora Linux with support
+##                for DNF5, Flatpak, Snap, and NVIDIA akmods. Provides both
+##                silent mode (with spinner) and verbose mode (detailed output).
+## Usage:         fedora-update [-l|--log|--verbose]
+## Author:        Lineax17
+## Version:       1.2.1
+## Requirements:  - Bash 4.0+
+##                - dnf5
+##                - sudo privileges
+##                - Optional: flatpak, snap, akmods
+################################################################################
+
+set -euo pipefail
+
+## Global variables
 new_kernel_version=true
 VERBOSE=false
 SPINNER_CHARS=( '-' '\' '|' '/' )
 
-# Parse command line arguments
-case "$1" in
+## Parse command line arguments
+case "${1:-}" in
     -l|--log|--verbose)
         VERBOSE=true
         ;;
     "")
         VERBOSE=false
         ;;
+    -h|--help)
+        cat << EOF
+Usage: fedora-update [-l|--log|--verbose]
+
+Automated system upgrade script for Fedora Linux.
+
+Options:
+  -l, --log, --verbose    Show detailed output during upgrade process
+  -h, --help              Display this help message
+
+Examples:
+  fedora-update           # Run in silent mode with spinner
+  fedora-update -l        # Run in verbose mode with detailed output
+
+EOF
+        exit 0
+        ;;
     *)
-        echo "Usage: fedora-update [-l]"
-        echo "  -l    Show live output during update"
+        echo "Error: Unknown option '$1'" >&2
+        echo "Usage: fedora-update [-l|--log|--verbose]" >&2
+        echo "Try 'fedora-update --help' for more information." >&2
         exit 1
         ;;
 esac
 
-# Print a section header (verbose mode only)
+################################################################################
+## Helper Functions
+################################################################################
+
+## Print a section header (verbose mode only)
+## Displays formatted ASCII art header for section identification
+##
+## Arguments:
+##   $1 - Section title to display
+## Returns:
+##   0 on success
+## Example:
+##   print_header "System Update"
 print_header() {
     if [ "$VERBOSE" = false ]; then
         return
@@ -40,14 +86,32 @@ print_header() {
     echo
 }
 
-# Print message (verbose mode only)
+## Print message in verbose mode only
+## Outputs messages only when verbose flag is enabled
+##
+## Arguments:
+##   $@ - Message to print
+## Returns:
+##   0 on success
+## Example:
+##   print_verbose "Processing files..."
 print_verbose() {
     if [ "$VERBOSE" = true ]; then
         echo "$@"
     fi
 }
 
-# Draws a spinner while a given command is running (silent mode only)
+## Run command with spinner animation (silent mode only)
+## In verbose mode, executes command directly with output
+## In silent mode, shows spinner and success/failure status
+##
+## Arguments:
+##   $1 - Description message for the spinner
+##   $@ - Command and arguments to execute
+## Returns:
+##   Exit code of the executed command
+## Example:
+##   run_with_spinner "Installing packages" sudo dnf install -y package
 run_with_spinner() {
     local message="$1"
     shift
@@ -86,7 +150,16 @@ run_with_spinner() {
     return $exit_code
 }
 
-# Redirect output based on mode
+## Redirect command output based on verbosity mode
+## In verbose mode, shows all output
+## In silent mode, suppresses stdout and stderr
+##
+## Arguments:
+##   $@ - Command and arguments to execute
+## Returns:
+##   Exit code of the executed command
+## Example:
+##   redirect_output sudo dnf upgrade -y
 redirect_output() {
     if [ "$VERBOSE" = true ]; then
         "$@"
@@ -95,7 +168,19 @@ redirect_output() {
     fi
 }
 
-# Ensure sudo is authenticated once and keep it alive for the duration of the script
+################################################################################
+## Core Functions
+################################################################################
+
+## Setup and maintain sudo privileges
+## Prompts for sudo password once and keeps it alive in background
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success, 1 if sudo is unavailable
+## Example:
+##   setup_sudo_keepalive
 setup_sudo_keepalive() {
     # If already root, nothing to do
     if [ "$EUID" -eq 0 ]; then
@@ -125,6 +210,15 @@ setup_sudo_keepalive() {
     trap 'kill $SUDO_KEEPALIVE_PID 2>/dev/null || true' EXIT INT TERM
 }
 
+## Main execution flow
+## Orchestrates the complete system upgrade process
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success, non-zero on failure
+## Example:
+##   main
 main() {
     setup_sudo_keepalive
     
@@ -142,6 +236,15 @@ main() {
     print_header "System Upgrade Finished"
 }
 
+## Verify DNF5 is installed and available
+## Checks if dnf5 command exists in PATH
+##
+## Arguments:
+##   None
+## Returns:
+##   0 if dnf5 is available, exits with 1 if not found
+## Example:
+##   require_dnf_5
 require_dnf_5() {
     if ! command -v dnf5 >/dev/null 2>&1; then
         echo "Error: dnf5 is required but not found in PATH."
@@ -149,6 +252,17 @@ require_dnf_5() {
     fi
 }
 
+## Check for available kernel updates
+## Queries DNF5 for kernel package updates and sets global flag
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success, 1 on dnf5 error
+## Sets:
+##   new_kernel_version - true if kernel update available, false otherwise
+## Example:
+##   check_kernel_updates
 check_kernel_updates() {
     print_header "Check Kernel Updates"
     
@@ -166,6 +280,15 @@ check_kernel_updates() {
     fi
 }
 
+## Prompt user to confirm kernel upgrade
+## Only prompts if kernel update is available
+##
+## Arguments:
+##   None
+## Returns:
+##   0 if confirmed or no kernel update, 1 if user declines
+## Example:
+##   confirm_kernel_upgrade
 confirm_kernel_upgrade() {
     if [ "$new_kernel_version" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
@@ -179,12 +302,29 @@ confirm_kernel_upgrade() {
     fi
 }
 
+## Execute system package upgrade
+## Runs DNF5 upgrade with repository refresh
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success, non-zero on upgrade failure
+## Example:
+##   apply_dnf_upgrade
 apply_dnf_upgrade() {
     print_header "Apply DNF Upgrade"
     redirect_output sudo dnf5 --refresh upgrade -y
 }
 
-# Clean DNF cache to prevent accumulation (Fedora 42 specific)
+## Clean DNF package cache and metadata
+## Removes cached packages and old metadata to save disk space
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   clean_dnf_cache
 clean_dnf_cache() {
     print_header "Clean DNF Cache"
     print_verbose "Cleaning DNF package cache..."
@@ -193,6 +333,15 @@ clean_dnf_cache() {
     redirect_output sudo dnf5 clean metadata --setopt=metadata_expire=1d
 }
 
+## Update Flatpak applications
+## Updates all installed Flatpak apps and cleans old cache files
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   update_flatpak
 update_flatpak() {
     print_header "Update Flatpak"
     
@@ -207,6 +356,15 @@ update_flatpak() {
     fi
 }
 
+## Update Snap applications
+## Refreshes all installed Snap packages
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   update_snap
 update_snap() {
     print_header "Update Snap"
     
@@ -218,7 +376,15 @@ update_snap() {
     fi
 }
 
-# Rebuild Nvidia drivers (Nvidia users only)
+## Rebuild NVIDIA kernel modules
+## Rebuilds akmods if NVIDIA drivers are installed
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   check_nvidia_akmods
 check_nvidia_akmods() {
     print_header "Check NVIDIA Akmods"
     
@@ -229,6 +395,15 @@ check_nvidia_akmods() {
     fi
 }
 
+## Regenerate initramfs for new kernel
+## Rebuilds initramfs if kernel was updated and cleans temp files
+##
+## Arguments:
+##   None
+## Returns:
+##   0 on success
+## Example:
+##   ensure_initramfs
 ensure_initramfs() {
     print_header "Ensure Initramfs"
     
@@ -244,6 +419,17 @@ ensure_initramfs() {
     fi
 }
 
+## Get version string of new kernel update
+## Queries DNF5 for available kernel-core version
+##
+## Arguments:
+##   None
+## Returns:
+##   0 if version found, 1 otherwise
+## Outputs:
+##   Kernel version string to stdout
+## Example:
+##   version=$(get_new_kernel_version)
 get_new_kernel_version() {
     local version
     version=$(dnf5 check-update 'kernel-core' 2>/dev/null \
@@ -256,6 +442,10 @@ get_new_kernel_version() {
         return 1
     fi
 }
+
+################################################################################
+## Main Entrypoint
+################################################################################
 
 # Call main entrypoint
 main
