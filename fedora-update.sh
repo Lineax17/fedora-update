@@ -3,15 +3,15 @@
 ################################################################################
 ## Script Name:   fedora-update
 ## Description:   Automated system upgrade script for Fedora Linux with support
-##                for DNF5, Flatpak, Snap, and NVIDIA akmods. Provides both
-##                silent mode (with spinner) and verbose mode (detailed output).
-## Usage:         fedora-update [-l|--log|--verbose]
+##                for DNF5, Flatpak, Snap, Homebrew and NVIDIA akmods. Provides both
+##                silent mode (with ASCI animation) and verbose mode (detailed output).
+## Usage:         fedora-update (fsu|fedora-upgrade) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 ## Author:        Lineax17
-## Version:       1.3.0
+## Version:       1.3.1
 ## Requirements:  - Bash 4.0+
 ##                - dnf5
 ##                - sudo privileges
-##                - Optional: flatpak, snap, akmods
+##                - Optional: flatpak, snap, brew, akmods
 ################################################################################
 
 set -euo pipefail
@@ -35,7 +35,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -h|--help)
             cat << EOF
-Usage: fedora-update [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
+Usage: fedora-update (fsu|fedora-upgrade) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 
 Automated system upgrade script for Fedora Linux.
 
@@ -48,6 +48,9 @@ Examples:
   fedora-update              # Run in silent mode with spinner
   fedora-update -l           # Run in verbose mode with detailed output
   fedora-update -b           # Update Homebrew packages
+
+Aliases:
+  fsu, fedora-upgrade        # Symlinks to this script; behave identically
 
 Note:
   Multiple options can be combined. The -b flag only runs if Homebrew is installed.
