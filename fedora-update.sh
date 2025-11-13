@@ -430,7 +430,8 @@ update_brew() {
 check_nvidia_akmods() {
     print_header "Check NVIDIA Akmods"
     
-    if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
+    #if rpm -q akmods >/dev/null 2>&1 && rpm -qa | grep -q '^akmod-'; then
+    if command -v akmods >/dev/null 2>&1; then
         redirect_output sudo akmods
     else
         print_verbose "Skipping akmods: no 'akmods' package installed."
