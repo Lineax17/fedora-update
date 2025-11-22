@@ -287,8 +287,8 @@ require_dnf_5() {
 check_kernel_updates() {
     print_header "Check Kernel Updates"
     
-    dnf5 check-upgrade -q 'kernel*' >/dev/null 2>&1
-    exit_code=$?
+    exit_code=0
+    dnf5 check-upgrade -q 'kernel*' >/dev/null 2>&1 || exit_code=$?
     
     if [ "$exit_code" -eq 0 ]; then
         new_kernel_version=false
@@ -479,7 +479,7 @@ ensure_initramfs() {
 get_new_kernel_version() {
     local version
     version=$(dnf5 check-update 'kernel-core' 2>/dev/null \
-        | awk '/^kernel-core/ {print $2; exit}')
+        | awk '/^kernel-core/ {print $2; exit}' || true)
     
     if [ -n "$version" ]; then
         echo "$version"
