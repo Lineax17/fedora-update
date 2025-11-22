@@ -7,7 +7,7 @@
 ##                silent mode (with ASCI animation) and verbose mode (detailed output).
 ## Usage:         fedora-update (fsu|fedora-upgrade) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 ## Author:        Lineax17
-## Version:       1.3.1
+## Version:       1.3.2
 ## Requirements:  - Bash 4.0+
 ##                - dnf5
 ##                - sudo privileges

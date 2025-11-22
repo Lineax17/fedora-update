@@ -1,5 +1,5 @@
 Name:           fedora-update
-Version:        1.3.1
+Version:        1.3.2
 Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
@@ -46,6 +46,5 @@ ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
 %{_bindir}/fedora-upgrade
 
 %changelog
-* Thu Nov 13 2025 Lineax17 <lineax17@gmail.com> - 1.3.1-1
-- fix regression where akmods availability was not checked correctly
-- add symlink description to --help 
+* Sat Nov 22 2025 Lineax17 <lineax17@gmail.com> - 1.3.2-1
+- fix regression where available kernel updates where detected as errors and the script was crashing
