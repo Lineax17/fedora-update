@@ -1,6 +1,6 @@
 # Fedora System Upgrade Utility
 
-A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It streamlines the update process for DNF5, Flatpak, Snap, and Homebrew, while ensuring system stability—especially for NVIDIA users.
+A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It streamlines the update process for DNF5, Flatpak, Snap, and Homebrew, while ensuring system stability-especially for NVIDIA users.
 
 ## Features
 
