@@ -1,22 +1,27 @@
 # Fedora System Upgrade Utility
 
-Unfortunately i am part of the crowd founding initiative that founded Jensens new jacket aka user of an Nvidia GPU. This package will update your Fedora (or Fedora based) Linux System and ensure that everything (including your green crowd founding gift) is still working afterwards. It requires DNF5 which is found in Fedora 41+.
+A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It streamlines the update process for DNF5, Flatpak, Snap, and Homebrew, while ensuring system stability—especially for NVIDIA users.
 
-## Steps in the Process
+## Features
 
-How the script works
+- **Comprehensive Updates:** Updates system packages (DNF5), Flatpak, Snap, and optionally Homebrew.
+- **Kernel Safety:** Detects kernel updates, requests user confirmation, and automatically rebuilds `initramfs`.
+- **NVIDIA Driver Support:** Checks and rebuilds `akmods` to ensure NVIDIA drivers persist across kernel updates.
+- **Modes:**
+  - **Silent (Default):** Clean interface with progress spinners.
+  - **Verbose (`-l` / `--verbose`):** Detailed output for debugging or monitoring.
+- **Maintenance:** Automatically cleans old package caches and metadata.
 
-- Setup sudo background refresher
-- Check if DNF5 is available
-- Check if kernel update is available
-    - Flip boolean ```new_kernel_version```to false if it isnt
-- Confirm kernel upgrade if ```new_kernel_version``` is true
-    - User is prompted with ```(y/N)```
-- Apply updates via ```dnf upgrade -y --refresh```
-- Update flatpak if available
-- Update snap if available
-- Check if Nvidia Driver is installed via ```akmods``` and run ```sudo akmods``` if is
-- Rebuild the initramfs if the ```new_kernel_version``` boolean is true
+## Usage
+
+```bash
+fedora-update [options]
+```
+
+### Options
+
+- `-l`, `--verbose`: Enable detailed output.
+- `-b`, `--brew`: Include Homebrew packages in the update.
 
 ## Installation
 
