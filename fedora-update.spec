@@ -1,5 +1,5 @@
 Name:           fedora-update
-Version:        1.3.2
+Version:        1.3.3
 Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
@@ -46,5 +46,5 @@ ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
 %{_bindir}/fedora-upgrade
 
 %changelog
-* Sat Nov 22 2025 Lineax17 <lineax17@gmail.com> - 1.3.2-1
-- fix regression where available kernel updates where detected as errors and the script was crashing
+* Tue Nov 25 2025 Lineax17 <lineax17@gmail.com> - 1.3.3-1
+- add -v and --version flag to show current version of tool
