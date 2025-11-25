@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -v|--version)
             cat << EOF
-Fedora-Update ${VERSION_NUMBER}
+Fedora Update-Utility ${VERSION_NUMBER}
 EOF
             exit 0
             ;;
