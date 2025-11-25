@@ -7,7 +7,7 @@
 ##                silent mode (with ASCI animation) and verbose mode (detailed output).
 ## Usage:         fedora-update (fsu|fedora-upgrade) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 ## Author:        Lineax17
-## Version:       1.3.2
+## Version:       1.3.3
 ## Requirements:  - Bash 4.0+
 ##                - dnf5
 ##                - sudo privileges
@@ -17,6 +17,7 @@
 set -euo pipefail
 
 ## Global variables
+VERSION_NUMBER=1.3.3
 new_kernel_version=true
 VERBOSE=false
 UPDATE_BREW=false
@@ -33,6 +34,12 @@ while [[ $# -gt 0 ]]; do
             UPDATE_BREW=true
             shift
             ;;
+        -v|--version)
+            cat << EOF
+Fedora-Update ${VERSION_NUMBER}
+EOF
+            exit 0
+            ;;
         -h|--help)
             cat << EOF
 Usage: fedora-update (fsu|fedora-upgrade) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
@@ -43,6 +50,7 @@ Options:
   -l, --log, --verbose       Show detailed output during upgrade process
   -b, --brew, --brew-upgrade Update Homebrew packages (if installed)
   -h, --help                 Display this help message
+  -v, --version              Show current version of tool
 
 Examples:
   fedora-update              # Run in silent mode with spinner
