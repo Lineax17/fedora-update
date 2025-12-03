@@ -41,7 +41,7 @@ ln -s fedora-update %{buildroot}%{_bindir}/fuck
 %license LICENSE
 %doc README.md
 %{_bindir}/fedora-update
-%{_bindir}/fsu
+%{_bindir}/fuck
 %{_bindir}/fedora-upgrade
 
 %changelog
