@@ -217,15 +217,17 @@ setup_sudo_keepalive() {
         exit 1
     fi
 
+    # Store main script PID before entering subshell
+    local main_pid=$$
+    
     # Keep sudo timestamp updated in the background until this script exits
     (
         while true; do
-            # Ensure we're still the child of the original script
-            [ -d "/proc/$PPID" ] || exit 0
-            sudo -n true 2>/dev/null || exit 0
             sleep 60
-            # Stop refreshing if parent script exits
-            kill -0 "$PPID" 2>/dev/null || exit 0
+            # Check if main script is still running
+            kill -0 "$main_pid" 2>/dev/null || exit 0
+            # Refresh sudo timestamp
+            sudo -n true 2>/dev/null || exit 0
         done
     ) &
     SUDO_KEEPALIVE_PID=$!
