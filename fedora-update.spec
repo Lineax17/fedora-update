@@ -1,5 +1,5 @@
 Name:           fedora-update
-Version:        1.3.4
+Version:        1.3.5
 Release:        1%{?dist}
 Summary:        Simple Fedora system update script
 
@@ -45,5 +45,5 @@ ln -s fedora-update %{buildroot}%{_bindir}/fuck
 %{_bindir}/fedora-upgrade
 
 %changelog
-* Tue Dec 03 2025 Lineax17 <lineax17@gmail.com> - 1.3.4-1
-- rename short-form symlink to streamline naming conventions
+* Sun Dec 07 2025 Lineax17 <lineax17@gmail.com> - 1.3.5-1
+- fix regression where sudo keepalive ended when brew flag was active
