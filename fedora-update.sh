@@ -255,15 +255,15 @@ main() {
     confirm_kernel_upgrade
     run_with_spinner "Apply DNF Updates" apply_dnf_upgrade
     run_with_spinner "Clean DNF Cache" clean_dnf_cache
-    run_with_spinner "Update Flatpak" update_flatpak
+    run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
+    run_with_spinner "Ensure Initramfs" ensure_initramfs
     run_with_spinner "Update Snap" update_snap
+    run_with_spinner "Update Flatpak" update_flatpak
     
     if [ "$UPDATE_BREW" = true ]; then
         run_with_spinner "Update Homebrew" update_brew
     fi
     
-    run_with_spinner "Check NVIDIA Akmods" check_nvidia_akmods
-    run_with_spinner "Ensure Initramfs" ensure_initramfs
     print_header "System Upgrade Finished"
 }
 
