@@ -18,7 +18,7 @@ set -euo pipefail
 
 ## Global variables
 VERSION_NUMBER=1.3.5
-new_kernel_version=true
+NEW_KERNEL_VERSION=true
 VERBOSE=false
 UPDATE_BREW=false
 SPINNER_CHARS=( '-' '\' '|' '/' )
@@ -291,7 +291,7 @@ require_dnf_5() {
 ## Returns:
 ##   0 on success, 1 on dnf5 error
 ## Sets:
-##   new_kernel_version - true if kernel update available, false otherwise
+##   NEW_KERNEL_VERSION - true if kernel update available, false otherwise
 ## Example:
 ##   check_kernel_updates
 check_kernel_updates() {
@@ -301,10 +301,10 @@ check_kernel_updates() {
     dnf5 check-upgrade -q 'kernel*' >/dev/null 2>&1 || exit_code=$?
     
     if [ "$exit_code" -eq 0 ]; then
-        new_kernel_version=false
+        NEW_KERNEL_VERSION=false
         print_verbose "No new kernel version detected."
     elif [ "$exit_code" -eq 100 ]; then
-        new_kernel_version=true
+        NEW_KERNEL_VERSION=true
     else
         echo "Error: 'dnf5 check-upgrade kernel*' failed (exit_code=$exit_code)." >&2
         exit 1
@@ -321,7 +321,7 @@ check_kernel_updates() {
 ## Example:
 ##   confirm_kernel_upgrade
 confirm_kernel_upgrade() {
-    if [ "$new_kernel_version" = true ]; then
+    if [ "$NEW_KERNEL_VERSION" = true ]; then
         kernel_update_version=$(get_new_kernel_version)
         echo -n "Kernel update available: $kernel_update_version. Proceed? [y/N]: "
         read -r -n 1 confirm
@@ -463,7 +463,7 @@ check_nvidia_akmods() {
 ensure_initramfs() {
     print_header "Ensure Initramfs"
     
-    if [ "$new_kernel_version" = true ]; then
+    if [ "$NEW_KERNEL_VERSION" = true ]; then
         print_verbose "Rebuilding initramfs..."
         sudo dracut -f --regenerate-all
         # Clean temporary dracut files older than 1 day (silent mode only)

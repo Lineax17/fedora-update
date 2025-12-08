@@ -15,26 +15,26 @@ test_kernel_update_available() {
     # Setup
     export MOCK_DNF_EXIT_CODE=100
     export MOCK_DNF_OUTPUT="kernel-core.x86_64 6.11.0-200.fc40 updates"
-    new_kernel_version=false # Reset state
+    NEW_KERNEL_VERSION=false # Reset state
 
     # Execute
     check_kernel_updates
 
     # Verify
-    assert_true "$new_kernel_version" "new_kernel_version should be true when exit code is 100"
+    assert_true "$NEW_KERNEL_VERSION" "NEW_KERNEL_VERSION should be true when exit code is 100"
 }
 
 test_no_kernel_update() {
     # Setup
     export MOCK_DNF_EXIT_CODE=0
     export MOCK_DNF_OUTPUT=""
-    new_kernel_version=true # Reset state
+    NEW_KERNEL_VERSION=true # Reset state
 
     # Execute
     check_kernel_updates
 
     # Verify
-    assert_false "$new_kernel_version" "new_kernel_version should be false when exit code is 0"
+    assert_false "$NEW_KERNEL_VERSION" "NEW_KERNEL_VERSION should be false when exit code is 0"
 }
 
 test_dnf_error_handling() {
