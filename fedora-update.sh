@@ -7,7 +7,7 @@
 ##                silent mode (with ASCI animation) and verbose mode (detailed output).
 ## Usage:         fedora-update (fedora-upgrade|fuck) [-l|--log|--verbose] [-b|--brew|--brew-upgrade]
 ## Author:        Lineax17
-## Version:       1.3.5
+## Version:       1.4.0
 ## Requirements:  - Bash 4.0+
 ##                - dnf5
 ##                - sudo privileges
@@ -17,7 +17,7 @@
 set -euo pipefail
 
 ## Global variables
-VERSION_NUMBER=1.3.5
+VERSION_NUMBER=1.4.0
 NEW_KERNEL_VERSION=true
 VERBOSE=false
 UPDATE_BREW=false
