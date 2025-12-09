@@ -2,11 +2,35 @@
 
 set -e  # Exit on error
 
-# Check if rpmbuild is installed
+# Check required RPM build tools
+MISSING_PACKAGES=()
+
 if ! command -v rpmbuild >/dev/null 2>&1; then
     echo "Error: rpmbuild is not installed."
-    echo "Install it with: sudo dnf install rpm-build"
+    MISSING_PACKAGES+=("rpm-build")
+fi
+
+if ! command -v rpmdev-setuptree >/dev/null 2>&1; then
+    echo "Error: rpmdev-setuptree is not installed."
+    MISSING_PACKAGES+=("rpmdevtools")
+fi
+
+if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
+    echo "Install missing packages with: sudo dnf install ${MISSING_PACKAGES[*]}"
     exit 1
+fi
+
+# Check if rpmbuild directory structure exists
+if [ ! -d "$HOME/rpmbuild/SPECS" ] || [ ! -d "$HOME/rpmbuild/SOURCES" ] || [ ! -d "$HOME/rpmbuild/RPMS" ]; then
+    echo "RPM build directory structure not found."
+    if command -v rpmdev-setuptree >/dev/null 2>&1; then
+        echo "Setting up RPM build directories..."
+        rpmdev-setuptree
+    else
+        echo "Error: rpmdev-setuptree is not installed."
+        echo "Install it with: sudo dnf install rpmdevtools"
+        exit 1
+    fi
 fi
 
 # Extract version from spec file
