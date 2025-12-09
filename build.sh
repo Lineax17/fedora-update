@@ -23,14 +23,8 @@ fi
 # Check if rpmbuild directory structure exists
 if [ ! -d "$HOME/rpmbuild/SPECS" ] || [ ! -d "$HOME/rpmbuild/SOURCES" ] || [ ! -d "$HOME/rpmbuild/RPMS" ]; then
     echo "RPM build directory structure not found."
-    if command -v rpmdev-setuptree >/dev/null 2>&1; then
-        echo "Setting up RPM build directories..."
-        rpmdev-setuptree
-    else
-        echo "Error: rpmdev-setuptree is not installed."
-        echo "Install it with: sudo dnf install rpmdevtools"
-        exit 1
-    fi
+    echo "Setting up RPM build directories..."
+    rpmdev-setuptree
 fi
 
 # Extract version from spec file
