@@ -476,7 +476,7 @@ ensure_initramfs() {
 }
 
 ## Get version string of new kernel update
-## Queries DNF5 for available kernel-core version
+## Queries DNF5 for available kernel-helper version
 ##
 ## Arguments:
 ##   None
@@ -488,8 +488,8 @@ ensure_initramfs() {
 ##   version=$(get_new_kernel_version)
 get_new_kernel_version() {
     local version
-    version=$(dnf5 check-update 'kernel-core' 2>/dev/null \
-        | awk '/^kernel-core/ {print $2; exit}' || true)
+    version=$(dnf5 check-update 'kernel-helper' 2>/dev/null \
+        | awk '/^kernel-helper/ {print $2; exit}' || true)
     
     if [ -n "$version" ]; then
         echo "$version"
