@@ -1,3 +1,4 @@
+from core import flatpak, dnf
 from helper import runner, sudo_keepalive
 
 
@@ -8,8 +9,8 @@ def main():
     sudo_keepalive.start()
 
     try:
+        dnf.update_dnf()
         # Run all update commands
-        _print_output(["sudo", "dnf", "update"])
         # Add more sudo commands here as needed
 
     except KeyboardInterrupt:
@@ -21,6 +22,8 @@ def main():
     finally:
         # Ensure keepalive is stopped
         sudo_keepalive.stop()
+
+    flatpak.update_flatpak()
 
     return 0
 
