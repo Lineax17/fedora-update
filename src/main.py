@@ -9,7 +9,8 @@ def main():
     sudo_keepalive.start()
 
     try:
-        dnf.update_dnf()
+        # System component updates
+        dnf.update_dnf(True)
 
     except KeyboardInterrupt:
         print("\n⚠️  Operation cancelled by user")
@@ -21,6 +22,7 @@ def main():
         # Ensure keepalive is stopped
         sudo_keepalive.stop()
 
+    # Userspace component updates
     flatpak.update_flatpak()
 
     return 0

@@ -8,6 +8,6 @@ def check_dnf_installed() -> bool:
     except runner.CommandError:
         return False
 
-def update_dnf():
+def update_dnf(show_live_output: bool = False):
     """Update DNF packages."""
-    runner.run(["sudo", "dnf", "update", "-y"], True)
+    return runner.run(["sudo", "dnf", "update", "-y"], show_live_output=show_live_output)

@@ -33,14 +33,14 @@ def test_basic_functionality():
 
     try:
         print("2. Running first sudo command...")
-        result = runner.run(["sudo", "whoami"], return_output=True)
+        result = runner.run(["sudo", "whoami"], show_live_output=True)
         print(f"   Result: {result}")
 
         print("\n3. Waiting 5 seconds to simulate long operation...")
         time.sleep(5)
 
         print("\n4. Running second sudo command (should not prompt for password)...")
-        result = runner.run(["sudo", "pwd"], return_output=True)
+        result = runner.run(["sudo", "pwd"], show_live_output=True)
         print(f"   Result: {result}")
 
         print("\n5. Testing is_running()...")

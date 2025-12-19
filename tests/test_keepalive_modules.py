@@ -20,14 +20,14 @@ from helper import sudo_keepalive, runner
 def module_a():
     """Function that needs sudo in module A."""
     print("  → Module A: Running sudo command...")
-    result = runner.run(["sudo", "whoami"], return_output=True)
+    result = runner.run(["sudo", "whoami"], show_live_output=True)
     print(f"    Result: {result}")
 
 
 def module_b():
     """Function that needs sudo in module B."""
     print("  → Module B: Running sudo command...")
-    result = runner.run(["sudo", "pwd"], return_output=True)
+    result = runner.run(["sudo", "pwd"], show_live_output=True)
     print(f"    Result: {result}")
 
 
