@@ -10,8 +10,6 @@ def main():
 
     try:
         dnf.update_dnf()
-        # Run all update commands
-        # Add more sudo commands here as needed
 
     except KeyboardInterrupt:
         print("\n⚠️  Operation cancelled by user")

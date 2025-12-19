@@ -125,9 +125,9 @@ class SudoKeepalive:
         :return: True if sudo access granted, False otherwise
         """
         try:
+            # Don't capture output so user can interact with sudo prompt
             result = subprocess.run(
                 ["sudo", "-v"],
-                capture_output=True,
                 timeout=60  # Give user time to enter password
             )
             return result.returncode == 0
