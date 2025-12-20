@@ -13,10 +13,10 @@ def main():
         dnf.update_dnf(True)
 
     except KeyboardInterrupt:
-        print("\n⚠️  Operation cancelled by user")
+        print("Operation cancelled by user")
         return 130
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         return 1
     finally:
         # Ensure keepalive is stopped
