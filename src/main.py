@@ -1,8 +1,21 @@
+import argparse
+
+import __version__
 from core import flatpak, dnf
 from helper import runner, sudo_keepalive
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Fedora System Update Tool"
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}"
+    )
+
+
     print("--- Fedora Update Control Kit ---")
 
     # Start sudo keepalive to maintain privileges throughout execution
