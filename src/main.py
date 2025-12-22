@@ -1,13 +1,14 @@
 import argparse
 
-import __version__
 from core import flatpak, dnf
 from helper import runner, sudo_keepalive
+from __version__ import __version__
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Fedora System Update Tool"
+        prog="Fedora Update Control Kit",
+        description="Automated system update script for Fedora Linux.",
     )
     parser.add_argument(
         "--version",
@@ -15,6 +16,7 @@ def main():
         version=f"%(prog)s {__version__}"
     )
 
+    args = parser.parse_args()
 
     print("--- Fedora Update Control Kit ---")
 
