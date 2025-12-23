@@ -12,5 +12,4 @@ def update_dnf(show_live_output: bool = False):
     """Update DNF packages."""
     if not check_dnf_installed():
         raise RuntimeError("DNF is not installed on this system.")
-    else:
-        return runner.run(["sudo", "dnf", "update", "-y"], show_live_output=show_live_output)
+    runner.run(["sudo", "dnf", "update", "-y"], show_live_output=show_live_output)

@@ -44,7 +44,7 @@ def main():
 
     try:
         # System component updates
-        cli.print_output(dnf.update_dnf(verbose), verbose, "Updating DNF packages")
+        cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")

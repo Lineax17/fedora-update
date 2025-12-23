@@ -13,9 +13,9 @@ def print_output(function, verbose_mode: bool, description: str = "Processing"):
         description: Description text to show with the spinner
     """
     if verbose_mode:
-        function()
+        function(verbose_mode)
     else:
-        run_with_spinner(function, description)
+        run_with_spinner(lambda: function(verbose_mode), description)
 
 
 def run_with_spinner(function, description: str):
