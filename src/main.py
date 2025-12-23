@@ -37,13 +37,16 @@ def main():
     verbose = args.verbose
     brew = args.brew
 
-    print("--- Fedora Update Control Kit ---")
+    print("--- Fedora Update Control Kit ---\n")
 
     # Start sudo keepalive to maintain privileges throughout execution
     sudo_keepalive.start()
 
     try:
         # System component updates
+
+        cli.print_header("Updating DNF packages", verbose)
+
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
 
     except KeyboardInterrupt:

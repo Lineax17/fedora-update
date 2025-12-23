@@ -3,19 +3,19 @@ import time
 import threading
 
 
-def print_output(function, verbose_mode: bool, description: str = "Processing"):
+def print_output(function, verbose: bool, description: str = "Processing"):
     """
     Execute a function either with verbose output or with a spinner animation.
 
     Args:
         function: Callable to execute
-        verbose_mode: If True, show full output; if False, show spinner
+        verbose: If True, show full output; if False, show spinner
         description: Description text to show with the spinner
     """
-    if verbose_mode:
-        function(verbose_mode)
+    if verbose:
+        function(verbose)
     else:
-        run_with_spinner(lambda: function(verbose_mode), description)
+        run_with_spinner(lambda: function(verbose), description)
 
 
 def run_with_spinner(function, description: str):
@@ -66,3 +66,23 @@ def run_with_spinner(function, description: str):
         else:
             sys.stdout.write(f'\r\033[2K✅ {description}\n')
         sys.stdout.flush()
+
+def print_header(string: str, verbose: bool = False):
+    """Print the application header."""
+    if not verbose:
+        return
+
+    string_length = len(string)
+    spacing = 12
+
+    for i in range(string_length + spacing):
+        print("#", end="")
+    print()
+
+    print("#     " + string + "     #", end="")
+    print()
+
+    for i in range(string_length + spacing):
+        print("#", end="")
+
+    print("\n")
