@@ -1,7 +1,7 @@
 import argparse
 
 from core import flatpak, dnf
-from helper import runner, sudo_keepalive
+from helper import runner, sudo_keepalive, cli
 from __version__ import __version__
 
 
@@ -44,7 +44,7 @@ def main():
 
     try:
         # System component updates
-        dnf.update_dnf(verbose)
+        cli.print_output(dnf.update_dnf(verbose), verbose, "Updating DNF packages")
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")
