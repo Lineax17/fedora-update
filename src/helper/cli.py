@@ -2,8 +2,10 @@ import sys
 import time
 import threading
 
+from helper import runner
 
-def print_output(function, verbose: bool, description: str = "Processing"):
+
+def print_output(function, verbose: bool = False, description: str = "Processing"):
     """
     Execute a function either with verbose output or with a spinner animation.
 

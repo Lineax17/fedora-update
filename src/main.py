@@ -1,6 +1,6 @@
 import argparse
 
-from core import flatpak, dnf
+from core import flatpak, dnf, init
 from helper import runner, sudo_keepalive, cli
 from __version__ import __version__
 
@@ -36,6 +36,7 @@ def main():
     # Extract arguments into boolean variables
     verbose = args.verbose
     brew = args.brew
+    new_kernel = True # Testing purposes only
 
     print("--- Fedora Update Control Kit ---\n")
 
@@ -48,6 +49,8 @@ def main():
         cli.print_header("Updating DNF packages", verbose)
 
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
+
+        cli.print_output(init.rebuild_initramfs(new_kernel), description="Updating initramfs")
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")
@@ -65,13 +68,7 @@ def main():
     return 0
 
 
-def _print_output(cmd: list[str]):
-    try:
-        result = runner.run(cmd, True)
-        print(result)
-    except runner.CommandError as e:
-        print(f"An error occurred: {e}")
-        raise
+
 
 
 if __name__ == "__main__":
