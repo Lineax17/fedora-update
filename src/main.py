@@ -6,6 +6,11 @@ from __version__ import __version__
 
 
 def main():
+
+    new_kernel = True
+    verbose = False
+    brew = False
+
     parser = argparse.ArgumentParser(
         prog="Fedora Update Control Kit",
         description="Automated system update script for Fedora Linux.",
@@ -15,8 +20,22 @@ def main():
         action="version",
         version=f"%(prog)s {__version__}"
     )
+    parser.add_argument(
+        "--verbose", "-l", "--log",
+        action="store_true",
+        help="Show detailed output during update process"
+    )
+    parser.add_argument(
+        "--brew", "-b",
+        action="store_true",
+        help="Update Homebrew packages (if installed)"
+    )
 
     args = parser.parse_args()
+
+    # Extract arguments into boolean variables
+    verbose = args.verbose
+    brew = args.brew
 
     print("--- Fedora Update Control Kit ---")
 
@@ -25,7 +44,7 @@ def main():
 
     try:
         # System component updates
-        dnf.update_dnf(True)
+        dnf.update_dnf(verbose)
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")
