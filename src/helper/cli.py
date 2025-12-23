@@ -68,7 +68,18 @@ def run_with_spinner(function, description: str):
         sys.stdout.flush()
 
 def print_header(string: str, verbose: bool = False):
-    """Print the application header."""
+    """
+    Print the given string formated as a header.
+    Example:
+
+    #################
+    #     Title     #
+    #################
+
+    Args:
+        string: The string to print as a header.
+        verbose: If False, do not print anything.
+    """
     if not verbose:
         return
 
