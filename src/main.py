@@ -50,7 +50,7 @@ def main():
 
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
 
-        cli.print_output(init.rebuild_initramfs(new_kernel), description="Updating initramfs")
+        cli.print_output(lambda verbose: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")
