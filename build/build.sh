@@ -50,9 +50,10 @@ fi
 
 # Create fresh build directory with all required files
 mkdir -p "$BUILD_DIR"
-cp fedora-update.sh "$BUILD_DIR/"
-cp LICENSE "$BUILD_DIR/"
-cp README.md "$BUILD_DIR/"
+cp -r ../src "$BUILD_DIR/"
+cp ../pyproject.toml "$BUILD_DIR/"
+cp ../LICENSE "$BUILD_DIR/"
+cp ../README.md "$BUILD_DIR/"
 
 # Create tar.gz archive
 echo "Creating tar.gz archive..."

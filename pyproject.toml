@@ -40,8 +40,8 @@ classifiers = [
 # ============================================================================
 # Dependencies
 # ============================================================================
-[project.dependencies]
 # No external dependencies - uses only Python standard library
+dependencies = []
 
 
 # ============================================================================
@@ -59,9 +59,9 @@ dev = [
 # Console Scripts (Entry Points)
 # ============================================================================
 [project.scripts]
-fedora-update = "src.main:main"
-fedora-upgrade = "src.main:main"
-fuck = "src.main:main"
+fedora-update = "main:main"
+fedora-upgrade = "main:main"
+fuck = "main:main"
 
 
 # ============================================================================
