@@ -2,10 +2,10 @@ from helper import runner
 
 def check_flatpak_installed() -> bool:
     """Check if Flatpak is installed on the system."""
-    try:
-        runner.run(["flatpak", "--version"])
+    result = runner.run(["flatpak", "--version"], check=False)
+    if result.returncode == 0:
         return True
-    except runner.CommandError:
+    else:
         return False
 
 def update_flatpak():
