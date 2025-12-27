@@ -4,7 +4,7 @@ This module provides functions to check Snap availability and update
 installed Snap packages.
 """
 
-from helper import runner
+from src.helper import runner
 
 def _check_snap_installed() -> bool:
     """Check if Snap is installed on the system.

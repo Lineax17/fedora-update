@@ -4,7 +4,7 @@ This module provides functions to rebuild the initial RAM filesystem (initramfs)
 after kernel updates to ensure proper boot functionality.
 """
 
-from helper import runner
+from src.helper import runner
 
 
 def rebuild_initramfs(new_kernel: bool) -> str:

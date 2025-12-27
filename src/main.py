@@ -10,9 +10,9 @@ The script provides both silent mode (with progress indicators) and verbose mode
 
 import argparse
 
-from core import flatpak, dnf, init, kernel, nvidia, snap, brew as homebrew
-from helper import sudo_keepalive, cli
-from __version__ import __version__
+from src.core import flatpak, dnf, init, kernel, nvidia, snap, brew as homebrew
+from src.helper import sudo_keepalive, cli
+from src.__version__ import __version__
 
 
 def main():

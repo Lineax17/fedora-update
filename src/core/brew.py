@@ -3,7 +3,7 @@
 This module provides functions to check Homebrew availability and update
 installed Homebrew packages and casks.
 """
-from helper import runner
+from src.helper import runner
 
 
 def _check_brew_installed() -> bool:

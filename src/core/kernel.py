@@ -4,7 +4,7 @@ This module provides functions to check for kernel updates, extract version
 information, and prompt users for confirmation before kernel upgrades.
 """
 
-from helper import runner
+from src.helper import runner
 
 
 def new_kernel_version() -> bool:

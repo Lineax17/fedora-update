@@ -4,7 +4,7 @@ This module provides functions to check Flatpak availability and update
 installed Flatpak applications.
 """
 
-from helper import runner
+from src.helper import runner
 
 
 def _check_flatpak_installed() -> bool:

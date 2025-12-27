@@ -4,7 +4,7 @@ This module provides functions to rebuild NVIDIA kernel modules using akmods
 after kernel updates to ensure NVIDIA drivers remain functional.
 """
 
-from helper import runner
+from src.helper import runner
 
 def _check_akmods_installed() -> bool:
     """Check if akmods is installed on the system.

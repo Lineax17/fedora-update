@@ -4,7 +4,7 @@ This module provides functions to check DNF availability and perform
 system package updates using DNF5.
 """
 
-from helper import runner
+from src.helper import runner
 
 
 def _check_dnf_installed() -> bool:
