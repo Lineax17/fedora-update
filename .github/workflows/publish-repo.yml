@@ -1,74 +1,40 @@
 name: Publish RPM Repository
 
 on:
-  workflow_dispatch: # manual trigger
+  workflow_dispatch:
   release:
-    types: [published] # automatic on new release → stable
-  push:
-    branches:
-      - testing # automatic on push → testing repo
+    types: [published]
 
 jobs:
-  build-rpm:
+  build-repo:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Podman
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman python3
+          sudo apt-get install -y podman
 
-      - name: Determine Build Type
-        id: build-type
-        run: |
-          if [[ "${{ github.event_name }}" == "release" ]]; then
-            echo "type=stable" >> $GITHUB_OUTPUT
-            echo "path=repo" >> $GITHUB_OUTPUT
-          else
-            echo "type=testing" >> $GITHUB_OUTPUT
-            echo "path=repo/testing" >> $GITHUB_OUTPUT
-          fi
+      - name: Download Release RPMs
+        uses: robinraju/release-downloader@v1.9
+        with:
+          latest: true
+          fileName: "*.rpm"
+          out-file-path: "repo"
 
-      - name: Modify Spec File for Testing
-        if: steps.build-type.outputs.type == 'testing'
+      - name: Generate repodata inside Fedora container
         run: |
-          sed -i 's/Release:\s*1%/Release: 0.1.testing%/' build/fedora-update.spec
-          echo "Modified spec file for testing build"
-          grep "Release:" build/fedora-update.spec
-
-      - name: Build RPM in Fedora Container
-        run: |
-          mkdir -p rpms
           podman pull docker.io/library/fedora:latest
           podman run --rm \
             -v $PWD:/workspace \
             -w /workspace \
             docker.io/library/fedora:latest \
             bash -c "
-              dnf -y install rpm-build rpmdevtools python3-devel python3-setuptools python3-wheel pyproject-rpm-macros && \
-              cd /workspace/build && \
-              bash build.sh && \
-              cp ~/rpmbuild/RPMS/noarch/*.rpm /workspace/rpms/ && \
-              cp ~/rpmbuild/SRPMS/*.rpm /workspace/rpms/
-            "
-
-      - name: Create Repository Structure
-        run: |
-          mkdir -p ${{ steps.build-type.outputs.path }}
-          cp rpms/*.rpm ${{ steps.build-type.outputs.path }}/
-
-      - name: Generate Repository Metadata
-        run: |
-          podman run --rm \
-            -v $PWD:/workspace \
-            -w /workspace \
-            docker.io/library/fedora:latest \
-            bash -c "
               dnf -y install createrepo_c && \
-              createrepo_c ${{ steps.build-type.outputs.path }}
+              createrepo_c repo
             "
 
       - name: Upload GitHub Pages Artifact
@@ -77,7 +43,7 @@ jobs:
           path: repo
 
   deploy:
-    needs: build-rpm
+    needs: build-repo
     runs-on: ubuntu-latest
     permissions:
       pages: write
