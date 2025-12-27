@@ -51,39 +51,6 @@ Install the package
 sudo dnf install fedora-update
 ```
 
-### Testing Repository (Beta Versions)
-
-For testing pre-release versions:
-
-Get the testing repo
-
-```bash
-sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/testing/extras/fedora-update-testing.repo -o /etc/yum.repos.d/fedora-update-testing.repo
-```
-
-Install or upgrade to testing version
-
-```bash
-sudo dnf upgrade fedora-update --enablerepo=fedora-update-testing
-```
-
-**Note:** Testing repo is disabled by default. Enable it only when you want to test pre-release versions:
-
-```bash
-# Temporary (one-time use)
-sudo dnf upgrade fedora-update --enablerepo=fedora-update-testing
-
-# Permanent
-sudo dnf config-manager --set-enabled fedora-update-testing
-```
-
-To switch back to stable:
-
-```bash
-sudo dnf config-manager --set-disabled fedora-update-testing
-sudo dnf downgrade fedora-update
-```
-
 ## Documentation
 
 📚 **[Complete Documentation](docs/README.md)**
