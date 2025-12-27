@@ -21,12 +21,6 @@ def new_kernel_version() -> bool:
     """
     new_kernel_version_available: bool
     result = runner.run(["dnf5", "check-upgrade", "-q", "kernel*"], check=False)
-    
-    # Debug: Print actual exit code
-    print(f"DEBUG: dnf5 check-upgrade returned exit code: {result.returncode}")
-    print(f"DEBUG: stdout: '{result.stdout}'")
-    print(f"DEBUG: stderr: '{result.stderr}'")
-    
     if result.returncode == 0:
         new_kernel_version_available = False
     elif result.returncode == 100:
@@ -37,18 +31,18 @@ def new_kernel_version() -> bool:
     return new_kernel_version_available
 
 def get_new_kernel_version() -> str:
-    """Extract the kernel version string from DNF5 check-update output.
+    """Extract the kernel version string from DNF5 check-upgrade output.
 
-    Queries DNF5 for kernel-helper package and extracts the version number
-    from the output (e.g., "6.12.5" from "6.12.5-300.fc41").
+    Queries DNF5 for kernel package updates and extracts the version number
+    from kernel.x86_64 package (e.g., "6.17.12" from "6.17.12-300.fc43").
 
     Returns:
         Kernel version string (e.g., "6.17.12").
 
     Raises:
-        CommandError: If kernel-helper version cannot be found in the output.
+        CommandError: If kernel version cannot be found in the output.
     """
-    result = runner.run(['dnf5', 'check-update', 'kernel-helper'], check=False)
+    result = runner.run(['dnf5', 'check-upgrade', 'kernel'], check=False)
     
     # Exit code 100 means updates available, 0 means no updates
     if result.returncode not in [0, 100]:
@@ -56,14 +50,15 @@ def get_new_kernel_version() -> str:
 
     for line in result.stdout.splitlines():
         line = line.strip()
-        if line.startswith('kernel-helper'):
+        # Look for kernel.x86_64 or kernel.aarch64 etc.
+        if line.startswith('kernel.'):
             parts = line.split()
             if len(parts) >= 2:
                 full_version = parts[1]
                 kernel_version = full_version.split('-')[0]
                 return kernel_version
 
-    raise runner.CommandError("Kernel version check failed")
+    raise runner.CommandError("Kernel version not found in output")
 
 
 def confirm_kernel_update(new_version: str) -> bool:
