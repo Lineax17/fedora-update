@@ -90,6 +90,7 @@ def print_header(string: str, verbose: bool = False):
     string_length = len(string)
     spacing = 12
 
+    print()
     for i in range(string_length + spacing):
         print("#", end="")
     print()
