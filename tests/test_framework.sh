@@ -10,7 +10,7 @@ TESTS_RUN=0
 TESTS_PASSED=0
 TESTS_FAILED=0
 
-# Assertion helper
+# Assertion core
 assert_equals() {
     local expected="$1"
     local actual="$2"

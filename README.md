@@ -50,3 +50,31 @@ Install the package
 ```
 sudo dnf install fedora-update
 ```
+
+## Documentation
+
+📚 **[Complete Documentation](docs/README.md)**
+
+- **[User Guide](docs/user-guide.md)** - Installation, usage, and troubleshooting
+- **[Architecture](docs/architecture.md)** - System design and architecture
+- **[Developer Guide](docs/developer-guide.md)** - Contributing and development
+- **[API Reference](docs/api-reference.md)** - Complete API documentation
+- **[FAQ](docs/faq.md)** - Frequently asked questions
+
+## Contributing
+
+Contributions are welcome! Please read the [Developer Guide](docs/developer-guide.md) for details on:
+
+- Setting up development environment
+- Running tests
+- Code style guidelines
+- Submitting pull requests
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## AI Assistance
+
+AI tools were used to assist in the development of this project, primarily for documentation and drafting. 
+The few lines of generated code have been reviewed and tested by me. This project is not AI-generated slop. 
