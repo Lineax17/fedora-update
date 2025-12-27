@@ -10,8 +10,8 @@ The script provides both silent mode (with progress indicators) and verbose mode
 
 import argparse
 
-from core import flatpak, dnf, init, kernel, nvidia
-from helper import runner, sudo_keepalive, cli
+from core import flatpak, dnf, init, kernel, nvidia, snap
+from helper import sudo_keepalive, cli
 from __version__ import __version__
 
 
@@ -77,6 +77,22 @@ def main():
         ## Nvidia driver rebuild
         cli.print_header("Rebuild Nvidia Drivers", verbose)
         cli.print_output(nvidia.rebuild_nvidia_modules())
+
+        ## Snap package updates
+        cli.print_header("Update Snap Packages", verbose)
+        cli.print_output(snap.update_snap, verbose, "Updating Snap packages")
+
+        ## Flatpak package updates
+        cli.print_header("Update Flatpak Packages", verbose)
+        cli.print_output(flatpak.update_flatpak, verbose, "Updating Flatpak packages")
+
+        ## Homebrew package updates
+        if brew:
+            cli.print_header("Update Homebrew Packages", verbose)
+            cli.print_output(lambda verbose: brew.update_brew(show_live_output=verbose), verbose, "Updating Homebrew packages")
+
+        print("\n--- System Upgrade finished ---\n")
+
 
     except KeyboardInterrupt:
         print("Operation cancelled by user")

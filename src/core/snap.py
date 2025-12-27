@@ -20,7 +20,6 @@ def update_snap():
 
     If Snap is not installed, prints a message and returns without error.
     """
-
     if not _check_snap_installed():
         print("Snap is not installed on this system.")
     else:
