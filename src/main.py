@@ -1,6 +1,6 @@
 import argparse
 
-from core import flatpak, dnf, init
+from core import flatpak, dnf, init, kernel
 from helper import runner, sudo_keepalive, cli
 from __version__ import __version__
 
@@ -36,7 +36,6 @@ def main():
     # Extract arguments into boolean variables
     verbose = args.verbose
     brew = args.brew
-    new_kernel = True # Testing purposes only
 
     print("--- Fedora Update Control Kit ---\n")
 
@@ -46,10 +45,23 @@ def main():
     try:
         # System component updates
 
-        cli.print_header("Updating DNF packages", verbose)
+        ## Dnf and Kernel updates
+        cli.print_header("Check Kernel Update", verbose)
 
+        new_kernel = kernel.new_kernel_version()
+
+        if new_kernel:
+            version = kernel.get_new_kernel_version()
+            kernel.confirm_kernel_update(version)
+        else:
+            print("No new kernel version detected.")
+
+        cli.print_header("Update DNF Packages", verbose)
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
 
+        ## Initramfs rebuild if kernel was updated
+
+        cli.print_header("Rebuild initramfs", verbose)
         cli.print_output(lambda verbose: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
 
     except KeyboardInterrupt:
@@ -66,9 +78,6 @@ def main():
     flatpak.update_flatpak()
 
     return 0
-
-
-
 
 
 if __name__ == "__main__":

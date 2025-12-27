@@ -18,7 +18,7 @@ def new_kernel_version() -> bool:
 
     return new_kernel_version_available
 
-def get_new_kernel_version() -> str | None:
+def get_new_kernel_version() -> str:
     """
     Extract the kernel version from DNF5 check-update output.
 
@@ -35,8 +35,33 @@ def get_new_kernel_version() -> str | None:
                 full_version = parts[1]
                 kernel_version = full_version.split('-')[0]
                 return kernel_version
-    return None
+
+    raise runner.CommandError("Kernel version check failed")
+
 
 def confirm_kernel_update(new_version: str) -> bool:
-    pass
+    """
+    Prompt user to confirm kernel upgrade.
+
+    Args:
+        new_version: The version string of the new kernel (e.g., "6.12.5")
+
+    Returns:
+        True if user confirms (input 'y' or 'Y')
+
+    Raises:
+        SystemExit: If user declines the kernel update
+    """
+    try:
+        response = input(f"Kernel update available: {new_version}. Proceed? [y/N]: ").strip()
+
+        if response in ['y', 'Y']:
+            return True
+        else:
+            print("Aborted: Kernel update detected and not confirmed.")
+            raise SystemExit(1)
+    except (KeyboardInterrupt, EOFError):
+        print("\nAborted: Kernel update detected and not confirmed.")
+        raise SystemExit(1)
+
 
