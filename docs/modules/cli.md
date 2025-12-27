@@ -431,10 +431,10 @@ Rebuilding initramfs...
 3. **Background process** - Heavier overhead
 
 **Thread approach:**
-- ✅ Simple implementation
-- ✅ Doesn't block operation
-- ✅ Easy cleanup with daemon threads
-- ✅ Minimal overhead
+- Simple implementation
+- Doesn't block operation
+- Easy cleanup with daemon threads
+- Minimal overhead
 
 ### Why ANSI Escape Codes?
 
@@ -444,22 +444,10 @@ Rebuilding initramfs...
 3. **Curses library** - Too heavy, compatibility issues
 
 **ANSI escape codes:**
-- ✅ Widely supported
-- ✅ Minimal footprint
-- ✅ Fine-grained control
-- ✅ Works in most terminals
+- Widely supported
+- Minimal footprint
+- Works in most terminals
 
-## Terminal Compatibility
-
-### Supported Terminals
-
-✅ GNOME Terminal
-✅ Konsole
-✅ xterm
-✅ Alacritty
-✅ Tilix
-✅ Terminator
-✅ SSH sessions
 
 ### ANSI Codes Used
 
@@ -551,46 +539,6 @@ finally:
     is_running = False
     spinner_thread.join()
     # Show result
-```
-
-## Testing
-
-### Testing UI Functions
-
-```python
-from unittest.mock import patch
-from io import StringIO
-
-def test_print_header():
-    with patch('sys.stdout', new=StringIO()) as fake_out:
-        cli.print_header("Test", verbose=True)
-        output = fake_out.getvalue()
-        assert "Test" in output
-        assert "#" in output
-```
-
-### Testing Spinners
-
-```python
-def test_spinner_success():
-    result = []
-    
-    def task():
-        result.append("done")
-    
-    cli.run_with_spinner(task, "Testing")
-    assert result == ["done"]
-```
-
-### Testing Error Cases
-
-```python
-def test_spinner_failure():
-    def failing_task():
-        raise ValueError("Test error")
-    
-    with pytest.raises(ValueError):
-        cli.run_with_spinner(failing_task, "Testing")
 ```
 
 ## Future Improvements

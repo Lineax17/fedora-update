@@ -24,18 +24,18 @@ Fedora Update Control Kit is designed as a modular Python application that orche
 ## System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                         main.py                             │
-│                   (Entry Point & Orchestration)             │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-        ┌────────────┼────────────┐
-        │            │            │
-        ▼            ▼            ▼
-┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│ Core Modules │ │  Helper  │ │  __version__ │
-│              │ │  Modules │ │              │
-└──────────────┘ └──────────┘ └──────────────┘
+┌───────────────────────────────────────────────────────┐
+│                      main.py                          │
+│             (Entry Point & Orchestration)             │
+└─────────────────────────┬─────────────────────────────┘
+                          │
+             ┌────────────┼────────────┐
+             │            │            │
+             ▼            ▼            ▼
+      ┌──────────────┐ ┌──────────┐ ┌──────────────┐
+      │ Core Modules │ │  Helper  │ │  __version__ │
+      │              │ │  Modules │ │              │
+      └──────────────┘ └──────────┘ └──────────────┘
 ```
 
 ### Layer Structure
@@ -89,6 +89,7 @@ def update_<tool>(show_live_output: bool = False):
 ```
 
 **Key characteristics:**
+
 - Private functions prefixed with `_`
 - Graceful degradation (skip if tool not installed)
 - Consistent return types and error handling
@@ -105,8 +106,8 @@ Central command execution module with three use cases:
 3. **Exit code handling** - For special cases (kernel check)
 
 ```python
-def run(cmd: list[str], 
-        show_live_output: bool = False, 
+def run(cmd: list[str],
+        show_live_output: bool = False,
         check: bool = True) -> CompletedProcess
 ```
 
@@ -150,18 +151,18 @@ def is_running() -> bool
          ▼
 ┌─────────────────────────────────────────────┐
 │  main.py                                    │
-│  ┌────────────────────────────────────────┐│
-│  │ 1. Start sudo_keepalive                ││
-│  │ 2. Check kernel updates                ││
-│  │    └─> Prompt if available             ││
-│  │ 3. Update DNF packages                 ││
-│  │ 4. Rebuild initramfs (if kernel update)││
-│  │ 5. Rebuild NVIDIA modules              ││
-│  │ 6. Update Snap packages                ││
-│  │ 7. Update Flatpak packages             ││
-│  │ 8. Update Homebrew (if --brew)         ││
-│  │ 9. Stop sudo_keepalive                 ││
-│  └────────────────────────────────────────┘│
+│  ┌────────────────────────────────────────┐ │
+│  │ 1. Start sudo_keepalive                │ │
+│  │ 2. Check kernel updates                │ │
+│  │    └─> Prompt if available             │ │
+│  │ 3. Update DNF packages                 │ │
+│  │ 4. Rebuild initramfs (if kernel update)│ │
+│  │ 5. Rebuild NVIDIA modules              │ │
+│  │ 6. Update Snap packages                │ │
+│  │ 7. Update Flatpak packages             │ │
+│  │ 8. Update Homebrew (if --brew)         │ │
+│  │ 9. Stop sudo_keepalive                 │ │
+│  └────────────────────────────────────────┘ │
 └─────────────────────────────────────────────┘
          │
          ▼
@@ -200,6 +201,7 @@ def is_running() -> bool
 **Original:** Bash script (`legacy/fedora-update.sh`)
 
 **Migration to Python:**
+
 - ✅ Better error handling
 - ✅ Type hints for reliability
 - ✅ Easier testing with mocks
@@ -209,6 +211,7 @@ def is_running() -> bool
 ### 2. Modular Package Manager Support
 
 Each package manager is in its own module, allowing:
+
 - Independent testing
 - Easy addition of new package managers
 - Graceful degradation if a tool isn't installed
@@ -218,11 +221,13 @@ Each package manager is in its own module, allowing:
 **Decision:** Always prompt for kernel updates
 
 **Rationale:**
+
 - Kernel updates can break systems (especially with NVIDIA)
 - Users should be aware of kernel changes
 - Allows users to postpone updates if needed
 
 **Implementation:**
+
 ```python
 if new_kernel:
     version = kernel.get_new_kernel_version()
@@ -233,10 +238,6 @@ if new_kernel:
 
 **Decision:** Background thread refreshes sudo timestamp
 
-**Alternatives considered:**
-- Run everything with `sudo fedora-update` ❌ (less secure)
-- Prompt for password multiple times ❌ (annoying)
-
 **Implementation:** Thread-based keepalive with signal handlers
 
 ### 5. Silent vs Verbose Modes
@@ -244,12 +245,14 @@ if new_kernel:
 **Decision:** Two distinct modes
 
 **Silent mode:**
+
 - Clean, minimal output
 - Animated spinners
 - ✅/❌ status indicators
 - Target audience: Daily users
 
 **Verbose mode:**
+
 - Live command output
 - Detailed headers
 - Debugging information
@@ -260,11 +263,13 @@ if new_kernel:
 **Levels of error handling:**
 
 1. **Critical errors** → Exit immediately
+
    - DNF5 not installed
    - Sudo validation fails
    - Kernel update declined
 
 2. **Recoverable errors** → Log and continue
+
    - Flatpak not installed
    - Snap not installed
    - Homebrew not installed
@@ -313,6 +318,7 @@ __version__ = "2.0.0"
 ```
 
 Referenced by:
+
 - `main.py` (--version argument)
 - `pyproject.toml` (package metadata)
 - Documentation
@@ -338,40 +344,3 @@ Referenced by:
 3. Implement Google-style docstrings
 4. Import in relevant modules
 5. Add documentation
-
-## Performance Considerations
-
-### Sequential Execution
-
-**Current:** Updates run sequentially
-
-**Rationale:**
-- Prevents package manager conflicts
-- Easier error tracking
-- Predictable behavior
-
-**Future consideration:** Parallel updates for independent package managers
-
-### Sudo Keepalive
-
-**Overhead:** Minimal (one background thread, refreshes every 60s)
-
-**Benefit:** Eliminates sudo password prompts during long updates
-
-## Security Considerations
-
-1. **Sudo usage:** Limited to specific commands, not shell injection
-2. **Command construction:** Uses list format, not string concatenation
-3. **Input validation:** Kernel confirmation accepts only y/Y
-4. **Signal handling:** Clean shutdown on Ctrl+C or SIGTERM
-
-## Future Improvements
-
-- [ ] Parallel package manager updates
-- [ ] Rollback mechanism for failed updates
-- [ ] System snapshot integration (Btrfs/LVM)
-- [ ] Configuration file support
-- [ ] Dry-run mode
-- [ ] Update scheduling
-- [ ] Email notifications
-

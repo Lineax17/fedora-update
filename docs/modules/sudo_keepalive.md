@@ -1,80 +1,133 @@
-# Sudo Keepalive Module
+# Sudo Keepalive Module Documentation
 
-## Übersicht
+Detailed documentation for the `sudo_keepalive` module (`src/helper/sudo_keepalive.py`).
 
-Das `sudo_keepalive` Modul sorgt dafür, dass sudo-Berechtigungen während der gesamten Skriptausführung erhalten bleiben, indem es den sudo-Timestamp regelmäßig im Hintergrund aktualisiert.
+## Overview
 
-## Funktionsweise
+The sudo_keepalive module maintains sudo privileges throughout script execution by periodically refreshing the sudo timestamp in the background. This eliminates repeated password prompts during long-running operations.
 
-1. **Initialer Check**: Prüft ob das Script bereits als root läuft (EUID=0)
-2. **Sudo-Validierung**: Fordert einmalig das sudo-Passwort an (`sudo -v`)
-3. **Background-Thread**: Startet einen Daemon-Thread, der alle 60 Sekunden `sudo -n true` ausführt
-4. **Automatisches Cleanup**: Registriert Handler für atexit, SIGINT und SIGTERM
+## Module Functions
 
-## API
+### `start(refresh_interval: int = 60) -> None`
 
-### Funktionen
+Starts the global sudo keepalive thread.
 
-#### `start(refresh_interval: int = 60) -> None`
-Startet den globalen sudo-keepalive Thread.
+#### Implementation Details
 
-**Parameter:**
-- `refresh_interval`: Sekunden zwischen den Refreshes (Standard: 60)
+1. **Root Check**: Skips if already running as root (EUID=0)
+2. **Sudo Validation**: Requests sudo password once (`sudo -v`)
+3. **Background Thread**: Launches daemon thread executing `sudo -n true` every 60 seconds
+4. **Automatic Cleanup**: Registers handlers for atexit, SIGINT, and SIGTERM
 
-**Wirft:**
-- `SystemExit`: Wenn sudo-Validierung fehlschlägt
+#### Parameters
 
-**Beispiel:**
+- `refresh_interval` (int): Seconds between refreshes (default: 60)
+
+#### Exceptions
+
+- `SystemExit`: Raised when sudo validation fails
+
+#### Usage Example
+
 ```python
-import sudo_keepalive
+from helper import sudo_keepalive
 
 sudo_keepalive.start()
-# Führe sudo-Befehle aus
+# Execute sudo commands without password prompts
 ```
 
-#### `stop() -> None`
-Stoppt den globalen sudo-keepalive Thread.
+#### Behavior When Already Running
 
-**Beispiel:**
+If called while already active, logs a warning but doesn't fail:
+
 ```python
+sudo_keepalive.start()
+sudo_keepalive.start()  # Warning: "Sudo keepalive is already running"
+```
+
+---
+
+### `stop() -> None`
+
+Stops the global sudo keepalive thread.
+
+#### Implementation Details
+
+Sets the stop event and waits for the background thread to terminate gracefully.
+
+#### Usage Example
+
+```python
+from helper import sudo_keepalive
+
 sudo_keepalive.stop()
 ```
 
-#### `is_running() -> bool`
-Prüft ob der keepalive Thread aktiv ist.
+#### Idempotent Behavior
 
-**Rückgabe:**
-- `True` wenn aktiv, `False` sonst
+Safe to call even if not running:
 
-**Beispiel:**
 ```python
-if sudo_keepalive.is_running():
-    print("Keepalive läuft")
+sudo_keepalive.stop()  # No error if already stopped
 ```
 
-### Klasse: SudoKeepalive
+---
 
-Die Klasse kann auch direkt verwendet werden, wenn mehr Kontrolle benötigt wird:
+### `is_running() -> bool`
+
+Checks if the keepalive thread is currently active.
+
+#### Return Value
+
+- `True`: Keepalive thread is running
+- `False`: Keepalive thread is not running
+
+#### Usage Example
+
+```python
+from helper import sudo_keepalive
+
+if sudo_keepalive.is_running():
+    print("Keepalive active")
+else:
+    print("Keepalive not running")
+```
+
+---
+
+### `class SudoKeepalive`
+
+Internal class for direct instantiation when more control is needed.
+
+#### Methods
+
+- `start() -> None`: Starts the keepalive thread
+- `stop() -> None`: Stops the keepalive thread
+- `is_running() -> bool`: Returns thread status
+
+#### Usage Example
 
 ```python
 from helper.sudo_keepalive import SudoKeepalive
 
 keepalive = SudoKeepalive(refresh_interval=30)
 keepalive.start()
-# ... Operationen ...
+# ... operations ...
 keepalive.stop()
 ```
 
-## Verwendungsbeispiele
+**Note:** The module-level functions use a global singleton instance. Direct instantiation is rarely needed.
 
-### Basis-Verwendung
+## Usage Examples
+
+### Basic Usage
 
 ```python
 from helper import sudo_keepalive, runner
 
 def main():
     sudo_keepalive.start()
-    
+
     try:
         runner.run(["sudo", "dnf", "update", "-y"])
         runner.run(["sudo", "dnf", "clean", "all"])
@@ -82,183 +135,214 @@ def main():
         sudo_keepalive.stop()
 ```
 
-### Mit Error Handling
+### With Error Handling
 
 ```python
 from helper import sudo_keepalive, runner
 
 def main():
-    print("Starte System-Update...")
-    
+    print("Starting system update...")
+
     sudo_keepalive.start()
-    
+
     try:
-        # DNF Updates
+        # DNF updates
         runner.run(["sudo", "dnf", "update", "-y"])
-        
-        # Flatpak Updates
+
+        # Flatpak updates
         runner.run(["sudo", "flatpak", "update", "-y"])
-        
-        # NVIDIA Akmods
+
+        # NVIDIA akmods
         runner.run(["sudo", "akmods", "--force"])
-        
-        print("✅ Update erfolgreich abgeschlossen")
+
+        print("✅ Update completed successfully")
         return 0
-        
+
     except runner.CommandError as e:
-        print(f"❌ Fehler: {e}")
+        print(f"❌ Error: {e}")
         return 1
     except KeyboardInterrupt:
-        print("\n⚠️  Abbruch durch Benutzer")
+        print("\n⚠️  Aborted by user")
         return 130
     finally:
         sudo_keepalive.stop()
 ```
 
-### Mit Custom Refresh-Interval
+### Custom Refresh Interval
 
 ```python
 from helper import sudo_keepalive
 
-# Refresh alle 30 Sekunden statt 60
+# Refresh every 30 seconds instead of 60
 sudo_keepalive.start(refresh_interval=30)
 ```
 
-## Technische Details
+### Integration with main.py
 
-### Threading-Architektur
+```python
+from helper import sudo_keepalive, runner
 
-- **Daemon-Thread**: Beendet sich automatisch wenn Hauptprozess stirbt
-- **Event-basiert**: Nutzt `threading.Event()` für sauberes Stoppen
-- **Non-blocking**: Wartet mit timeout statt zu sleepen
+def main():
+    sudo_keepalive.start()
 
-### Cleanup-Mechanismen
+    try:
+        update_dnf()
+        update_flatpak()
+        update_nvidia()
+    except KeyboardInterrupt:
+        print("\nUpdate cancelled")
+        raise SystemExit(130)
+    finally:
+        sudo_keepalive.stop()
+```
 
-1. **atexit**: Registriert bei `start()`, läuft bei normalem Exit
-2. **signal handler**: Fängt SIGINT (Ctrl+C) und SIGTERM ab
-3. **try-finally**: Zusätzlicher Schutz im Hauptscript
+## Technical Details
 
-### Sicherheit
+### Threading Architecture
 
-- **Minimale Privilegien**: Thread führt nur `sudo -n true` aus, keine anderen Befehle
-- **User-Kontrolle**: Initiale Passwort-Eingabe gibt User volle Kontrolle
-- **Automatic Timeout**: Wenn Refresh fehlschlägt, stoppt der Thread automatisch
+- **Daemon Thread**: Automatically terminates when main process exits
+- **Event-Based**: Uses `threading.Event()` for clean shutdown
+- **Non-Blocking**: Waits with timeout instead of sleep
 
-### Root-Handling
+**Implementation:**
 
-Wenn das Script bereits als root läuft (EUID=0), macht der keepalive nichts:
+```python
+def _refresh_loop(self):
+    while not self._stop_event.is_set():
+        self._refresh_sudo()
+        self._stop_event.wait(self.refresh_interval)  # Interruptible wait
+```
+
+### Cleanup Mechanisms
+
+1. **atexit**: Registered during `start()`, runs on normal exit
+2. **Signal Handlers**: Catches SIGINT (Ctrl+C) and SIGTERM
+3. **try-finally**: Additional protection in main script
+
+**Registration:**
+
+```python
+atexit.register(self.stop)
+signal.signal(signal.SIGINT, self._handle_signal)
+signal.signal(signal.SIGTERM, self._handle_signal)
+```
+
+### Security
+
+- **Minimal Privileges**: Thread only executes `sudo -n true`, no other commands
+- **User Control**: Initial password prompt gives user full control
+- **Automatic Timeout**: Thread stops automatically if refresh fails
+
+### Root Handling
+
+When the script is already running as root (EUID=0), the keepalive does nothing:
+
 ```python
 if os.geteuid() == 0:
     logging.debug("Already running as root, sudo keepalive not needed")
     return
 ```
 
+**Why?** Root doesn't need sudo, so the keepalive would be redundant.
+
 ## Logging
 
-Das Modul nutzt Python's logging-Framework:
+The module uses Python's logging framework for diagnostics.
 
-```python
-import logging
+### Debug Messages
 
-logging.basicConfig(level=logging.DEBUG)
-# Jetzt werden keepalive Debug-Meldungen ausgegeben
-```
-
-Debug-Meldungen:
 - `"Already running as root, sudo keepalive not needed"`
 - `"Sudo keepalive started (refresh every 60s)"`
 - `"Sudo timestamp refreshed"`
 - `"Stopping sudo keepalive"`
 
-Warnungen:
+### Warnings
+
 - `"Sudo keepalive is already running"`
 - `"Failed to refresh sudo timestamp"`
 
-Fehler:
+### Errors
+
 - `"Error refreshing sudo: {exception}"`
 - `"Sudo validation failed: {exception}"`
+
+### Enabling Debug Logging
+
+```python
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+# Now keepalive debug messages will be displayed
+```
 
 ## Best Practices
 
 ### ✅ DO
 
 ```python
-# Immer finally für Cleanup verwenden
+# Always use finally for cleanup
 sudo_keepalive.start()
 try:
-    # ... Code ...
+    # ... code ...
 finally:
     sudo_keepalive.stop()
 
-# Nur einmal pro Prozess starten (Singleton-Pattern)
+# Start only once per process (singleton pattern)
 sudo_keepalive.start()
 ```
 
 ### ❌ DON'T
 
 ```python
-# Kein Cleanup - Thread läuft weiter!
+# No cleanup - thread keeps running!
 sudo_keepalive.start()
-# ... Code ...
+# ... code ...
 
-# Mehrfach starten (funktioniert, aber unnötig)
+# Multiple starts (works but unnecessary)
 sudo_keepalive.start()
-sudo_keepalive.start()  # Warnung: Already running
+sudo_keepalive.start()  # Warning: Already running
 ```
 
-## Troubleshooting
+## Testing
 
-### Problem: "Error: sudo privileges are required to continue"
-**Lösung**: User hat keine sudo-Rechte oder hat falsches Passwort eingegeben.
+### Run Test Suite
 
-### Problem: Keepalive stoppt unerwartet
-**Prüfen**:
-- Läuft `sudo -n true` noch? → `sudo -n true` im Terminal testen
-- Ist sudo-Timeout zu kurz? → `/etc/sudoers` Einstellungen prüfen
-
-### Problem: Script fragt nach Passwort trotz keepalive
-**Ursachen**:
-- Keepalive wurde nicht gestartet vor sudo-Befehlen
-- Keepalive Thread ist abgestürzt (Check logs)
-- Sudo-Timestamp wurde extern invalidiert
-
-## Tests
-
-Test-Suite ausführen:
 ```bash
-python3 tests/test_sudo_keepalive.py
+python3 tests/sudo_keepalive/test_basic.py
+python3 tests/sudo_keepalive/test_cross_module.py
 ```
 
-Die Tests prüfen:
-- ✅ Start/Stop Funktionalität
-- ✅ Multiple sudo-Befehle ohne erneutes Passwort
-- ✅ is_running() Status
-- ✅ Cleanup bei Exit
+### Test Coverage
 
-## Kompatibilität
+The tests verify:
+
+- Start/stop functionality
+- Multiple sudo commands without password re-prompt
+- `is_running()` status
+- Cleanup on exit
+- Signal handling (SIGINT, SIGTERM)
+
+### Example Test
+
+```python
+def test_sudo_commands_without_password():
+    sudo_keepalive.start()
+
+    # These should all succeed without password prompts
+    runner.run(["sudo", "true"])
+    runner.run(["sudo", "ls", "/root"])
+
+    sudo_keepalive.stop()
+```
+
+## Compatibility
 
 - **Python**: 3.10+
-- **OS**: Linux/Unix (sudo muss verfügbar sein)
-- **Dependencies**: Nur Python stdlib (subprocess, threading, etc.)
+- **OS**: Linux/Unix (sudo must be available)
+- **Dependencies**: Python standard library only (subprocess, threading, signal, atexit)
 
-## Performance
+## See Also
 
-- **Memory**: ~100KB für Thread
-- **CPU**: Minimal (~0.1% alle 60 Sekunden)
-- **Network**: Keine
-
-## Vergleich mit Bash-Version
-
-| Feature | Bash | Python |
-|---------|------|--------|
-| Background-Process | Subshell `( ... ) &` | `threading.Thread` |
-| Cleanup | `trap` | atexit + signal handler |
-| PID-Check | `kill -0 $pid` | Event-based |
-| Logging | echo/stderr | logging module |
-| Testing | Schwierig | Einfach (mocking) |
-| Typ-Sicherheit | Keine | Type hints |
-
-## Lizenz
-
-Siehe LICENSE Datei im Projekt-Root.
-
+- [runner.md](runner.md) - Command execution
+- [cli.md](cli.md) - User interface
+- [Architecture](../architecture.md) - System design

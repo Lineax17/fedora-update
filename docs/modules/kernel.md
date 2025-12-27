@@ -286,10 +286,6 @@ The kernel module has comprehensive unit tests in `tests/test_kernel_logic.py`:
 python3 tests/test_kernel_logic.py
 ```
 
-### Test Coverage
-
-The kernel module has **100% test coverage** for all public functions.
-
 ## Design Decisions
 
 ### Why Check kernel* Instead of kernel-core?
@@ -313,14 +309,6 @@ This allows checking without parsing if version isn't needed.
 ### Why SystemExit Instead of Returning False?
 
 When a user declines a kernel update, the entire update process should stop, not just the kernel update. `SystemExit` ensures the program terminates gracefully.
-
-## Future Improvements
-
-- [ ] Support for kernel version comparison (defer if minor update)
-- [ ] Option to skip confirmation via config file
-- [ ] Kernel changelog display before confirmation
-- [ ] Automatic backup before kernel update
-- [ ] Kernel rollback support
 
 ## Related Modules
 

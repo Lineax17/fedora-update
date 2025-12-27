@@ -433,15 +433,6 @@ if result.returncode != 0:
 - **sudo_keepalive.py**: Uses subprocess directly (not runner)
 - **cli.py**: Wraps runner calls with UI elements
 
-## Future Improvements
-
-- [ ] Timeout support
-- [ ] Input/output streaming
-- [ ] Progress callbacks
-- [ ] Command retry logic
-- [ ] Parallel execution support
-- [ ] Dry-run mode (print without executing)
-
 ## References
 
 - Python subprocess: https://docs.python.org/3/library/subprocess.html

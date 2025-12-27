@@ -13,8 +13,6 @@ Fedora Update Control Kit is an automated system upgrade tool for Fedora Linux t
 Fedora Update Control Kit provides:
 - **Kernel safety**: Prompts before kernel updates and rebuilds initramfs automatically
 - **NVIDIA support**: Automatically rebuilds NVIDIA drivers after kernel updates
-- **Multiple package managers**: Updates DNF, Flatpak, Snap, and Homebrew in one command
-- **User-friendly**: Silent mode with spinners or verbose mode for detailed output
 - **Sudo management**: Only asks for password once
 
 ### Is this safe to use?
@@ -79,52 +77,7 @@ When prompted for kernel update confirmation, press any key except `y` or `Y`, o
 
 ### Can I update only specific package managers?
 
-Currently, the script updates all available package managers. You can use the `--brew` flag to optionally include Homebrew. Future versions may add more granular control.
-
-## Troubleshooting Questions
-
-### Why does it keep asking for my password?
-
-You should only be prompted once. If prompted multiple times:
-1. Check your sudo configuration: `sudo cat /etc/sudoers`
-2. Ensure sudo timeout is not too short
-3. Check if sudo_keepalive is working: `fedora-update --verbose`
-
-### What if the script crashes?
-
-1. Run with verbose mode to see details: `fedora-update --verbose`
-2. Check the error message
-3. Report bugs at: https://github.com/Lineax17/fedora-update/issues
-
-### My NVIDIA drivers stopped working after update
-
-This can happen after kernel updates. Solutions:
-
-1. **Reboot first**: The new drivers might need a reboot
-2. **Rebuild manually**:
-   ```bash
-   sudo akmods --force
-   sudo dracut -f --regenerate-all
-   sudo reboot
-   ```
-3. **Check logs**: `dmesg | grep nvidia`
-
-### The script says "DNF5 not found"
-
-Install DNF5:
-```bash
-sudo dnf install dnf5
-```
-
-Fedora 41+ should have DNF5 by default.
-
-### Flatpak/Snap updates fail
-
-These are non-critical. The script will continue even if they fail. You can update manually:
-```bash
-flatpak update
-snap refresh
-```
+Currently, the script updates all available package managers. You can use the `--brew` flag to optionally include Homebrew. Future versions may add more granular control if many users ask for it.
 
 ### Can I see what's happening during updates?
 
@@ -139,53 +92,13 @@ fedora-update --verbose
 fedora-update --verbose 2>&1 | tee ~/update-$(date +%Y%m%d).log
 ```
 
-## Feature Questions
-
-### Does it support Homebrew?
-
-Yes, with the `--brew` flag:
-```bash
-fedora-update --brew
-```
-
-### Does it clean old packages?
-
-Currently, it updates packages but doesn't clean old versions. You can manually clean with:
-```bash
-sudo dnf clean packages
-```
-
-### Can it rollback failed updates?
-
-Not currently. Future versions may include rollback support using Btrfs/LVM snapshots.
-
-### Does it support dry-run mode?
-
-Not yet, but it's planned for a future release.
-
-### Can I schedule automatic updates?
-
-Yes, but be cautious with kernel updates. You can create a systemd timer or cron job. See [Developer Guide](developer-guide.md#automated-updates-advanced) for details.
-
 ## Technical Questions
-
-### What's the difference between v1.x (Bash) and v2.x (Python)?
-
-| Feature | v1.x (Bash) | v2.x (Python) |
-|---------|-------------|---------------|
-| Language | Bash | Python 3.10+ |
-| Testing | Limited | Comprehensive unit tests |
-| Type Safety | None | Type hints |
-| Error Handling | Basic | Advanced |
-| Extensibility | Moderate | High (modular) |
-| Performance | Fast | Comparable |
 
 ### Why was it rewritten in Python?
 
 - Better error handling and testing
 - Type safety with type hints
 - Easier to extend and maintain
-- Better cross-platform potential
 - More robust subprocess handling
 
 ### What Python version is required?
@@ -211,40 +124,6 @@ A background thread refreshes the sudo timestamp every 60 seconds using `sudo -n
 ### Can I contribute?
 
 Yes! See the [Developer Guide](developer-guide.md#contributing) for details.
-
-## Comparison Questions
-
-### vs. GNOME Software
-
-| Feature | Fedora Update Kit | GNOME Software |
-|---------|-------------------|----------------|
-| Interface | CLI | GUI |
-| Speed | Fast | Slower |
-| Package Managers | DNF, Flatpak, Snap, Brew | DNF, Flatpak |
-| Kernel Safety | Explicit confirmation | Automatic |
-| NVIDIA Support | Automatic rebuild | Manual |
-| Automation | Easy | Difficult |
-
-### vs. dnf-automatic
-
-| Feature | Fedora Update Kit | dnf-automatic |
-|---------|-------------------|---------------|
-| Kernel Updates | With confirmation | Automatic |
-| Flatpak | Yes | No |
-| Snap | Yes | No |
-| Homebrew | Yes | No |
-| NVIDIA | Automatic rebuild | No |
-| Interactive | Yes | No |
-
-### vs. Manual Updates
-
-| Feature | Fedora Update Kit | Manual |
-|---------|-------------------|--------|
-| Commands | 1 command | Multiple commands |
-| Kernel Safety | Built-in | Manual checking |
-| NVIDIA Rebuild | Automatic | Manual |
-| Error Handling | Automatic | Manual |
-| Time | Quick | Slower |
 
 ## Security Questions
 

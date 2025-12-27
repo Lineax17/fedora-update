@@ -63,18 +63,7 @@ fedora-update/
 │       ├── sudo_keepalive.py   # Sudo management
 │       └── log.py              # Logging (future)
 ├── tests/                       # Test suite
-│   ├── test_kernel_logic.py   # Kernel module tests
-│   ├── test_sudo_keepalive.py # Keepalive tests
-│   ├── test_syntax.sh         # Bash syntax tests
-│   └── run_tests.sh           # Test runner
 ├── docs/                        # Documentation
-│   ├── README.md              # Documentation index
-│   ├── user-guide.md          # User documentation
-│   ├── architecture.md        # Architecture overview
-│   ├── developer-guide.md     # This file
-│   └── modules/               # Module-specific docs
-├── legacy/                      # Original Bash script
-│   └── fedora-update.sh
 ├── build/                       # RPM build files
 │   ├── build.sh
 │   └── fedora-update.spec
@@ -85,32 +74,38 @@ fedora-update/
 
 ## Running Tests
 
-### Python Tests
+### Using the Test Runner
+
+The project includes a comprehensive test runner that automatically discovers and runs all tests:
 
 ```bash
-# Run all Python tests
-python3 tests/test_kernel_logic.py
-python3 tests/test_sudo_keepalive.py
+# Run all tests
+python3 tests/run_tests.py
+```
+The test runner will:
+- Automatically discover all test files in `tests/` subdirectories
+- Organize tests by category (kernel, sudo_keepalive, syntax, etc.)
+- Provide detailed output for each test suite
+- Show a comprehensive summary with pass/fail status
 
-# Or use pytest if installed
-pytest tests/
+### Running Individual Tests
+
+You can also run individual test files directly:
+
+```bash
+# Run specific test category
+python3 tests/kernel/test_version_detection.py
+python3 tests/sudo_keepalive/test_basic.py
+
+# Run syntax tests
+python3 tests/syntax/test_python_syntax.py
 ```
 
 ### Test Coverage
 
 ```bash
-# Run with coverage
+# Run with coverage (if pytest is installed)
 pytest --cov=src --cov-report=html tests/
-```
-
-### Bash Tests (Legacy)
-
-```bash
-# Run all tests
-bash tests/run_tests.sh
-
-# Run specific test
-bash tests/test_kernel_logic.sh
 ```
 
 ## Code Style
@@ -238,136 +233,6 @@ refactor: simplify kernel version extraction
 - **Tests:** Include test results
 - **Documentation:** Update relevant docs
 - **Breaking changes:** Clearly mark them
-
-## Adding New Features
-
-### Adding a New Package Manager
-
-Example: Adding support for APT
-
-1. **Create the module:**
-   ```python
-   # src/core/apt.py
-   """APT package manager update module."""
-   
-   from helper import runner
-   
-   def _check_apt_installed() -> bool:
-       """Check if APT is installed."""
-       result = runner.run(["apt", "--version"], check=False)
-       return result.returncode == 0
-   
-   def update_apt(show_live_output: bool = False):
-       """Update all APT packages."""
-       if not _check_apt_installed():
-           print("APT is not installed on this system.")
-           return
-       runner.run(["sudo", "apt", "update"], show_live_output=show_live_output)
-       runner.run(["sudo", "apt", "upgrade", "-y"], show_live_output=show_live_output)
-   ```
-
-2. **Add to main.py:**
-   ```python
-   from core import apt
-   
-   # In main():
-   cli.print_header("Update APT Packages", verbose)
-   cli.print_output(apt.update_apt, verbose, "Updating APT packages")
-   ```
-
-3. **Write tests:**
-   ```python
-   # tests/test_apt.py
-   def test_apt_update():
-       with patch('core.apt.runner.run') as mock_run:
-           mock_run.return_value = CompletedProcess([], 0, "", "")
-           apt.update_apt()
-           assert mock_run.called
-   ```
-
-4. **Update documentation:**
-   - Add to `docs/user-guide.md`
-   - Add to `docs/architecture.md`
-   - Create `docs/modules/apt.md`
-
-### Adding a Helper Function
-
-1. Choose appropriate module or create new one
-2. Add docstring with type hints
-3. Write unit tests
-4. Update API reference
-
-## Debugging
-
-### Verbose Mode
-
-Always test with verbose mode:
-
-```bash
-fedora-update --verbose
-```
-
-### Logging
-
-Add debug logging:
-
-```python
-import logging
-logging.basicConfig(level=logging.DEBUG)
-logging.debug("Debug message")
-```
-
-### Testing Individual Modules
-
-```python
-# Test a specific function
-from core import kernel
-result = kernel.new_kernel_version()
-print(f"Kernel update available: {result}")
-```
-
-## Testing Strategy
-
-### Unit Tests
-
-Mock external commands:
-
-```python
-from unittest.mock import patch
-from subprocess import CompletedProcess
-
-def test_kernel_update_available():
-    mock_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
-        returncode=100,
-        stdout="kernel-core.x86_64 6.11.0-200.fc40 updates\n",
-        stderr=""
-    )
-    
-    with patch('core.kernel.runner.run', return_value=mock_result):
-        result = kernel.new_kernel_version()
-        assert result == True
-```
-
-### Integration Tests
-
-Test with actual commands (requires sudo):
-
-```python
-# Integration test (run manually)
-def test_dnf_update_integration():
-    # Only run on actual Fedora system
-    if not is_fedora():
-        pytest.skip("Not on Fedora")
-    
-    dnf.update_dnf(show_live_output=True)
-```
-
-### Test Coverage Goals
-
-- **Core modules:** 80%+ coverage
-- **Helper modules:** 90%+ coverage
-- **Critical paths:** 100% coverage (kernel, sudo)
 
 ## Release Process
 

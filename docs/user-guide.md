@@ -162,12 +162,6 @@ The update process follows these steps in order:
 
 ## Troubleshooting
 
-### Kernel Update Confirmation Prompt
-
-**Problem:** Script asks for kernel update confirmation even though I want to abort.
-
-**Solution:** Press any key except `y` or `Y`, or press `Ctrl+C` to cancel.
-
 ### Sudo Password Prompt
 
 **Problem:** Script keeps asking for sudo password.
@@ -182,25 +176,6 @@ The update process follows these steps in order:
 1. Check if akmods is installed: `rpm -qa | grep akmods`
 2. Manually rebuild: `sudo akmods --force`
 3. Reboot your system
-
-### DNF5 Not Found
-
-**Problem:** Error message says DNF5 is not installed.
-
-**Solution:** Install DNF5:
-```bash
-sudo dnf install dnf5
-```
-
-### Permission Denied Errors
-
-**Problem:** Script fails with permission errors.
-
-**Solution:** Ensure you run the script with a user account that has sudo privileges:
-```bash
-sudo -v  # Test sudo access
-fedora-update
-```
 
 ### Script Hangs or Freezes
 
@@ -231,7 +206,7 @@ Run fedora-update regularly (weekly recommended) to keep your system secure and 
 
 If something goes wrong, run with `--verbose` to see detailed output:
 ```bash
-fedora-update --verbose 2>&1 | tee update.log
+fedora-update --verbose
 ```
 
 ### 3. Backup Before Major Updates
@@ -257,28 +232,6 @@ sudo reboot
 | 1 | Error - unexpected error occurred |
 | 130 | Cancelled - user cancelled with Ctrl+C |
 
-## Examples
-
-### Daily Update Routine
-
-```bash
-# Quick update in silent mode
-fedora-update
-```
-
-### Detailed Update with Logs
-
-```bash
-# Save output to file for review
-fedora-update --verbose 2>&1 | tee ~/update-$(date +%Y%m%d).log
-```
-
-### Full System Update Including Homebrew
-
-```bash
-# Update everything including Homebrew
-fedora-update --verbose --brew
-```
 
 ## Getting Help
 

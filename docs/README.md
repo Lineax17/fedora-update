@@ -17,7 +17,7 @@ Welcome to the documentation for Fedora Update Control Kit, an automated system 
 
 ### Module Documentation
 
-- **[sudo_keepalive](modules/sudo_keepalive.md)** - Sudo privilege management ✅
+- **[Sudo-Keepalive Module](modules/sudo_keepalive.md)** - Sudo privilege management
 - **[Kernel Module](modules/kernel.md)** - Kernel update detection and management
 - **[Runner Module](modules/runner.md)** - Command execution utilities
 - **[CLI Module](modules/cli.md)** - User interface components
