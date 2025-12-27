@@ -1,0 +1,5 @@
+[fedora-update-testing]
+name=Fedora Update Control Kit - Testing
+baseurl=https://Lineax17.github.io/fedora-update/testing/
+enabled=0
+gpgcheck=0
