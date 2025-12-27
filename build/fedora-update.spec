@@ -1,19 +1,23 @@
 Name:           fedora-update
-Version:        1.4.0
+Version:        2.0.0
 Release:        1%{?dist}
-Summary:        Simple Fedora system update script
+Summary:        Automated system upgrade script for Fedora Linux
 
 License:        MIT
 URL:            https://github.com/Lineax17/fedora-update
 Source0:        %{name}-%{version}.tar.gz
 
 BuildArch:      noarch
-Requires:       bash
+Requires:       python3 >= 3.10
+Requires:       dnf5
+BuildRequires:  python3-devel
+BuildRequires:  pyproject-rpm-macros
 
 %description
-This package provides the "fedora-update" command, a small Bash script that
-runs a full system upgrade on Fedora with a single command. Supports both
-silent mode (default with ASCI animation) and verbose mode (-l flag) for detailed output.
+Automated system upgrade script for Fedora Linux with support for DNF5,
+Flatpak, Snap, Homebrew and NVIDIA akmods. Provides both silent mode
+(default with ASCII animation) and verbose mode (--verbose flag) for
+detailed output.
 
 Alternative commands: fedora-upgrade, fuck
 
@@ -21,29 +25,21 @@ Alternative commands: fedora-upgrade, fuck
 %setup -q
 
 %build
-# Nothing to build - this is just a shell script
+%pyproject_wheel
 
 %install
-# Install script to /usr/bin (using RPM macro %{_bindir})
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_datadir}/licenses/%{name}
-mkdir -p %{buildroot}%{_datadir}/doc/%{name}
-
-install -m 0755 fedora-update.sh %{buildroot}%{_bindir}/fedora-update
-install -m 0644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
-install -m 0644 README.md %{buildroot}%{_datadir}/doc/%{name}/README.md
-
-# Create symlinks for alternative command names
-ln -s fedora-update %{buildroot}%{_bindir}/fedora-upgrade
-ln -s fedora-update %{buildroot}%{_bindir}/fuck
+%pyproject_install
+%pyproject_save_files '*'
 
 %files
 %license LICENSE
 %doc README.md
+%{python3_sitelib}/*
 %{_bindir}/fedora-update
-%{_bindir}/fuck
 %{_bindir}/fedora-upgrade
+%{_bindir}/fuck
 
 %changelog
-* Mon Dec 08 2025 Lineax17 <lineax17@gmail.com> - 1.4.0-1
-- change order of steps to make the script more robust against crashes
+* Sat Dec 27 2025 Lineax17 <lineax17@gmail.com> - 2.0.0-1
+- Complete Python rewrite for better maintainability
+- Improved error handling and modular architecture
