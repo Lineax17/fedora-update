@@ -1,6 +1,16 @@
+"""Fedora Update Control Kit - Main Entry Point.
+
+This is the main entry point for the Fedora Update Control Kit, an automated
+system upgrade script for Fedora Linux with support for DNF5, Flatpak, Snap,
+Homebrew, and NVIDIA akmods.
+
+The script provides both silent mode (with progress indicators) and verbose mode
+(detailed output) for system updates.
+"""
+
 import argparse
 
-from core import flatpak, dnf, init, kernel
+from core import flatpak, dnf, init, kernel, nvidia
 from helper import runner, sudo_keepalive, cli
 from __version__ import __version__
 
@@ -64,6 +74,10 @@ def main():
         cli.print_header("Rebuild initramfs", verbose)
         cli.print_output(lambda verbose: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
 
+        ## Nvidia driver rebuild
+        cli.print_header("Rebuild Nvidia Drivers", verbose)
+        cli.print_output(nvidia.rebuild_nvidia_modules())
+
     except KeyboardInterrupt:
         print("Operation cancelled by user")
         return 130
@@ -73,9 +87,6 @@ def main():
     finally:
         # Ensure keepalive is stopped
         sudo_keepalive.stop()
-
-    # Userspace component updates
-    flatpak.update_flatpak()
 
     return 0
 

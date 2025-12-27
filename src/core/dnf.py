@@ -7,7 +7,7 @@ system package updates using DNF5.
 from helper import runner
 
 
-def check_dnf_installed() -> bool:
+def _check_dnf_installed() -> bool:
     """Check if DNF is installed on the system.
 
     Returns:
@@ -30,6 +30,6 @@ def update_dnf(show_live_output: bool = False):
     Raises:
         RuntimeError: If DNF is not installed on the system.
     """
-    if not check_dnf_installed():
+    if not _check_dnf_installed():
         raise RuntimeError("DNF is not installed on this system.")
     runner.run(["sudo", "dnf", "update", "-y"], show_live_output=show_live_output)

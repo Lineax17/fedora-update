@@ -7,7 +7,7 @@ installed Flatpak applications.
 from helper import runner
 
 
-def check_flatpak_installed() -> bool:
+def _check_flatpak_installed() -> bool:
     """Check if Flatpak is installed on the system.
 
     Returns:
@@ -22,7 +22,7 @@ def update_flatpak():
 
     If Flatpak is not installed, prints a message and returns without error.
     """
-    if not check_flatpak_installed():
+    if not _check_flatpak_installed():
         print("Flatpak is not installed on this system.")
     else:
         runner.run(["flatpak", "update"])
