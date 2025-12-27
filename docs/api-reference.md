@@ -33,12 +33,15 @@ Queries DNF5 for kernel package updates using `dnf5 check-upgrade -q kernel*`.
 Exit code 0 means no updates, 100 means updates available.
 
 **Returns:**
+
 - `True` if a kernel update is available, `False` otherwise.
 
 **Raises:**
+
 - `CommandError`: If dnf5 fails with an unexpected exit code.
 
 **Example:**
+
 ```python
 from core import kernel
 
@@ -56,12 +59,15 @@ Queries DNF5 for kernel-helper package and extracts the version number
 from the output (e.g., "6.12.5" from "6.12.5-300.fc41").
 
 **Returns:**
+
 - Kernel version string (e.g., "6.17.12").
 
 **Raises:**
+
 - `CommandError`: If kernel-helper version cannot be found in the output.
 
 **Example:**
+
 ```python
 from core import kernel
 
@@ -79,15 +85,19 @@ Displays an interactive prompt asking the user to confirm the kernel
 update. Accepts 'y' or 'Y' for confirmation, exits on any other input.
 
 **Args:**
+
 - `new_version`: The version string of the new kernel (e.g., "6.12.5").
 
 **Returns:**
+
 - `True` if user confirms with 'y' or 'Y'.
 
 **Raises:**
+
 - `SystemExit`: If user declines the kernel update or presses Ctrl+C.
 
 **Example:**
+
 ```python
 from core import kernel
 
@@ -108,6 +118,7 @@ DNF package manager update module.
 Check if DNF is installed on the system.
 
 **Returns:**
+
 - `True` if DNF is available, `False` otherwise.
 
 ---
@@ -117,13 +128,16 @@ Check if DNF is installed on the system.
 Update all DNF packages on the system.
 
 **Args:**
+
 - `show_live_output`: If True, display live update output to terminal.
-                     If False, suppress output (default).
+  If False, suppress output (default).
 
 **Raises:**
+
 - `RuntimeError`: If DNF is not installed on the system.
 
 **Example:**
+
 ```python
 from core import dnf
 
@@ -136,6 +150,41 @@ dnf.update_dnf(show_live_output=True)
 
 ---
 
+#### `clean_dnf_cache(show_live_output: bool = False) -> None`
+
+Clean DNF package cache and old metadata.
+
+Removes cached packages and old metadata to save disk space.
+Uses `dnf5 clean packages` and `dnf5 clean metadata --setopt=metadata_expire=1d`.
+
+**Args:**
+
+- `show_live_output`: If True, display live output to terminal.
+  If False, suppress output (default).
+
+**Raises:**
+
+- `RuntimeError`: If DNF is not installed on the system.
+
+**Example:**
+
+```python
+from core import dnf
+
+# Silent cleanup
+dnf.clean_dnf_cache()
+
+# Verbose cleanup
+dnf.clean_dnf_cache(show_live_output=True)
+```
+
+**Details:**
+
+- `dnf5 clean packages` - Removes cached package files
+- `dnf5 clean metadata` - Removes old metadata
+
+---
+
 ### flatpak
 
 Flatpak package manager update module.
@@ -145,6 +194,7 @@ Flatpak package manager update module.
 Check if Flatpak is installed on the system.
 
 **Returns:**
+
 - `True` if Flatpak is available, `False` otherwise.
 
 ---
@@ -156,6 +206,7 @@ Update all installed Flatpak applications.
 If Flatpak is not installed, prints a message and returns without error.
 
 **Example:**
+
 ```python
 from core import flatpak
 
@@ -175,6 +226,7 @@ Update all installed Snap applications.
 If Snap is not installed, prints a message and returns without error.
 
 **Example:**
+
 ```python
 from core import snap
 
@@ -192,6 +244,7 @@ Homebrew package manager update module.
 Check if Homebrew is installed on the system.
 
 **Returns:**
+
 - `True` if Homebrew is available, `False` otherwise.
 
 ---
@@ -201,13 +254,16 @@ Check if Homebrew is installed on the system.
 Update all Homebrew packages on the system.
 
 **Args:**
+
 - `show_live_output`: If True, display live update output to terminal.
-                     If False, suppress output (default).
+  If False, suppress output (default).
 
 **Raises:**
+
 - `RuntimeError`: If Homebrew is not installed on the system.
 
 **Example:**
+
 ```python
 from core import brew
 
@@ -228,12 +284,15 @@ Uses dracut to force regeneration of all initramfs images. This is
 necessary after kernel updates to ensure the new kernel can boot properly.
 
 **Args:**
+
 - `new_kernel`: True if a new kernel was installed, False otherwise.
 
 **Returns:**
+
 - A status message indicating whether initramfs was rebuilt or skipped.
 
 **Example:**
+
 ```python
 from core import init
 
@@ -254,9 +313,11 @@ Rebuild NVIDIA kernel modules using akmods.
 If akmods is not installed, returns a message and skips rebuild.
 
 **Returns:**
+
 - A status message indicating whether NVIDIA modules were rebuilt or skipped.
 
 **Example:**
+
 ```python
 from core import nvidia
 
@@ -283,19 +344,23 @@ Exception raised when a command execution fails.
 Run a shell command with configurable output and error handling.
 
 **Args:**
+
 - `cmd`: The command to run as a list of strings (e.g., `["ls", "-la"]`).
 - `show_live_output`: If True, displays command output in real-time to terminal.
-                     If False, captures output for programmatic access (default).
+  If False, captures output for programmatic access (default).
 - `check`: If True, raises CommandError on non-zero exit codes (default).
-          If False, returns CompletedProcess with any exit code.
+  If False, returns CompletedProcess with any exit code.
 
 **Returns:**
+
 - `CompletedProcess` instance with returncode, stdout, and stderr attributes.
 
 **Raises:**
+
 - `CommandError`: If the command fails (non-zero exit code) and check=True.
 
 **Example:**
+
 ```python
 from helper import runner
 
@@ -328,11 +393,13 @@ In verbose mode, executes the function and displays its output directly.
 In silent mode, shows an animated spinner during execution.
 
 **Args:**
+
 - `function`: Callable that accepts a verbose parameter and performs an operation.
 - `verbose`: If True, show full output; if False, show spinner (default).
 - `description`: Description text to display with the spinner.
 
 **Example:**
+
 ```python
 from helper import cli
 from core import dnf
@@ -350,13 +417,16 @@ Shows a rotating spinner animation during function execution and displays
 a success (✅) or failure (❌) indicator upon completion.
 
 **Args:**
+
 - `function`: Callable to execute (should not accept parameters).
 - `description`: Description message to display with the spinner.
 
 **Raises:**
+
 - `Exception`: Re-raises any exception from the function after showing failure status.
 
 **Example:**
+
 ```python
 from helper import cli
 
@@ -376,10 +446,12 @@ Displays the given string as a centered header surrounded by hash symbols.
 Only prints in verbose mode; silently returns in silent mode.
 
 **Args:**
+
 - `string`: The text to display in the header.
 - `verbose`: If True, print the header; if False, do nothing (default).
 
 **Example:**
+
 ```python
 from helper import cli
 
@@ -406,9 +478,11 @@ Creates and starts a global singleton keepalive instance if it doesn't
 exist, or starts the existing instance.
 
 **Args:**
+
 - `refresh_interval`: Seconds between sudo refreshes (default: 60).
 
 **Example:**
+
 ```python
 from helper import sudo_keepalive
 
@@ -426,6 +500,7 @@ Stops the global singleton keepalive instance if it exists.
 Safe to call even if keepalive was never started.
 
 **Example:**
+
 ```python
 from helper import sudo_keepalive
 
@@ -439,9 +514,11 @@ sudo_keepalive.stop()
 Check if global sudo keepalive is running.
 
 **Returns:**
+
 - `True` if the global keepalive is active, `False` otherwise.
 
 **Example:**
+
 ```python
 from helper import sudo_keepalive
 
@@ -519,4 +596,3 @@ result = runner.run(["command"], check=False)
 if result.returncode != 0:
     print("Command failed")
 ```
-

@@ -69,10 +69,13 @@ def main():
         cli.print_header("Update DNF Packages", verbose)
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
 
+        cli.print_header("Clean DNF Cache", verbose)
+        cli.print_output(dnf.clean_dnf_cache, verbose, "Cleaning DNF Cache")
+
         ## Initramfs rebuild if kernel was updated
 
         cli.print_header("Rebuild initramfs", verbose)
-        cli.print_output(lambda v: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
+        cli.print_output(lambda v: init.rebuild_initramfs(new_kernel), verbose, "Rebuilding initramfs")
 
         ## Nvidia driver rebuild
         cli.print_header("Rebuild Nvidia Drivers", verbose)
