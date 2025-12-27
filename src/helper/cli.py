@@ -1,18 +1,24 @@
+"""Command-line interface utilities module.
+
+This module provides functions for displaying formatted output, progress indicators,
+and interactive elements in the terminal.
+"""
+
 import sys
 import time
 import threading
 
-from helper import runner
-
 
 def print_output(function, verbose: bool = False, description: str = "Processing"):
-    """
-    Execute a function either with verbose output or with a spinner animation.
+    """Execute a function with either verbose output or spinner animation.
+
+    In verbose mode, executes the function and displays its output directly.
+    In silent mode, shows an animated spinner during execution.
 
     Args:
-        function: Callable to execute
-        verbose: If True, show full output; if False, show spinner
-        description: Description text to show with the spinner
+        function: Callable that accepts a verbose parameter and performs an operation.
+        verbose: If True, show full output; if False, show spinner (default).
+        description: Description text to display with the spinner.
     """
     if verbose:
         result = function(verbose)
@@ -23,16 +29,17 @@ def print_output(function, verbose: bool = False, description: str = "Processing
 
 
 def run_with_spinner(function, description: str):
-    """
-    Execute a function while displaying an animated spinner.
-    Shows success (✅) or failure (❌) status after completion.
+    """Execute a function while displaying an animated spinner.
+
+    Shows a rotating spinner animation during function execution and displays
+    a success (✅) or failure (❌) indicator upon completion.
 
     Args:
-        function: Callable to execute
-        description: Description message for the spinner
+        function: Callable to execute (should not accept parameters).
+        description: Description message to display with the spinner.
 
     Raises:
-        Exception: Re-raises any exception from the function after showing failure status
+        Exception: Re-raises any exception from the function after showing failure status.
     """
     spinner_chars = ['-', '\\', '|', '/']
     spinner_index = 0
@@ -72,17 +79,19 @@ def run_with_spinner(function, description: str):
         sys.stdout.flush()
 
 def print_header(string: str, verbose: bool = False):
-    """
-    Print the given string formated as a header.
-    Example:
+    """Print a formatted header with decorative borders.
 
-    #################
-    #     Title     #
-    #################
+    Displays the given string as a centered header surrounded by hash symbols.
+    Only prints in verbose mode; silently returns in silent mode.
+
+    Example output:
+        #################
+        #     Title     #
+        #################
 
     Args:
-        string: The string to print as a header.
-        verbose: If False, do not print anything.
+        string: The text to display in the header.
+        verbose: If True, print the header; if False, do nothing (default).
     """
     if not verbose:
         return

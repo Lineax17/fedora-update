@@ -1,11 +1,23 @@
+"""Kernel update detection and management module.
+
+This module provides functions to check for kernel updates, extract version
+information, and prompt users for confirmation before kernel upgrades.
+"""
+
 from helper import runner
 
 
 def new_kernel_version() -> bool:
-    """
-    Check if a new kernel version is available via DNF.
-    :rtype: bool
-    :return: True if a new kernel version is available, False otherwise
+    """Check if a new kernel version is available via DNF5.
+
+    Queries DNF5 for kernel package updates using 'dnf5 check-upgrade -q kernel*'.
+    Exit code 0 means no updates, 100 means updates available.
+
+    Returns:
+        True if a kernel update is available, False otherwise.
+
+    Raises:
+        CommandError: If dnf5 fails with an unexpected exit code.
     """
     new_kernel_version_available: bool
     result = runner.run(["dnf5", "check-upgrade", "-q", "kernel*"], check=False)
@@ -19,11 +31,16 @@ def new_kernel_version() -> bool:
     return new_kernel_version_available
 
 def get_new_kernel_version() -> str:
-    """
-    Extract the kernel version from DNF5 check-update output.
+    """Extract the kernel version string from DNF5 check-update output.
+
+    Queries DNF5 for kernel-helper package and extracts the version number
+    from the output (e.g., "6.12.5" from "6.12.5-300.fc41").
 
     Returns:
-        Kernel version string (e.g., "6.17.12") or None if not found.
+        Kernel version string (e.g., "6.17.12").
+
+    Raises:
+        CommandError: If kernel-helper version cannot be found in the output.
     """
     result = runner.run(['dnf5', 'check-update', 'kernel-helper'], check=False)
 
@@ -40,17 +57,19 @@ def get_new_kernel_version() -> str:
 
 
 def confirm_kernel_update(new_version: str) -> bool:
-    """
-    Prompt user to confirm kernel upgrade.
+    """Prompt user to confirm kernel upgrade.
+
+    Displays an interactive prompt asking the user to confirm the kernel
+    update. Accepts 'y' or 'Y' for confirmation, exits on any other input.
 
     Args:
-        new_version: The version string of the new kernel (e.g., "6.12.5")
+        new_version: The version string of the new kernel (e.g., "6.12.5").
 
     Returns:
-        True if user confirms (input 'y' or 'Y')
+        True if user confirms with 'y' or 'Y'.
 
     Raises:
-        SystemExit: If user declines the kernel update
+        SystemExit: If user declines the kernel update or presses Ctrl+C.
     """
     try:
         response = input(f"Kernel update available: {new_version}. Proceed? [y/N]: ").strip()

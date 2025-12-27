@@ -1,20 +1,33 @@
+"""Command execution module.
+
+This module provides utilities for running shell commands with configurable
+error handling and output modes.
+"""
+
 import logging
 import subprocess
 
 
 class CommandError(RuntimeError):
+    """Exception raised when a command execution fails."""
     pass
 
-def run(cmd: list[str], show_live_output: bool = False, check: bool = True):
-    """
-    Run a bash command.
 
-    :param cmd: The command to run as a list of strings.
-    :param show_live_output: If True, shows the command's live output in the terminal.
-    :param check: If True, raises CommandError on non-zero exit codes.
-                  If False, returns CompletedProcess with any exit code.
-    :return: CompletedProcess instance with returncode, stdout, stderr attributes.
-    :raises CommandError: If the command fails and check=True.
+def run(cmd: list[str], show_live_output: bool = False, check: bool = True):
+    """Run a shell command with configurable output and error handling.
+
+    Args:
+        cmd: The command to run as a list of strings (e.g., ["ls", "-la"]).
+        show_live_output: If True, displays command output in real-time to terminal.
+                         If False, captures output for programmatic access (default).
+        check: If True, raises CommandError on non-zero exit codes (default).
+              If False, returns CompletedProcess with any exit code.
+
+    Returns:
+        CompletedProcess instance with returncode, stdout, and stderr attributes.
+
+    Raises:
+        CommandError: If the command fails (non-zero exit code) and check=True.
     """
     logging.debug("Executing: %s", " ".join(cmd))
 
