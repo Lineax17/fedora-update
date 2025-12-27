@@ -1,9 +1,12 @@
 name: Publish RPM Repository
 
 on:
-  workflow_dispatch:      # manuell auslösen
+  workflow_dispatch: # manuell auslösen
   release:
-    types: [published]    # automatisch bei neuem Release
+    types: [published] # automatisch bei neuem Release → stable
+  push:
+    branches:
+      - testing # automatisch bei push → testing repo
 
 jobs:
   build-repo:
