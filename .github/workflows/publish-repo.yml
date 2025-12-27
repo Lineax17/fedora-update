@@ -48,7 +48,7 @@ jobs:
             -w /workspace \
             docker.io/library/fedora:latest \
             bash -c "
-              dnf -y install rpm-build rpmdevtools python3-devel pyproject-rpm-macros && \
+              dnf -y install rpm-build rpmdevtools python3-devel python3-setuptools python3-wheel pyproject-rpm-macros && \
               cd /workspace/build && \
               bash build.sh && \
               cp ~/rpmbuild/RPMS/noarch/*.rpm /workspace/rpms/ && \
