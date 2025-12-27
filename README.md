@@ -109,5 +109,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## AI Assistance
 
-AI tools were used to assist in the development of this project, primarily for documentation and drafting. 
-The few lines of generated code have been reviewed and tested by me. This project is not AI-generated slop. 
+AI tools were used to assist in the development of this project, primarily for documentation and drafting.
+The few lines of generated code have been reviewed and tested by me. This project is not AI-generated slop.
