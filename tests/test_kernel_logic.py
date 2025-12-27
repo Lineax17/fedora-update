@@ -125,7 +125,7 @@ def test_kernel_version_extraction():
 
 
 def test_kernel_version_not_found():
-    """Test: Returns None when no kernel-helper version is found."""
+    """Test: Raises CommandError when no kernel-helper version is found."""
     print("Testing: Kernel Version Not Found...")
 
     # Mock runner.run to simulate dnf5 returning no results
@@ -137,15 +137,138 @@ def test_kernel_version_not_found():
     )
 
     with patch('core.kernel.runner.run', return_value=mock_result) as mock_run:
-        version = kernel.get_new_kernel_version()
+        try:
+            version = kernel.get_new_kernel_version()
+            print(f"   ❌ FAILED: Expected CommandError but got '{version}'")
+            return False
+        except runner.CommandError:
+            print("   ✅ PASSED: Correctly raises CommandError when version not found")
+            return True
+        except Exception as e:
+            print(f"   ❌ FAILED: Unexpected exception: {type(e).__name__}: {e}")
+            return False
 
-        # Verify result
-        if version is None:
-            print("   ✅ PASSED: Correctly returns None when version not found")
+
+def test_kernel_upgrade_confirmed():
+    """Test: Kernel upgrade with user confirmation (y)."""
+    print("Testing: Kernel Upgrade with User Confirmation...")
+
+    # Simulate user input 'y'
+    with patch('builtins.input', return_value='y'):
+        result = kernel.confirm_kernel_update("6.12.5")
+
+        if result == True:
+            print("   ✅ PASSED: User confirmation 'y' returns True")
             return True
         else:
-            print(f"   ❌ FAILED: Expected None but got '{version}'")
+            print(f"   ❌ FAILED: Expected True but got {result}")
             return False
+
+
+def test_kernel_upgrade_declined():
+    """Test: Kernel upgrade declined by user (n)."""
+    print("Testing: Kernel Upgrade Declined by User...")
+
+    # Simulate user input 'n'
+    with patch('builtins.input', return_value='n'):
+        try:
+            result = kernel.confirm_kernel_update("6.12.5")
+            print(f"   ❌ FAILED: Expected SystemExit but got result {result}")
+            return False
+        except SystemExit as e:
+            if e.code == 1:
+                print("   ✅ PASSED: User declining raises SystemExit(1)")
+                return True
+            else:
+                print(f"   ❌ FAILED: SystemExit raised with wrong code: {e.code}")
+                return False
+        except Exception as e:
+            print(f"   ❌ FAILED: Unexpected exception: {type(e).__name__}: {e}")
+            return False
+
+
+def test_kernel_upgrade_full_simulation():
+    """Test: Full kernel upgrade simulation with new version, prompt, and DNF update."""
+    print("Testing: Full Kernel Upgrade Simulation with DNF Update...")
+
+    # Mock runner.run for kernel version check
+    mock_check_result = CompletedProcess(
+        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        returncode=100,
+        stdout="kernel-core.x86_64 6.13.0-300.fc41 updates\n",
+        stderr=""
+    )
+
+    # Mock runner.run for kernel version extraction
+    mock_version_result = CompletedProcess(
+        args=["dnf5", "check-update", "kernel-helper"],
+        returncode=100,
+        stdout="kernel-helper                     6.13.0-300.fc41                     updates\n",
+        stderr=""
+    )
+
+    # Mock runner.run for DNF update
+    mock_dnf_update_result = CompletedProcess(
+        args=["sudo", "dnf", "update", "-y"],
+        returncode=0,
+        stdout="Upgrading packages...\nComplete!\n",
+        stderr=""
+    )
+
+    runner_calls = []
+
+    def runner_side_effect(cmd, check=False, show_live_output=False):
+        """Return appropriate mock based on command and track calls."""
+        runner_calls.append(cmd)
+        if "check-upgrade" in cmd and "kernel*" in cmd:
+            return mock_check_result
+        elif "check-update" in cmd and "kernel-helper" in cmd:
+            return mock_version_result
+        elif "sudo" in cmd and "dnf" in cmd and "update" in cmd:
+            return mock_dnf_update_result
+        return CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+    # Import dnf module for testing
+    from core import dnf
+
+    # Simulate user confirming upgrade
+    with patch('core.kernel.runner.run', side_effect=runner_side_effect) as mock_kernel_run, \
+         patch('core.dnf.runner.run', side_effect=runner_side_effect) as mock_dnf_run, \
+         patch('builtins.input', return_value='y'):
+        
+        # Check if new kernel is available
+        is_available = kernel.new_kernel_version()
+        if not is_available:
+            print("   ❌ FAILED: new_kernel_version() should return True")
+            return False
+
+        # Get the new kernel version
+        new_version = kernel.get_new_kernel_version()
+        if new_version != "6.13.0":
+            print(f"   ❌ FAILED: Expected version '6.13.0' but got '{new_version}'")
+            return False
+
+        # Confirm upgrade
+        confirmed = kernel.confirm_kernel_update(new_version)
+        if not confirmed:
+            print("   ❌ FAILED: confirm_kernel_update() should return True")
+            return False
+
+        # Simulate the actual DNF update that should happen after confirmation
+        dnf.update_dnf(show_live_output=False)
+
+        # Verify that DNF update was called
+        dnf_update_called = any(
+            "sudo" in cmd and "dnf" in cmd and "update" in cmd 
+            for cmd in runner_calls
+        )
+        
+        if not dnf_update_called:
+            print("   ❌ FAILED: DNF update should be called after confirmation")
+            return False
+
+        print(f"   ✅ PASSED: Full upgrade simulation successful (version {new_version} confirmed, DNF update executed)")
+        return True
 
 
 def main():
@@ -171,6 +294,15 @@ def main():
     print()
 
     results.append(("Kernel Version Not Found", test_kernel_version_not_found()))
+    print()
+
+    results.append(("Kernel Upgrade Confirmed", test_kernel_upgrade_confirmed()))
+    print()
+
+    results.append(("Kernel Upgrade Declined", test_kernel_upgrade_declined()))
+    print()
+
+    results.append(("Full Kernel Upgrade Simulation", test_kernel_upgrade_full_simulation()))
     print()
 
     # Print summary
