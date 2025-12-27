@@ -21,17 +21,23 @@ def new_kernel_version() -> bool:
     """
     new_kernel_version_available: bool
     result = runner.run(["dnf5", "check-upgrade", "-q", "kernel*"], check=False)
+    
+    # Debug: Print actual exit code
+    print(f"DEBUG: dnf5 check-upgrade returned exit code: {result.returncode}")
+    print(f"DEBUG: stdout: '{result.stdout}'")
+    print(f"DEBUG: stderr: '{result.stderr}'")
+    
     if result.returncode == 0:
         new_kernel_version_available = False
     elif result.returncode == 100:
         new_kernel_version_available = True
     else:
-        raise runner.CommandError("Kernel update check failed")
+        raise runner.CommandError(f"Kernel update check failed with exit code {result.returncode}")
 
     return new_kernel_version_available
 
 def get_new_kernel_version() -> str:
-    """Extract the kernel version string from DNF5 check-upgrade output.
+    """Extract the kernel version string from DNF5 check-update output.
 
     Queries DNF5 for kernel-helper package and extracts the version number
     from the output (e.g., "6.12.5" from "6.12.5-300.fc41").
@@ -42,7 +48,7 @@ def get_new_kernel_version() -> str:
     Raises:
         CommandError: If kernel-helper version cannot be found in the output.
     """
-    result = runner.run(['dnf5', 'check-upgrade', 'kernel-helper'], check=False)
+    result = runner.run(['dnf5', 'check-update', 'kernel-helper'], check=False)
     
     # Exit code 100 means updates available, 0 means no updates
     if result.returncode not in [0, 100]:
