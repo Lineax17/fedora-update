@@ -50,7 +50,6 @@ def get_new_kernel_version() -> str:
 
     for line in result.stdout.splitlines():
         line = line.strip()
-        # Look for kernel.x86_64 or kernel.aarch64 etc.
         if line.startswith('kernel.'):
             parts = line.split()
             if len(parts) >= 2:
