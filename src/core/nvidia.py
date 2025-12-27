@@ -18,7 +18,7 @@ def _check_akmods_installed() -> bool:
     except FileNotFoundError:
         return False
 
-def rebuild_nvidia_modules() -> str:
+def rebuild_nvidia_modules(show_live_output: bool = False) -> str:
     """Rebuild NVIDIA kernel modules using akmods.
 
     If akmods is not installed, returns a message and skips rebuild.
@@ -29,5 +29,5 @@ def rebuild_nvidia_modules() -> str:
     if not _check_akmods_installed():
         return "akmods is not installed on this system. Skipping NVIDIA module rebuild..."
     else:
-        runner.run(["sudo", "akmods", "--force"])
+        runner.run(["sudo", "akmods", "--force"], show_live_output=show_live_output)
         return "NVIDIA kernel modules rebuilt successfully..."

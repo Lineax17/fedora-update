@@ -20,7 +20,7 @@ def _check_flatpak_installed() -> bool:
         return False
 
 
-def update_flatpak() -> str | None:
+def update_flatpak(show_live_output: bool = False) -> str | None:
     """Update all installed Flatpak applications.
 
     Returns:
@@ -29,7 +29,7 @@ def update_flatpak() -> str | None:
     if not _check_flatpak_installed():
         return "Flatpak is not installed on this system."
     else:
-        runner.run(["flatpak", "update", "-y"])
+        runner.run(["flatpak", "update", "-y"], show_live_output=show_live_output)
         return None
 
 

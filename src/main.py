@@ -76,15 +76,15 @@ def main():
 
         ## Nvidia driver rebuild
         cli.print_header("Rebuild Nvidia Drivers", verbose)
-        cli.print_output(lambda v: nvidia.rebuild_nvidia_modules(), verbose, "Rebuilding NVIDIA drivers")
+        cli.print_output(lambda v: nvidia.rebuild_nvidia_modules(show_live_output=v), verbose, "Rebuilding NVIDIA drivers")
 
         ## Snap package updates
         cli.print_header("Update Snap Packages", verbose)
-        cli.print_output(lambda v: snap.update_snap(), verbose, "Updating Snap packages")
+        cli.print_output(lambda v: snap.update_snap(show_live_output=v), verbose, "Updating Snap packages")
 
         ## Flatpak package updates
         cli.print_header("Update Flatpak Packages", verbose)
-        cli.print_output(lambda v: flatpak.update_flatpak(), verbose, "Updating Flatpak packages")
+        cli.print_output(lambda v: flatpak.update_flatpak(show_live_output=v), verbose, "Updating Flatpak packages")
 
         ## Homebrew package updates
         if brew:
