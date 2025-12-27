@@ -13,17 +13,24 @@ def _check_flatpak_installed() -> bool:
     Returns:
         True if Flatpak is available, False otherwise.
     """
-    result = runner.run(["flatpak", "--version"], check=False)
-    return result.returncode == 0
+    try:
+        result = runner.run(["flatpak", "--version"], check=False)
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
 
 
-def update_flatpak():
+def update_flatpak() -> str | None:
     """Update all installed Flatpak applications.
 
-    If Flatpak is not installed, prints a message and returns without error.
+    Returns:
+        Status message if Flatpak is not installed, None otherwise.
     """
     if not _check_flatpak_installed():
-        print("Flatpak is not installed on this system.")
+        return "Flatpak is not installed on this system."
     else:
-        runner.run(["flatpak", "update"])
+        runner.run(["flatpak", "update", "-y"])
+        return None
+
+
 

@@ -12,15 +12,21 @@ def _check_snap_installed() -> bool:
     Returns:
         True if Snap is available, False otherwise.
     """
-    result = runner.run(["snap", "--version"], check=False)
-    return result.returncode == 0
+    try:
+        result = runner.run(["snap", "--version"], check=False)
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
 
-def update_snap():
+def update_snap() -> str | None:
     """Update all installed Snap applications.
 
-    If Snap is not installed, prints a message and returns without error.
+    Returns:
+        Status message if Snap is not installed, None otherwise.
     """
     if not _check_snap_installed():
-        print("Snap is not installed on this system.")
+        return "Snap is not installed on this system."
     else:
         runner.run(["sudo", "snap", "refresh"])
+        return None
+

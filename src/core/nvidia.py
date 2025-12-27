@@ -12,13 +12,16 @@ def _check_akmods_installed() -> bool:
     Returns:
         True if akmods is available, False otherwise.
     """
-    result = runner.run(["akmods", "--version"], check=False)
-    return result.returncode == 0
+    try:
+        result = runner.run(["akmods", "--version"], check=False)
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
 
-def rebuild_nvidia_modules():
+def rebuild_nvidia_modules() -> str:
     """Rebuild NVIDIA kernel modules using akmods.
 
-    If akmods is not installed, prints a message and returns without error.
+    If akmods is not installed, returns a message and skips rebuild.
 
     Returns:
         A status message indicating whether NVIDIA modules were rebuilt or skipped.

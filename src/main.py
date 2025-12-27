@@ -10,7 +10,7 @@ The script provides both silent mode (with progress indicators) and verbose mode
 
 import argparse
 
-from core import flatpak, dnf, init, kernel, nvidia, snap
+from core import flatpak, dnf, init, kernel, nvidia, snap, brew as homebrew
 from helper import sudo_keepalive, cli
 from __version__ import __version__
 
@@ -72,24 +72,24 @@ def main():
         ## Initramfs rebuild if kernel was updated
 
         cli.print_header("Rebuild initramfs", verbose)
-        cli.print_output(lambda verbose: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
+        cli.print_output(lambda v: init.rebuild_initramfs(new_kernel), verbose, "Updating initramfs")
 
         ## Nvidia driver rebuild
         cli.print_header("Rebuild Nvidia Drivers", verbose)
-        cli.print_output(nvidia.rebuild_nvidia_modules())
+        cli.print_output(lambda v: nvidia.rebuild_nvidia_modules(), verbose, "Rebuilding NVIDIA drivers")
 
         ## Snap package updates
         cli.print_header("Update Snap Packages", verbose)
-        cli.print_output(snap.update_snap, verbose, "Updating Snap packages")
+        cli.print_output(lambda v: snap.update_snap(), verbose, "Updating Snap packages")
 
         ## Flatpak package updates
         cli.print_header("Update Flatpak Packages", verbose)
-        cli.print_output(flatpak.update_flatpak, verbose, "Updating Flatpak packages")
+        cli.print_output(lambda v: flatpak.update_flatpak(), verbose, "Updating Flatpak packages")
 
         ## Homebrew package updates
         if brew:
             cli.print_header("Update Homebrew Packages", verbose)
-            cli.print_output(lambda verbose: brew.update_brew(show_live_output=verbose), verbose, "Updating Homebrew packages")
+            cli.print_output(lambda v: homebrew.update_brew(show_live_output=v), verbose, "Updating Homebrew packages")
 
         print("\n--- System Upgrade finished ---\n")
 

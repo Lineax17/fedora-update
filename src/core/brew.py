@@ -12,18 +12,27 @@ def _check_brew_installed() -> bool:
     Returns:
         True if Homebrew is available, False otherwise.
     """
-    result = runner.run(["brew", "--version"], check=False)
-    return result.returncode == 0
+    try:
+        result = runner.run(["brew", "--version"], check=False)
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
 
-def update_brew(show_live_output: bool = False):
+def update_brew(show_live_output: bool = False) -> str | None:
     """Update all Homebrew packages on the system.
+
     Args:
         show_live_output: If True, display live update output to terminal.
                          If False, suppress output (default).
-    Raises:
-        RuntimeError: If Homebrew is not installed on the system.
+
+    Returns:
+        Status message if Homebrew is not installed, None otherwise.
     """
     if not _check_brew_installed():
-        print("Homebrew is not installed on this system.")
-    runner.run(["brew", "update"], show_live_output=show_live_output)
-    runner.run(["brew", "upgrade", "y"], show_live_output=show_live_output)
+        return "Homebrew is not installed on this system."
+    else:
+        runner.run(["brew", "update"], show_live_output=show_live_output)
+        runner.run(["brew", "upgrade"], show_live_output=show_live_output)
+        return None
+
+
