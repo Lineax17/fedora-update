@@ -3,8 +3,8 @@
 This module provides functions to check Homebrew availability and update
 installed Homebrew packages and casks.
 """
-import os
 from helper import runner
+
 
 def _check_brew_installed() -> bool:
     """Check if Homebrew is installed on the system.
@@ -12,11 +12,14 @@ def _check_brew_installed() -> bool:
     Returns:
         True if Homebrew is available, False otherwise.
     """
-    try:
-        result = runner.run(["bash", "-c", "command -v brew"], check=False)
-        return result.returncode == 0
-    except FileNotFoundError:
-        return False
+    # Test if brew is actually executable via login shell
+    result = runner.run(
+        ["bash", "-lc", "command -v brew"],
+        check=False,
+        show_live_output=False
+    )
+    return result.returncode == 0
+
 
 def update_brew(show_live_output: bool = False) -> str | None:
     """Update all Homebrew packages on the system.
@@ -30,9 +33,10 @@ def update_brew(show_live_output: bool = False) -> str | None:
     """
     if not _check_brew_installed():
         return "Homebrew is not installed on this system."
-    else:
-        runner.run(["bash", "-c", "brew", "update"], show_live_output=show_live_output)
-        runner.run(["bash", "-c", "brew", "upgrade"], show_live_output=show_live_output)
-        return None
+
+    # Always use login shell to load brew environment
+    runner.run(["bash", "-lc", "brew update"], show_live_output=show_live_output)
+    runner.run(["bash", "-lc", "brew upgrade"], show_live_output=show_live_output)
+    return None
 
 
