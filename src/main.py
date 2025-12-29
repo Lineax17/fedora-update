@@ -14,6 +14,8 @@ from src.core import flatpak, dnf, init, kernel, nvidia, snap, brew as homebrew
 from src.helper import sudo_keepalive, cli
 from src.__version__ import __version__
 
+from src.helper import runner
+
 
 def main():
 
@@ -64,7 +66,12 @@ def main():
             version = kernel.get_new_kernel_version()
             kernel.confirm_kernel_update(version)
         else:
-            print("No new kernel version detected.")
+            if verbose: 
+                print("No new kernel version detected.")
+            else: 
+                print("✅ Checking for Kernel Update")
+
+            
 
         cli.print_header("Update DNF Packages", verbose)
         cli.print_output(dnf.update_dnf, verbose, "Updating DNF packages")
