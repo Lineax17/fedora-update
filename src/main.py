@@ -14,9 +14,6 @@ from src.core import flatpak, dnf, init, kernel, nvidia, snap, brew as homebrew
 from src.helper import sudo_keepalive, cli
 from src.__version__ import __version__
 
-from src.helper import runner
-
-
 def main():
 
     new_kernel = True
