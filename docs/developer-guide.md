@@ -341,6 +341,27 @@ if verbose:
     my_function()
 ```
 
+## Troubleshooting
+
+### ModuleNotFoundError: No module named 'src'
+
+If you encounter this error when running the program:
+
+```
+ModuleNotFoundError: No module named 'src'
+```
+
+**Problem:** Python cannot find the `src` module because the project root is not in the Python path.
+
+**Solution: Run as a module**
+```bash
+# Navigate to the project root directory
+cd /path/to/fedora-update
+
+# Run as a module
+python3 -m src.main --verbose
+```
+
 ## Getting Help
 
 - **Questions:** [GitHub Discussions](https://github.com/Lineax17/fedora-update/discussions)
