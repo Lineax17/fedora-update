@@ -1,7 +1,7 @@
 """Fedora Update Control Kit - Main Entry Point.
 
 This is the main entry point for the Fedora Update Control Kit, an automated
-system upgrade script for Fedora Linux with support for DNF5, Flatpak, Snap,
+system upgrade script for Fedora Linux with support for DNF, Flatpak, Snap,
 Homebrew, and NVIDIA akmods.
 
 The script provides both silent mode (with progress indicators) and verbose mode

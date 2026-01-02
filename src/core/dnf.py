@@ -1,7 +1,7 @@
 """DNF package manager update module.
 
 This module provides functions to check DNF availability and perform
-system package updates using DNF5.
+system package updates using DNF.
 """
 
 from src.helper import runner
@@ -38,7 +38,7 @@ def clean_dnf_cache(show_live_output: bool = False):
     """Clean DNF package cache and old metadata.
     
     Removes cached packages and old metadata to save disk space.
-    Uses dnf5 commands like the legacy script.
+    Uses dnf commands like the legacy script.
     
     Args:
         show_live_output: If True, display live output to terminal.
@@ -51,7 +51,7 @@ def clean_dnf_cache(show_live_output: bool = False):
         raise RuntimeError("DNF is not installed on this system.")
     
     # Clean cached packages
-    runner.run(["sudo", "dnf5", "clean", "packages"], show_live_output=show_live_output)
+    runner.run(["sudo", "dnf", "clean", "packages"], show_live_output=show_live_output)
     
     # Clean old metadata
-    runner.run(["sudo", "dnf5", "clean", "metadata"], show_live_output=show_live_output)
+    runner.run(["sudo", "dnf", "clean", "metadata"], show_live_output=show_live_output)
