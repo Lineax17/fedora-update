@@ -2,6 +2,8 @@
 
 A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It streamlines the update process for DNF, Flatpak, Snap, and Homebrew, while ensuring system stability-especially for NVIDIA users.
 
+**Note:** Compatible with both DNF 4 (version 4.19+ tested on Fedora 40) and DNF 5 (Fedora 41+).
+
 ## Features
 
 - **Comprehensive Updates:** Updates system packages (DNF), Flatpak, Snap, and optionally Homebrew.

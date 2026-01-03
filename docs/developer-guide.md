@@ -15,10 +15,9 @@ Guide for developers who want to contribute to or extend Fedora Update Control K
 
 ### Prerequisites
 
-- **Fedora Linux 41+**
 - **Python 3.10+**
 - **Git**
-- **DNF5**
+- **DNF 4 or DNF 5**
 
 ### Clone and Setup
 

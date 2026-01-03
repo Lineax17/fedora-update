@@ -52,7 +52,9 @@ Complete guide for using Fedora Update Control Kit.
 
 - **Fedora Linux 41+** (required)
 - **Python 3.10+** (required)
-- **DNF5** (required)
+- **DNF 4 or DNF 5** (required)
+  - DNF 5: Fedora 41+ (recommended)
+  - DNF 4: Version 4.19+ tested on Fedora 40; further testing of RHEL-based distributions (AlmaLinux, Rocky Linux, etc.) has to be done
 - **sudo** privileges (required)
 - **Flatpak** (optional, for Flatpak updates)
 - **Snap** (optional, for Snap updates)
