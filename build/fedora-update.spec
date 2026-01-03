@@ -1,5 +1,5 @@
 Name:           fedora-update
-Version:        2.0.0
+Version:        2.0.1
 Release:        1%{?dist}
 Summary:        Automated system upgrade script for Fedora Linux
 
@@ -40,6 +40,10 @@ Alternative commands: fedora-upgrade, fuck
 %{_bindir}/fuck
 
 %changelog
+* Sat Jan 03 2025 Lineax17 <lineax17@gmail.com> - 2.0.1-1
+- fix minor visual issues
+- remove dnf5 hardlock to enable dnf4 support (tested with dnf 4.19 on Fedora 40)
+
 * Sat Dec 27 2025 Lineax17 <lineax17@gmail.com> - 2.0.0-1
 - Complete Python rewrite for better maintainability
 - Improved error handling and modular architecture

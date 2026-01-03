@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 # ============================================================================
 [project]
 name = "fedora-update"
-version = "2.0.0"
+version = "2.0.1"
 description = "Automated system upgrade script for Fedora Linux with DNF, Flatpak, Snap, and Homebrew support"
 readme = "README.md"
 license = {text = "MIT"}
