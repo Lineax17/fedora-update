@@ -2,6 +2,10 @@
 
 set -e  # Exit on error
 
+# Determine script directory and project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 # Check required RPM build tools
 MISSING_PACKAGES=()
 
@@ -28,7 +32,7 @@ if [ ! -d "$HOME/rpmbuild/SPECS" ] || [ ! -d "$HOME/rpmbuild/SOURCES" ] || [ ! -
 fi
 
 # Extract version from spec file
-VERSION=$(grep -E "^Version:" fedora-update.spec | awk '{print $2}')
+VERSION=$(grep -E "^Version:" "$SCRIPT_DIR/fedora-update.spec" | awk '{print $2}')
 
 if [ -z "$VERSION" ]; then
     echo "Error: Could not extract version from fedora-update.spec"
@@ -40,7 +44,7 @@ echo "Building version: $VERSION"
 BUILD_DIR="$HOME/fedora-update-${VERSION}"
 
 # Copy the spec file
-cp fedora-update.spec ~/rpmbuild/SPECS/
+cp "$SCRIPT_DIR/fedora-update.spec" ~/rpmbuild/SPECS/
 
 # Prepare directory for tar.gz (remove if exists to ensure clean build)
 if [ -d "$BUILD_DIR" ]; then
@@ -50,10 +54,10 @@ fi
 
 # Create fresh build directory with all required files
 mkdir -p "$BUILD_DIR"
-cp -r ../src "$BUILD_DIR/"
-cp ../pyproject.toml "$BUILD_DIR/"
-cp ../LICENSE "$BUILD_DIR/"
-cp ../README.md "$BUILD_DIR/"
+cp -r "$PROJECT_ROOT/src" "$BUILD_DIR/"
+cp "$PROJECT_ROOT/pyproject.toml" "$BUILD_DIR/"
+cp "$PROJECT_ROOT/LICENSE" "$BUILD_DIR/"
+cp "$PROJECT_ROOT/README.md" "$BUILD_DIR/"
 
 # Create tar.gz archive
 echo "Creating tar.gz archive..."
