@@ -46,7 +46,7 @@ def main():
     verbose = args.verbose
     brew = args.brew
 
-    print("--- Fedora Update Control Kit ---\n")
+    print("\n--- Fedora Update Control Kit ---\n")
 
     # Start sudo keepalive to maintain privileges throughout execution
     sudo_keepalive.start()
