@@ -30,4 +30,4 @@ def rebuild_nvidia_modules(show_live_output: bool = False) -> str:
         return "akmods is not installed on this system. Skipping NVIDIA module rebuild..."
     else:
         runner.run(["sudo", "akmods", "--force"], show_live_output=show_live_output)
-        return "NVIDIA kernel modules rebuilt successfully..."
+        return "NVIDIA kernel modules check successful..."
