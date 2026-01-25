@@ -139,7 +139,8 @@ Update all DNF packages on the system.
 **Example:**
 
 ```python
-from core import dnf
+
+from package_managers import dnf
 
 # Silent update
 dnf.update_dnf()
@@ -169,7 +170,8 @@ Uses `dnf5 clean packages` and `dnf5 clean metadata --setopt=metadata_expire=1d`
 **Example:**
 
 ```python
-from core import dnf
+
+from package_managers import dnf
 
 # Silent cleanup
 dnf.clean_dnf_cache()
@@ -208,7 +210,8 @@ If Flatpak is not installed, prints a message and returns without error.
 **Example:**
 
 ```python
-from core import flatpak
+
+from package_managers import flatpak
 
 flatpak.update_flatpak()
 ```
@@ -228,7 +231,8 @@ If Snap is not installed, prints a message and returns without error.
 **Example:**
 
 ```python
-from core import snap
+
+from package_managers import snap
 
 snap.update_snap()
 ```
@@ -265,7 +269,8 @@ Update all Homebrew packages on the system.
 **Example:**
 
 ```python
-from core import brew
+
+from package_managers import brew
 
 brew.update_brew(show_live_output=True)
 ```
@@ -563,21 +568,24 @@ except runner.CommandError as e:
 ### Checking Tool Availability
 
 ```python
-from core import flatpak
+
+from package_managers import flatpak
 
 if flatpak.check_flatpak_installed():
-    flatpak.update_flatpak()
+  flatpak.update_flatpak()
 else:
-    print("Flatpak not available")
+  print("Flatpak not available")
 ```
 
 ### Conditional Live Output
 
 ```python
-from core import dnf
+
+from package_managers import dnf
+
 
 def update_with_mode(verbose: bool):
-    dnf.update_dnf(show_live_output=verbose)
+  dnf.update_dnf(show_live_output=verbose)
 ```
 
 ### Safe Command Execution

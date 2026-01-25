@@ -69,9 +69,10 @@ def print_output(function, verbose=False, description="Processing"):
 #### Usage Examples
 
 **Example 1: Simple function**
+
 ```python
 from helper import cli
-from core import dnf
+from package_managers import dnf
 
 cli.print_output(
     dnf.update_dnf,
@@ -347,7 +348,8 @@ update_section("Flatpak", verbose=True)
 
 ```python
 from helper import cli
-from core import dnf, flatpak, snap
+from core import dnf
+from package_managers import flatpak, snap
 
 verbose = False
 
