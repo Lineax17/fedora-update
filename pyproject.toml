@@ -60,6 +60,7 @@ dev = [
 # Console Scripts (Entry Points)
 # ============================================================================
 [project.scripts]
+tuxgrade = "src.main:main"
 fedora-update = "src.main:main"
 fedora-upgrade = "src.main:main"
 fuck = "src.main:main"

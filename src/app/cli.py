@@ -40,7 +40,7 @@ def parse_args():
     verbose = args.verbose
     brew = args.brew
 
-    print("\n--- Fedora Update Control Kit ---\n")
+    print("\n--- Tuxgrade - Linux System Updater ---\n")
 
     # Run the main update process
     app.run(verbose, brew)
