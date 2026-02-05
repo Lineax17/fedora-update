@@ -25,7 +25,7 @@ def update_dnf(show_live_output: bool = False):
 
     Args:
         show_live_output: If True, display live update output to terminal.
-                         If False, suppress output (default).
+                          If False, suppress output (default).
 
     Raises:
         RuntimeError: If DNF is not installed on the system.
