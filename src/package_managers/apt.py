@@ -25,4 +25,5 @@ def update_apt(show_live_output: bool = False):
     """
     if not _check_apt_installed():
         raise RuntimeError("APT is not installed on this system.")
-    runner.run(["sudo", "apt", "update", "&&", "apt", "upgrade", "-y"], show_live_output=show_live_output)
+    runner.run(["sudo", "apt", "update"], show_live_output=show_live_output)
+    runner.run(["sudo", "apt", "upgrade", "-y"], show_live_output=show_live_output)
