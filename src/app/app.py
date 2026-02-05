@@ -20,11 +20,9 @@ def run(verbose: bool, brew: bool) -> int:
     distro = _choose_distro(distro_id)
 
     cli_print_utility.print_header("Detecting Linux Distribution", verbose)
-    cli_print_utility.print_output(
-        lambda v: f"Detected Linux Distribution: {distro_name}",
-        verbose,
-        "Detecting Linux distribution"
-    )
+    if verbose:
+        print(f"Detected Linux Distribution: {distro_name}")
+    
 
     sudo_keepalive.start()
 
