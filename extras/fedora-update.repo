@@ -1,5 +1,0 @@
-[fedora-update]
-name=Fedora Update Control Kit
-baseurl=https://Lineax17.github.io/fedora-update/
-enabled=1
-gpgcheck=0
