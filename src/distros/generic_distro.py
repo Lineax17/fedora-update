@@ -1,5 +1,5 @@
 from helper import cli_print_utility
-from package_managers import snap, flatpak
+from package_managers import snap, flatpak, brew as homebrew
 
 
 class GenericDistro:
@@ -16,5 +16,5 @@ class GenericDistro:
         ## Homebrew package updates
         if brew:
             cli_print_utility.print_header("Update Homebrew Packages", verbose)
-            cli_print_utility.print_output(lambda v: brew.update_brew(show_live_output=v), verbose,
+            cli_print_utility.print_output(lambda v: homebrew.update_brew(show_live_output=v), verbose,
                                            "Updating Homebrew packages")
