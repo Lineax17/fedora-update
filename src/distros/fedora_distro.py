@@ -5,8 +5,24 @@ from src.core import kernel, init, nvidia
 
 
 class FedoraDistro(GenericDistro):
+    """Fedora-specific distribution update handler.
+
+    Extends GenericDistro with Fedora-specific update functionality including
+    DNF package updates, kernel version detection and confirmation, initramfs
+    regeneration, and NVIDIA driver rebuilds using akmods.
+    """
 
     def update(self, verbose, brew):
+        """Perform comprehensive system updates for Fedora Linux.
+
+        Executes Fedora-specific updates including kernel version checking,
+        DNF package updates, initramfs regeneration, NVIDIA driver rebuilds,
+        and common package manager updates (Snap, Flatpak, Homebrew).
+
+        Args:
+            verbose: If True, show detailed output; if False, show minimal output with spinners.
+            brew: If True, include Homebrew package updates.
+        """
 
         # System component updates
 

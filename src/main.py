@@ -10,6 +10,10 @@ The script provides both silent mode (with progress indicators) and verbose mode
 from src.app import cli
 
 def main():
+    """Entry point for the Fedora Update Control Kit application.
+
+    Delegates to the CLI argument parser and exits with the appropriate status code.
+    """
     exit(cli.parse_args())
 
 if __name__ == "__main__":

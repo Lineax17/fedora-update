@@ -4,6 +4,11 @@ from src.app import app
 from src.__version__ import __version__
 
 def parse_args():
+    """Parse command-line arguments and run the application.
+
+    Sets up argument parser with options for verbose mode and Homebrew updates,
+    parses the command-line arguments, and invokes the main update process.
+    """
 
     new_kernel = True
     verbose = False
