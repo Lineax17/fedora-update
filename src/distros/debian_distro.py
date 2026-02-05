@@ -1,3 +1,5 @@
+from src.package_managers import apt
+from src.helper import cli_print_utility
 from src.distros.generic_distro import GenericDistro
 
 
@@ -19,4 +21,8 @@ class DebianDistro(GenericDistro):
             verbose: If True, show detailed output; if False, show minimal output with spinners.
             brew: If True, include Homebrew package updates.
         """
+
+        cli_print_utility.print_header("Update APT Packages", verbose)
+        cli_print_utility.print_output(apt.update_apt, verbose, "Updating APT packages")
+
         super().update(verbose, brew)

@@ -53,7 +53,7 @@ def _choose_distro(distro_name: str):
     """
     if distro_name == "fedora":
         return FedoraDistro()
-    elif distro_name == "debian":
+    elif distro_name in ("debian", "ubuntu", "linuxmint", "pop"):
         return DebianDistro()
     else:
         return GenericDistro()
