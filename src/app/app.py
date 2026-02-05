@@ -1,8 +1,8 @@
-from distros import distro_manager
-from distros.debian_distro import DebianDistro
-from distros.fedora_distro import FedoraDistro
-from distros.generic_distro import GenericDistro
-from helper import cli_print_utility, sudo_keepalive
+from src.distros import distro_manager
+from src.distros.debian_distro import DebianDistro
+from src.distros.fedora_distro import FedoraDistro
+from src.distros.generic_distro import GenericDistro
+from src.helper import cli_print_utility, sudo_keepalive
 
 
 def run(verbose: bool, brew: bool) -> int:
@@ -15,12 +15,13 @@ def run(verbose: bool, brew: bool) -> int:
     Returns:
         int: Exit code (0 = success, non-zero = error)
     """
-    distro_name = distro_manager.detect_distro()
-    distro = _choose_distro(distro_name)
+    distro_id = distro_manager.detect_distro_id()
+    distro_name = distro_manager.detect_distro_name()
+    distro = _choose_distro(distro_id)
 
     cli_print_utility.print_header("Detecting Linux Distribution", verbose)
     cli_print_utility.print_output(
-        f"Detected Linux Distribution: {distro_name}",
+        lambda v: f"Detected Linux Distribution: {distro_name}",
         verbose,
         "Detecting Linux distribution"
     )

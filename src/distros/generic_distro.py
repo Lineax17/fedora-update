@@ -1,5 +1,5 @@
-from helper import cli_print_utility
-from package_managers import snap, flatpak, brew as homebrew
+from src.helper import cli_print_utility
+from src.package_managers import snap, flatpak, brew as homebrew
 
 
 class GenericDistro:

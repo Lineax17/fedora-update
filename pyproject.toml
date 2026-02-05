@@ -79,7 +79,7 @@ Documentation = "https://github.com/Lineax17/fedora-update/blob/main/README.md"
 # Setuptools Configuration
 # ============================================================================
 [tool.setuptools]
-packages = ["src", "src.core", "src.helper", "src.package_managers", "src.distros"]
+packages = ["src", "src.core", "src.helper", "src.package_managers", "src.distros", "src.app"]
 
 
 # ============================================================================

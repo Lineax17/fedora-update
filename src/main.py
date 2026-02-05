@@ -7,7 +7,10 @@ Homebrew, and NVIDIA akmods.
 The script provides both silent mode (with progress indicators) and verbose mode
 (detailed output) for system updates.
 """
-from app import cli
+from src.app import cli
+
+def main():
+    exit(cli.parse_args())
 
 if __name__ == "__main__":
-    exit(cli.parse_args())
+    main()

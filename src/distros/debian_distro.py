@@ -1,4 +1,4 @@
-from distros.generic_distro import GenericDistro
+from src.distros.generic_distro import GenericDistro
 
 
 class DebianDistro(GenericDistro):

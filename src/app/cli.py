@@ -1,9 +1,7 @@
-
-
 import argparse
 
-from src import app
-from __version__ import __version__
+from src.app import app
+from src.__version__ import __version__
 
 def parse_args():
 
