@@ -28,6 +28,7 @@ def run(verbose: bool, brew: bool) -> int:
     sudo_keepalive.start()
 
     try:
+        # Perform distro-specific update process
         distro.update(verbose, brew)
         return 0
     except KeyboardInterrupt:

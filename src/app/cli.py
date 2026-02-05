@@ -1,21 +1,11 @@
-"""Fedora Update Control Kit - Main Entry Point.
 
-This is the main entry point for the Fedora Update Control Kit, an automated
-system upgrade script for Fedora Linux with support for DNF, Flatpak, Snap,
-Homebrew, and NVIDIA akmods.
-
-The script provides both silent mode (with progress indicators) and verbose mode
-(detailed output) for system updates.
-"""
 
 import argparse
 
-import app
-from distros import fedora_distro
-from src.helper import sudo_keepalive
-from src.__version__ import __version__
+from src import app
+from __version__ import __version__
 
-def main():
+def parse_args():
 
     new_kernel = True
     verbose = False
@@ -56,5 +46,4 @@ def main():
 
 
 
-if __name__ == "__main__":
-    exit(main())
+
