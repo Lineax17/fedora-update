@@ -10,6 +10,7 @@ The script provides both silent mode (with progress indicators) and verbose mode
 
 import argparse
 
+import app
 from distros import fedora_distro
 from src.helper import sudo_keepalive
 from src.__version__ import __version__
@@ -48,28 +49,11 @@ def main():
 
     print("\n--- Fedora Update Control Kit ---\n")
 
-    # Start sudo keepalive to maintain privileges throughout execution
-    sudo_keepalive.start()
+    # Run the main update process
+    app.run(verbose, brew)
 
-    try:
+    print("\n--- System Upgrade finished ---\n")
 
-        fd = fedora_distro()
-        fd.update(verbose, brew)
-
-        print("\n--- System Upgrade finished ---\n")
-
-
-    except KeyboardInterrupt:
-        print("Operation cancelled by user")
-        return 130
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        return 1
-    finally:
-        # Ensure keepalive is stopped
-        sudo_keepalive.stop()
-
-    return 0
 
 
 if __name__ == "__main__":

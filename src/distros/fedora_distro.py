@@ -1,8 +1,7 @@
-
 from distros.generic_distro import GenericDistro
 from helper import cli_print_utility
 from package_managers import dnf
-from src.core import kernel, init, nvidia
+from core import kernel, init, nvidia
 
 
 class FedoraDistro(GenericDistro):
