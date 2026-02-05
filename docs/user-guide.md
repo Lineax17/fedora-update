@@ -17,7 +17,7 @@ Complete guide for using Fedora Update Control Kit.
 
 1. **Add the repository:**
    ```bash
-   sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo
+   sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/tuxgrade.repo
    ```
 
 2. **Clear DNF cache:**

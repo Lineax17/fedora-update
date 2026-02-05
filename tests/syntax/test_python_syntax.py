@@ -75,7 +75,7 @@ def test_specific_files():
     project_root = Path(__file__).parent.parent.parent
     
     critical_files = [
-        project_root / 'src' / 'main.py',
+        project_root / 'src' / 'cli_print_utility.py',
         project_root / 'src' / 'core' / 'kernel.py',
         project_root / 'src' / 'core' / 'dnf.py',
         project_root / 'src' / 'helper' / 'runner.py',

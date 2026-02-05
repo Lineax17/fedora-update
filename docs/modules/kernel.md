@@ -220,9 +220,9 @@ else:
 
 ```python
 from core import kernel
-from helper import cli
+from helper import cli_print_utility
 
-cli.print_header("Check Kernel Update", verbose)
+cli_print_utility.print_header("Check Kernel Update", verbose)
 
 new_kernel = kernel.new_kernel_version()
 

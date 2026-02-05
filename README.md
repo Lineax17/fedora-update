@@ -1,8 +1,6 @@
-# Fedora Update Control Kit
+# Tuxgrade 
 
-A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It streamlines the update process for DNF, Flatpak, Snap, and Homebrew, while ensuring system stability-especially for NVIDIA users.
-
-**Note:** Compatible with both DNF 4 (version 4.19+ tested on Fedora 40) and DNF 5 (Fedora 41+).
+A robust and automated system upgrade script for Linux. It streamlines the update process for APT, DNF, Pacman, Flatpak, Snap, and Homebrew, while ensuring system stability-especially for NVIDIA users.
 
 ## Features
 
@@ -17,7 +15,7 @@ A robust and automated system upgrade script for Fedora Linux (Fedora 41+). It s
 ## Usage
 
 ```bash
-fedora-update [options]
+tuxgrade [options]
 ```
 
 ### Options
@@ -27,12 +25,14 @@ fedora-update [options]
 
 ## Installation
 
-### Add the repo and install the package
+### Fedora/Alma/Rocky
+
+#### Add the repo and install the package
 
 Get the repo
 
 ```
-sudo curl -L https://raw.githubusercontent.com/Lineax17/fedora-update/refs/heads/master/extras/fedora-update.repo -o /etc/yum.repos.d/fedora-update.repo
+sudo curl -L https://raw.githubusercontent.com/Lineax17/tuxgrade/refs/heads/master/extras/tuxgrade.repo -o /etc/yum.repos.d/tuxgrade.repo
 ```
 
 Clear the dnf cache
