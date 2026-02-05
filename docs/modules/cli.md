@@ -71,10 +71,10 @@ def print_output(function, verbose=False, description="Processing"):
 **Example 1: Simple function**
 
 ```python
-from helper import cli
+from helper import cli_print_utility
 from package_managers import dnf
 
-cli.print_output(
+cli_print_utility.print_output(
     dnf.update_dnf,
     verbose=False,
     description="Updating DNF packages"
@@ -82,11 +82,12 @@ cli.print_output(
 ```
 
 **Example 2: Lambda for complex calls**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
 from core import init
 
-cli.print_output(
+cli_print_utility.print_output(
     lambda verbose: init.rebuild_initramfs(new_kernel=True),
     verbose=True,
     description="Rebuilding initramfs"
@@ -205,19 +206,23 @@ def run_with_spinner(function, description):
 #### Usage Examples
 
 **Example 1: Simple operation**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
 import time
+
 
 def long_task():
     time.sleep(5)
 
-cli.run_with_spinner(long_task, "Processing data")
+
+cli_print_utility.run_with_spinner(long_task, "Processing data")
 ```
 
 **Example 2: With lambda**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
 from core import dnf
 
 cli.run_with_spinner(
@@ -227,11 +232,14 @@ cli.run_with_spinner(
 ```
 
 **Example 3: Error handling**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
+
 
 def failing_task():
     raise RuntimeError("Something went wrong")
+
 
 try:
     cli.run_with_spinner(failing_task, "Attempting task")
@@ -317,25 +325,29 @@ cli.print_header("Test", verbose=True)
 #### Usage Examples
 
 **Example 1: Section headers**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
 
 verbose = True
 
-cli.print_header("Check Kernel Updates", verbose)
+cli_print_utility.print_header("Check Kernel Updates", verbose)
 # Check logic here
 
-cli.print_header("Update DNF Packages", verbose)
+cli_print_utility.print_header("Update DNF Packages", verbose)
 # Update logic here
 ```
 
 **Example 2: Dynamic headers**
+
 ```python
-from helper import cli
+from helper import cli_print_utility
+
 
 def update_section(name: str, verbose: bool):
     cli.print_header(f"Update {name}", verbose)
     # Update logic
+
 
 update_section("Flatpak", verbose=True)
 ```
@@ -347,7 +359,7 @@ update_section("Flatpak", verbose=True)
 ### Complete Update Flow
 
 ```python
-from helper import cli
+from helper import cli_print_utility
 from core import dnf
 from package_managers import flatpak, snap
 

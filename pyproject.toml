@@ -40,8 +40,9 @@ classifiers = [
 # ============================================================================
 # Dependencies
 # ============================================================================
-# No external dependencies - uses only Python standard library
-dependencies = []
+dependencies = [
+    "distro>=1.9.0"
+]
 
 
 # ============================================================================
@@ -78,7 +79,7 @@ Documentation = "https://github.com/Lineax17/fedora-update/blob/main/README.md"
 # Setuptools Configuration
 # ============================================================================
 [tool.setuptools]
-packages = ["src", "src.core", "src.helper"]
+packages = ["src", "src.core", "src.helper", "src.package_managers", "src.distros"]
 
 
 # ============================================================================

@@ -310,7 +310,7 @@ refactor: simplify kernel version extraction
 ### Add a Command Line Option
 
 ```python
-# In main.py
+# In cli_print_utility.py
 parser.add_argument(
     "--dry-run",
     action="store_true",

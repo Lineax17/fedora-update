@@ -406,10 +406,10 @@ In silent mode, shows an animated spinner during execution.
 **Example:**
 
 ```python
-from helper import cli
+from helper import cli_print_utility
 from core import dnf
 
-cli.print_output(dnf.update_dnf, verbose=False, description="Updating DNF")
+cli_print_utility.print_output(dnf.update_dnf, verbose=False, description="Updating DNF")
 ```
 
 ---
@@ -433,12 +433,14 @@ a success (✅) or failure (❌) indicator upon completion.
 **Example:**
 
 ```python
-from helper import cli
+from helper import cli_print_utility
+
 
 def long_task():
-    time.sleep(5)
+  time.sleep(5)
 
-cli.run_with_spinner(long_task, "Processing data")
+
+cli_print_utility.run_with_spinner(long_task, "Processing data")
 ```
 
 ---
@@ -458,7 +460,7 @@ Only prints in verbose mode; silently returns in silent mode.
 **Example:**
 
 ```python
-from helper import cli
+from helper import cli_print_utility
 
 cli.print_header("Update DNF Packages", verbose=True)
 # Outputs:
