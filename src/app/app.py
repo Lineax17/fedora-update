@@ -1,4 +1,4 @@
-from distros.rhel_distro import RHELDistro
+from src.distros.rhel_distro import RHELDistro
 from src.distros import distro_manager
 from src.distros.debian_distro import DebianDistro
 from src.distros.fedora_distro import FedoraDistro
