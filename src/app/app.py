@@ -1,3 +1,4 @@
+from distros.rhel_distro import RHELDistro
 from src.distros import distro_manager
 from src.distros.debian_distro import DebianDistro
 from src.distros.fedora_distro import FedoraDistro
@@ -40,7 +41,7 @@ def run(verbose: bool, brew: bool) -> int:
         sudo_keepalive.stop()
 
 
-def _choose_distro(distro_name: str):
+def _choose_distro(distro_id: str):
     """Factory method to create the appropriate distro instance.
 
     Args:
@@ -49,9 +50,11 @@ def _choose_distro(distro_name: str):
     Returns:
         GenericDistro: Appropriate distro implementation
     """
-    if distro_name == "fedora":
+    if distro_id == "fedora":
         return FedoraDistro()
-    elif distro_name in ("debian", "ubuntu", "linuxmint", "pop"):
+    elif distro_id in ("debian", "ubuntu", "linuxmint", "pop"):
         return DebianDistro()
+    elif distro_id in ("rhel", "rocky", "almalinux"):
+        return RHELDistro()
     else:
         return GenericDistro()
