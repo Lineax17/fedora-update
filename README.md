@@ -1,22 +1,39 @@
-# Tuxgrade 
+# Tuxgrade
 
-A robust and automated system upgrade script for Linux. It streamlines the update process for APT, DNF, Pacman, Flatpak, Snap, and Homebrew, while ensuring system stability-especially for NVIDIA users.
+A robust and automated system upgrade script for multiple Linux distributions. It streamlines the update process for APT, DNF, Flatpak, Snap, and Homebrew, while ensuring system stability — especially for NVIDIA users.
+
+**Supported Distributions:**
+- Fedora/RHEL based
+  - Fedora
+  - RHEL
+  - Alma
+  - Rocky
+- Debian/Ubuntu based
+  - Debian
+  - Ubuntu
+  - Pop OS
+  - Linux Mint
+  - Zorin OS
+- Any distribution with Flatpak, Snap, or Homebrew
 
 ## Features
 
-- **Comprehensive Updates:** Updates system packages (DNF), Flatpak, Snap, and optionally Homebrew.
-- **Kernel Safety:** Detects kernel updates, requests user confirmation, and automatically rebuilds `initramfs`.
-- **NVIDIA Driver Support:** Checks and rebuilds `akmods` to ensure NVIDIA drivers persist across kernel updates.
+- **Multi-Distribution Support:** Automatically detects your Linux distribution and uses the appropriate package manager (DNF for Fedora/RHEL, APT for Ubuntu/Debian)
+- **Comprehensive Updates:** Updates system packages, Flatpak, Snap, and optionally Homebrew
+- **Kernel Safety:** Detects kernel updates on rolling release distros (like Fedora), requests user confirmation, and automatically rebuilds `initramfs`
+- **NVIDIA Driver Support:** Checks and rebuilds NVIDIA drivers to ensure they persist across kernel updates (Fedora/RHEL)
 - **Modes:**
-  - **Silent (Default):** Clean interface with progress spinners.
-  - **Verbose (`-l` / `--verbose`):** Detailed output for debugging or monitoring.
-- **Maintenance:** Automatically cleans old package caches and metadata.
+  - **Silent (Default):** Clean interface with progress spinners
+  - **Verbose (`-l` / `--verbose`):** Detailed output for debugging or monitoring
+- **Maintenance:** Automatically cleans old package caches and metadata
 
 ## Usage
 
 ```bash
 tuxgrade [options]
 ```
+
+**Note:** For backward compatibility, the commands `fedora-update` and `fedora-upgrade` still work as aliases.
 
 ### Options
 
@@ -50,7 +67,7 @@ sudo dnf repolist
 Install the package
 
 ```
-sudo dnf install fedora-update
+sudo dnf install tuxgrade
 ```
 
 ## Documentation
