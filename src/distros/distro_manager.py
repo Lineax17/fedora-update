@@ -2,7 +2,7 @@
 
 import distro
 
-supported_distros = ["debian", "ubuntu", "linuxmint", "pop", "fedora", "rhel", "rocky", "almalinux"]
+supported_distros = ["debian", "ubuntu", "linuxmint", "pop", "fedora", "rhel", "rocky", "almalinux", "zorin"]
 
 def detect_distro_id() -> str:
     """Detect the current Linux distribution id.
