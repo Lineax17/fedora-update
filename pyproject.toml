@@ -10,9 +10,9 @@ build-backend = "setuptools.build_meta"
 # Project Metadata
 # ============================================================================
 [project]
-name = "fedora-update"
-version = "2.0.1"
-description = "Automated system upgrade script for Fedora Linux with DNF, Flatpak, Snap, and Homebrew support"
+name = "tuxgrade"
+version = "3.0.0"
+description = "Automated system upgrade script for several Linux distributions with DNF, Flatpak, Snap, and Homebrew support"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
@@ -70,10 +70,10 @@ fuck = "src.main:main"
 # Project URLs
 # ============================================================================
 [project.urls]
-# Homepage = "https://github.com/Lineax17/fedora-update"
-Repository = "https://github.com/Lineax17/fedora-update"
-Issues = "https://github.com/Lineax17/fedora-update/issues"
-Documentation = "https://github.com/Lineax17/fedora-update/blob/main/README.md"
+# Homepage = "https://github.com/Lineax17/tuxgrade"
+Repository = "https://github.com/Lineax17/tuxgrade"
+Issues = "https://github.com/Lineax17/tuxgrade/issues"
+Documentation = "https://github.com/Lineax17/tuxgrade/blob/main/README.md"
 
 
 # ============================================================================

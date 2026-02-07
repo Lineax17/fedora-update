@@ -15,8 +15,8 @@ def parse_args():
     brew = False
 
     parser = argparse.ArgumentParser(
-        prog="Fedora Update Control Kit",
-        description="Automated system update script for Fedora Linux.",
+        prog="Tuxgrade - Linux System Updater",
+        description="Automated system update script for several Linux distributions.",
     )
     parser.add_argument(
         "--version",

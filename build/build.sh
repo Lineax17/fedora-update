@@ -32,19 +32,19 @@ if [ ! -d "$HOME/rpmbuild/SPECS" ] || [ ! -d "$HOME/rpmbuild/SOURCES" ] || [ ! -
 fi
 
 # Extract version from spec file
-VERSION=$(grep -E "^Version:" "$SCRIPT_DIR/fedora-update.spec" | awk '{print $2}')
+VERSION=$(grep -E "^Version:" "$SCRIPT_DIR/tuxgrade.spec" | awk '{print $2}')
 
 if [ -z "$VERSION" ]; then
-    echo "Error: Could not extract version from fedora-update.spec"
+    echo "Error: Could not extract version from tuxgrade.spec"
     exit 1
 fi
 
 echo "Building version: $VERSION"
 
-BUILD_DIR="$HOME/fedora-update-${VERSION}"
+BUILD_DIR="$HOME/tuxgrade-${VERSION}"
 
 # Copy the spec file
-cp "$SCRIPT_DIR/fedora-update.spec" ~/rpmbuild/SPECS/
+cp "$SCRIPT_DIR/tuxgrade.spec" ~/rpmbuild/SPECS/
 
 # Prepare directory for tar.gz (remove if exists to ensure clean build)
 if [ -d "$BUILD_DIR" ]; then
@@ -61,13 +61,13 @@ cp "$PROJECT_ROOT/README.md" "$BUILD_DIR/"
 
 # Create tar.gz archive
 echo "Creating tar.gz archive..."
-tar czf ~/rpmbuild/SOURCES/fedora-update-${VERSION}.tar.gz -C ~ fedora-update-${VERSION}
+tar czf ~/rpmbuild/SOURCES/tuxgrade-${VERSION}.tar.gz -C ~ tuxgrade-${VERSION}
 
 # Clean up temporary build directory
 rm -rf "$BUILD_DIR"
 
 # Build the RPM package
 echo "Building RPM package..."
-rpmbuild -ba ~/rpmbuild/SPECS/fedora-update.spec
+rpmbuild -ba ~/rpmbuild/SPECS/tuxgrade.spec
 
 echo "✅ Build complete! RPMs are in ~/rpmbuild/RPMS/"

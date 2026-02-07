@@ -1,5 +1,5 @@
 [tuxgrade]
-name=Tuxgrade System Updater
+name=Tuxgrade - Linux System Updater
 baseurl=https://Lineax17.github.io/tuxgrade/
 enabled=1
 gpgcheck=0

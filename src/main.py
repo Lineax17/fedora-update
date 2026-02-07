@@ -1,6 +1,6 @@
-"""Fedora Update Control Kit - Main Entry Point.
+"""Tuxgrade - Main Entry Point.
 
-This is the main entry point for the Fedora Update Control Kit, an automated
+This is the main entry point for the Tuxgrade, an automated
 system upgrade script for Fedora Linux with support for DNF, Flatpak, Snap,
 Homebrew, and NVIDIA akmods.
 
@@ -10,7 +10,7 @@ The script provides both silent mode (with progress indicators) and verbose mode
 from src.app import cli
 
 def main():
-    """Entry point for the Fedora Update Control Kit application.
+    """Entry point for the Tuxgrade application.
 
     Delegates to the CLI argument parser and exits with the appropriate status code.
     """
