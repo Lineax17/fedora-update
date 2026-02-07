@@ -18,7 +18,7 @@ for APT, DNF, Flatpak, Snap, Homebrew and NVIDIA akmods. Provides both silent mo
 (default with ASCII animation) and verbose mode (--verbose flag) for
 detailed output.
 
-Alternative commands: fedora-upgrade, fuck
+Alternative commands: fedora-update, fedora-upgrade, fuck
 
 %prep
 %setup -q
