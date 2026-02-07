@@ -1,51 +1,72 @@
 # Frequently Asked Questions (FAQ)
 
-Common questions and answers about Fedora Update Control Kit.
+Common questions and answers about Tuxgrade.
 
 ## General Questions
 
-### What is Fedora Update Control Kit?
+### What is Tuxgrade?
 
-Fedora Update Control Kit is an automated system upgrade tool for Fedora Linux that streamlines updates across multiple package managers (DNF5, Flatpak, Snap, Homebrew) while ensuring system stability, especially for kernel updates and NVIDIA drivers.
+Tuxgrade is an automated system upgrade tool for multiple Linux distributions that streamlines updates across various package managers (DNF, APT, Flatpak, Snap, Homebrew) while ensuring system stability, especially for kernel updates and NVIDIA drivers.
 
-### Why use this instead of just `dnf update`?
+**Supported Distributions:**
+- Fedora/RHEL/CentOS/AlmaLinux/Rocky Linux (dnf)
+- Debian/Ubuntu/Pop!_OS/Linux Mint/Zorin OS (apt)
 
-Fedora Update Control Kit provides:
+### Why use this instead of just `dnf update` or `apt upgrade`?
+
+Tuxgrade provides:
+- **Multi-distribution support**: Works across Fedora, RHEL, Ubuntu, Debian, and more
 - **Kernel safety**: Prompts before kernel updates and rebuilds initramfs automatically
-- **NVIDIA support**: Automatically rebuilds NVIDIA drivers after kernel updates
+- **NVIDIA support**: Automatically rebuilds NVIDIA drivers after kernel updates (Fedora)
 - **Sudo management**: Only asks for password once
+- **Multi-package manager**: Updates DNF/APT, Flatpak, Snap, and optionally Homebrew in one command
 
 ### Is this safe to use?
 
 Yes. The script:
 - Prompts for confirmation before kernel updates
-- Uses well-tested package managers (DNF5, Flatpak, etc.)
+- Uses well-tested package managers (DNF, APT, Flatpak, Snap, etc.)
 - Has been used in production on multiple systems
 - Is based on a mature Bash script (v1.x)
 - Has comprehensive test coverage
 
 ### Can I use this on other Linux distributions?
 
-Currently, Fedora Update Control Kit is designed for **Fedora Linux 41+**. It requires DNF5, which is Fedora-specific. However, the modular architecture makes it easy to adapt for other distributions.
+Yes! Tuxgrade now supports:
+- **Fedora Linux 41+**
+- **RHEL, CentOS, AlmaLinux, Rocky Linux** (DNF-based)
+- **Debian/Ubuntu, Pop!_OS, Linux Mint, Zorin OS** (APT-based)
+- **Other distributions**: Limited functionality via fallback mode
 
 ## Installation Questions
 
 ### Do I need to install all package managers?
 
-No. Only **DNF5** is required. Flatpak, Snap, Homebrew, and akmods are optional. The script will skip updates for tools that aren't installed.
+No. The required package manager depends on your distribution:
+- **Fedora/RHEL:** DNF is required
+- **Ubuntu/Debian:** APT is required
+- **All distros:** Flatpak, Snap, Homebrew, and akmods are optional
+
+The script will skip updates for tools that aren't installed.
 
 ### How do I uninstall?
 
+**On Fedora/RHEL:**
 ```bash
-sudo dnf remove fedora-update
+sudo dnf remove tuxgrade
+```
+
+**On Ubuntu/Debian:**
+```bash
+sudo apt remove tuxgrade
 ```
 
 ### Can I install from source?
 
 Yes:
 ```bash
-git clone https://github.com/Lineax17/fedora-update.git
-cd fedora-update
+git clone https://github.com/Lineax17/tuxgrade.git
+cd tuxgrade
 pip install .
 ```
 
@@ -55,17 +76,22 @@ pip install .
 
 Simply:
 ```bash
-fedora-update
+tuxgrade
+```
+
+For backward compatibility:
+```bash
+fedora-update  # Still works as an alias
 ```
 
 For verbose output:
 ```bash
-fedora-update --verbose
+tuxgrade --verbose
 ```
 
 ### Does it need sudo?
 
-Yes, but you don't need to run it with `sudo fedora-update`. The script will prompt for your password once and maintain privileges throughout execution.
+Yes, but you don't need to run it with `sudo tuxgrade`. The script will prompt for your password once and maintain privileges throughout execution.
 
 ### Can I automate it?
 
@@ -83,13 +109,13 @@ Currently, the script updates all available package managers. You can use the `-
 
 Yes, use verbose mode:
 ```bash
-fedora-update --verbose
+tuxgrade --verbose
 ```
 
 ### How do I save update logs?
 
 ```bash
-fedora-update --verbose 2>&1 | tee ~/update-$(date +%Y%m%d).log
+tuxgrade --verbose 2>&1 | tee ~/update-$(date +%Y%m%d).log
 ```
 
 ## Technical Questions
@@ -142,14 +168,14 @@ The script:
 ### Should I review the code?
 
 Yes! The code is open source. Review it before use:
-https://github.com/Lineax17/fedora-update
+https://github.com/Lineax17/tuxgrade
 
 ## Version Questions
 
 ### How do I check the version?
 
 ```bash
-fedora-update --version
+tuxgrade --version
 ```
 
 ### How often are releases made?
@@ -174,15 +200,15 @@ Currently on an as-needed basis. Follow the GitHub repository for updates.
 ### How do I report bugs?
 
 Create an issue on GitHub:
-https://github.com/Lineax17/fedora-update/issues
+https://github.com/Lineax17/tuxgrade/issues
 
 ### How do I request features?
 
 Open a discussion on GitHub:
-https://github.com/Lineax17/fedora-update/discussions
+https://github.com/Lineax17/tuxgrade/discussions
 
 ### Can I get help from the community?
 
 Yes! Use GitHub Discussions for questions and help:
-https://github.com/Lineax17/fedora-update/discussions
+https://github.com/Lineax17/tuxgrade/discussions
 

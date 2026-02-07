@@ -4,7 +4,7 @@ Detailed documentation for the `sudo_keepalive` module (`src/helper/sudo_keepali
 
 ## Overview
 
-The sudo_keepalive module maintains sudo privileges throughout script execution by periodically refreshing the sudo timestamp in the background. This eliminates repeated password prompts during long-running operations.
+The sudo_keepalive module maintains sudo privileges throughout script execution by periodically refreshing the sudo timestamp in the background. This eliminates repeated password prompts during long-running operations in Tuxgrade.
 
 ## Module Functions
 

@@ -1,20 +1,29 @@
 # API Reference
 
-Complete API documentation for all modules in Fedora Update Control Kit.
+Complete API documentation for all modules in Tuxgrade.
 
 ## Table of Contents
 
 - [Core Modules](#core-modules)
   - [kernel](#kernel)
+  - [init](#init)
+  - [nvidia](#nvidia)
+- [Distribution Modules](#distribution-modules)
+  - [distro_manager](#distro_manager)
+  - [fedora_distro](#fedora_distro)
+  - [debian_distro](#debian_distro)
+  - [rhel_distro](#rhel_distro)
+  - [ubuntu_distro](#ubuntu_distro)
+  - [generic_distro](#generic_distro)
+- [Package Manager Modules](#package-manager-modules)
   - [dnf](#dnf)
+  - [apt](#apt)
   - [flatpak](#flatpak)
   - [snap](#snap)
   - [brew](#brew)
-  - [init](#init)
-  - [nvidia](#nvidia)
 - [Helper Modules](#helper-modules)
   - [runner](#runner)
-  - [cli](#cli)
+  - [cli_print_utility](#cli_print_utility)
   - [sudo_keepalive](#sudo_keepalive)
 
 ---
@@ -25,11 +34,14 @@ Complete API documentation for all modules in Fedora Update Control Kit.
 
 Kernel update detection and management module.
 
+**Note:** The implementation varies by distribution. Fedora/RHEL use DNF for kernel checks, while Ubuntu/Debian use APT.
+
 #### `new_kernel_version() -> bool`
 
-Check if a new kernel version is available via DNF5.
+Check if a new kernel version is available.
 
-Queries DNF5 for kernel package updates using `dnf5 check-upgrade -q kernel*`.
+On Fedora/RHEL, queries DNF for kernel package updates using `dnf5 check-upgrade -q kernel*`.  
+On Ubuntu/Debian, queries APT for kernel package updates.
 Exit code 0 means no updates, 100 means updates available.
 
 **Returns:**
@@ -53,10 +65,11 @@ if kernel.new_kernel_version():
 
 #### `get_new_kernel_version() -> str`
 
-Extract the kernel version string from DNF5 check-update output.
+Extract the kernel version string from package manager output.
 
-Queries DNF5 for kernel-helper package and extracts the version number
-from the output (e.g., "6.12.5" from "6.12.5-300.fc41").
+On Fedora/RHEL: Queries DNF for kernel-helper package and extracts the version number (e.g., "6.12.5" from "6.12.5-300.fc41").
+
+On Ubuntu/Debian: No kernel check required.
 
 **Returns:**
 
@@ -109,9 +122,92 @@ if kernel.new_kernel_version():
 
 ---
 
+## Distribution Modules
+
+### distro_manager
+
+Orchestrates system updates by delegating to distribution-specific implementations.
+
+#### `class DistroManager`
+
+Main class for managing distribution-specific updates.
+
+**Methods:**
+
+- `update_system(verbose: bool)`: Performs a complete system update
+- `detect_distro() -> str`: Detects the current Linux distribution
+
+**Example:**
+
+```python
+from distros import distro_manager
+
+manager = distro_manager.DistroManager()
+manager.update_system(verbose=True)
+```
+
+---
+
+### fedora_distro
+
+Fedora-specific update implementation.
+
+**Features:**
+- DNF/DNF5 detection and usage
+- NVIDIA akmods rebuilds
+- Fedora-specific kernel handling
+
+---
+
+### debian_distro
+
+Debian-specific update implementation.
+
+**Features:**
+- APT package management
+- Debian kernel handling
+- apt-specific maintenance tasks
+
+---
+
+### rhel_distro
+
+RHEL/CentOS/AlmaLinux/Rocky-specific update implementation.
+
+**Features:**
+- DNF package management
+- subscription-manager integration
+- RHEL-specific repositories
+
+---
+
+### ubuntu_distro
+
+Ubuntu family-specific update implementation.
+
+**Features:**
+- APT package management
+- PPA handling
+- Ubuntu-specific kernel packages
+
+---
+
+### generic_distro
+
+Fallback for unknown distributions.
+
+**Features:**
+- Basic package manager detection
+- Limited functionality
+- Graceful degradation
+
+---
+
+## Package Manager Modules
+
 ### dnf
 
-DNF package manager update module.
+DNF package manager update module (for Fedora/RHEL-based distributions).
 
 #### `check_dnf_installed() -> bool`
 
@@ -184,6 +280,82 @@ dnf.clean_dnf_cache(show_live_output=True)
 
 - `dnf5 clean packages` - Removes cached package files
 - `dnf5 clean metadata` - Removes old metadata
+
+---
+
+### apt
+
+APT package manager update module (for Debian/Ubuntu-based distributions).
+
+#### `check_apt_installed() -> bool`
+
+Check if APT is installed on the system.
+
+**Returns:**
+
+- `True` if APT is available, `False` otherwise.
+
+---
+
+#### `update_apt(show_live_output: bool = False) -> None`
+
+Update all APT packages on the system.
+
+**Args:**
+
+- `show_live_output`: If True, display live update output to terminal.
+  If False, suppress output (default).
+
+**Raises:**
+
+- `RuntimeError`: If APT is not installed on the system.
+
+**Example:**
+
+```python
+from package_managers import apt
+
+# Silent update
+apt.update_apt()
+
+# Verbose update  
+apt.update_apt(show_live_output=True)
+```
+
+---
+
+#### `clean_apt_cache(show_live_output: bool = False) -> None`
+
+Clean APT package cache.
+
+Removes cached packages to save disk space.
+Uses `apt-get clean` and `apt-get autoclean`.
+
+**Args:**
+
+- `show_live_output`: If True, display live output to terminal.
+  If False, suppress output (default).
+
+**Raises:**
+
+- `RuntimeError`: If APT is not installed on the system.
+
+**Example:**
+
+```python
+from package_managers import apt
+
+# Silent cleanup
+apt.clean_apt_cache()
+
+# Verbose cleanup
+apt.clean_apt_cache(show_live_output=True)
+```
+
+**Details:**
+
+- `apt-get clean` - Removes cached package files
+- `apt-get autoclean` - Removes old cached packages
 
 ---
 
@@ -386,7 +558,7 @@ runner.run(["dnf", "update", "-y"], show_live_output=True)
 
 ---
 
-### cli
+### cli_print_utility
 
 Command-line interface utilities module.
 

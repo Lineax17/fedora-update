@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the architecture and design decisions of the Fedora Update Control Kit.
+This document describes the architecture and design decisions of Tuxgrade.
 
 ## Table of Contents
 
@@ -12,14 +12,21 @@ This document describes the architecture and design decisions of the Fedora Upda
 
 ## Overview
 
-Fedora Update Control Kit is designed as a modular Python application that orchestrates system updates across multiple package managers while ensuring system stability, especially for kernel updates and NVIDIA drivers.
+Tuxgrade is designed as a modular Python application that orchestrates system updates across multiple Linux distributions and package managers while ensuring system stability, especially for kernel updates and NVIDIA drivers.
+
+### Supported Distributions
+
+- **Fedora/RHEL/CentOS/AlmaLinux/Rocky Linux** - Uses DNF package manager
+- **Debian/Ubuntu/Pop!_OS/Linux Mint/Zorin OS** - Uses APT package manager
+- **Generic/Unknown** - Fallback with limited functionality
 
 ### Key Principles
 
 1. **Modularity** - Separate concerns into independent modules
-2. **Safety** - User confirmation for critical updates (kernel)
-3. **Robustness** - Graceful handling of missing package managers
-4. **Transparency** - Clear feedback in both silent and verbose modes
+2. **Multi-Distribution Support** - Automatic detection and distro-specific handling
+3. **Safety** - User confirmation for critical updates (kernel)
+4. **Robustness** - Graceful handling of missing package managers
+5. **Transparency** - Clear feedback in both silent and verbose modes
 
 ## System Architecture
 
@@ -29,13 +36,22 @@ Fedora Update Control Kit is designed as a modular Python application that orche
 │             (Entry Point & Orchestration)             │
 └─────────────────────────┬─────────────────────────────┘
                           │
-             ┌────────────┼────────────┐
-             │            │            │
-             ▼            ▼            ▼
+             ┌────────────┼────────────────┐
+             │            │                │
+             ▼            ▼                ▼
       ┌──────────────┐ ┌──────────┐ ┌──────────────┐
-      │ Core Modules │ │  Helper  │ │  __version__ │
+      │ Distro Layer │ │  Helper  │ │  __version__ │
       │              │ │  Modules │ │              │
-      └──────────────┘ └──────────┘ └──────────────┘
+      └──────┬───────┘ └──────────┘ └──────────────┘
+             │
+    ┌────────┼────────┐
+    │        │        │
+    ▼        ▼        ▼
+┌─────────────────┬──────────────┬─────────────────┐
+│ Package Manager │ Core Modules │ Distro-Specific │
+│ Abstraction     │ (kernel,init,│ Implementations │
+│ (dnf, apt, etc.)│  nvidia)     │ (Fedora, Ubuntu)│
+└─────────────────┴──────────────┴─────────────────┘
 ```
 
 ### Layer Structure
@@ -49,24 +65,114 @@ Fedora Update Control Kit is designed as a modular Python application that orche
 
 #### 2. Core Layer (`src/core/`)
 
-Business logic for different package managers and system operations:
+Core business logic shared across distributions:
 
 - `kernel.py` - Kernel update detection and user confirmation
-- `dnf.py` - DNF package management
-- `flatpak.py` - Flatpak application updates
-- `snap.py` - Snap package updates
-- `brew.py` - Homebrew package updates
 - `init.py` - Initramfs regeneration
-- `nvidia.py` - NVIDIA driver rebuilds
+- `nvidia.py` - NVIDIA driver rebuilds (Fedora only)
 
 #### 3. Helper Layer (`src/helper/`)
 
 Utility modules providing cross-cutting functionality:
 
 - `runner.py` - Command execution with flexible error handling
-- `cli.py` - User interface (spinners, headers, output)
+- `cli_print_utility.py` - User interface (spinners, headers, output)
 - `sudo_keepalive.py` - Sudo privilege persistence
 - `log.py` - Logging utilities (future use)
+
+## Multi-Distribution Architecture
+
+### Distribution Detection
+
+Tuxgrade automatically detects the Linux distribution using `/etc/os-release`:
+
+```python
+# Distribution detection logic
+def detect_distro() -> str:
+    """Detect the current Linux distribution."""
+    with open('/etc/os-release') as f:
+        for line in f:
+            if line.startswith('ID='):
+                return line.split('=')[1].strip().strip('"')
+    return 'unknown'
+```
+
+**Supported Distribution IDs:**
+- `fedora` → FedoraDistro
+- `rhel`, `centos`, `almalinux`, `rocky` → RHELDistro
+- `ubuntu`, `pop`, `linuxmint`, `elementary`, `zorin` → UbuntuDistro  
+- `debian` → DebianDistro
+- Others → GenericDistro (fallback)
+
+### Distro Module Layer (`src/distros/`)
+
+Distribution-specific implementations:
+
+#### `distro_manager.py`
+
+Orchestrates updates by delegating to the appropriate distro class:
+
+```python
+class DistroManager:
+    def __init__(self):
+        self.distro = self._detect_and_create_distro()
+    
+    def update_system(self, verbose: bool):
+        """Delegates to distro-specific implementation."""
+        self.distro.update_packages(verbose)
+        self.distro.post_update_tasks()
+```
+
+#### `fedora_distro.py`
+
+Fedora-specific logic:
+- DNF/DNF5 detection and usage
+- NVIDIA akmods rebuilds
+- Fedora-specific kernel handling
+- RPM package management
+
+#### `debian_distro.py`
+
+Debian-specific logic:
+- APT package management
+- Debian kernel handling
+- apt-specific maintenance tasks
+
+#### `rhel_distro.py`
+
+RHEL/CentOS/AlmaLinux/Rocky-specific logic:
+- DNF package management
+- subscription-manager integration
+- RHEL-specific repositories
+
+#### `ubuntu_distro.py`
+
+Ubuntu family-specific logic:
+- APT package management
+- PPA handling
+- Ubuntu-specific kernel packages
+
+#### `generic_distro.py`
+
+Fallback for unknown distributions:
+- Basic package manager detection
+- Limited functionality
+- Graceful degradation
+
+### Package Manager Abstraction (`src/package_managers/`)
+
+Package managers are abstracted into separate modules:
+
+- `dnf.py` - DNF4/DNF5 support for Fedora/RHEL
+- `apt.py` - APT support for Debian/Ubuntu
+- `flatpak.py` - Flatpak (cross-distro)
+- `snap.py` - Snap (cross-distro)
+- `brew.py` - Homebrew (cross-distro)
+
+Each module provides:
+- Tool availability check
+- Update operation
+- Cleanup operation (if applicable)
 
 ## Module Structure
 
@@ -111,7 +217,7 @@ def run(cmd: list[str],
         check: bool = True) -> CompletedProcess
 ```
 
-#### cli.py
+#### cli_print_utility.py
 
 User interface abstraction:
 
@@ -150,35 +256,70 @@ def is_running() -> bool
          │
          ▼
 ┌─────────────────────────────────────────────┐
-│  main.py                                    │
+│  main.py (Entry Point)                      │
+│  ┌────────────────────────────────────────┐ │
+│  │ 1. Parse CLI arguments                 │ │
+│  │ 2. Initialize DistroManager            │ │
+│  │ 3. Detect distribution                 │ │
+│  │ 4. Delegate to distro-specific handler │ │
+│  └────────────────────────────────────────┘ │
+└─────────────────┬───────────────────────────┘
+                  │
+                  ▼
+┌─────────────────────────────────────────────┐
+│  DistroManager                              │
 │  ┌────────────────────────────────────────┐ │
 │  │ 1. Start sudo_keepalive                │ │
-│  │ 2. Check kernel updates                │ │
+│  │ 2. Check kernel updates (distro-aware) │ │
 │  │    └─> Prompt if available             │ │
-│  │ 3. Update DNF packages                 │ │
+│  │ 3. Update system packages (DNF/APT)    │ │
 │  │ 4. Rebuild initramfs (if kernel update)│ │
-│  │ 5. Rebuild NVIDIA modules              │ │
+│  │ 5. Rebuild NVIDIA modules (Fedora)     │ │
 │  │ 6. Update Snap packages                │ │
 │  │ 7. Update Flatpak packages             │ │
 │  │ 8. Update Homebrew (if --brew)         │ │
 │  │ 9. Stop sudo_keepalive                 │ │
 │  └────────────────────────────────────────┘ │
-└─────────────────────────────────────────────┘
-         │
-         ▼
+└─────────────────┬───────────────────────────┘
+                  │
+                  ▼
 ┌─────────────────┐
 │   Exit Code     │
 │  (0/1/130)      │
 └─────────────────┘
 ```
 
+### Distribution-Specific Flow
+
+```
+┌──────────────────────┐
+│  DistroManager       │
+└──────────┬───────────┘
+           │
+    ┌──────┴──────┐
+    │ Detect OS   │
+    └──────┬──────┘
+           │
+    ┌──────┴───────────────────────────┐
+    │                                  │
+    ▼                                  ▼
+┌─────────────────┐         ┌──────────────────┐
+│ Fedora/RHEL     │         │ Ubuntu/Debian    │
+│ ┌─────────────┐ │         │ ┌──────────────┐ │
+│ │ Use DNF     │ │         │ │ Use APT      │ │
+│ │             │ │         │ │              │ │
+│ │             │ │         │ │              │ │
+│ └─────────────┘ │         │ └──────────────┘ │
+└─────────────────┘         └──────────────────┘
+```
+
 ### Command Execution Flow
 
 ```
-┌──────────────┐
-│ Core Module  │
-│ (e.g. dnf.py)│
-└──────┬───────┘
+┌──────────────────────────┐
+│ Package Manager Module   │
+│ (e.g. dnf.py or apt.py)  │
+└──────┬───────────────────┘
        │
        ▼
 ┌──────────────────┐
@@ -198,7 +339,7 @@ def is_running() -> bool
 
 ### 1. Why Python Instead of Bash?
 
-**Original:** Bash script (`legacy/fedora-update.sh`)
+**Original:** Bash script
 
 **Migration to Python:**
 

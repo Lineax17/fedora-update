@@ -1,6 +1,6 @@
-# Fedora Update Control Kit - Documentation
+# Tuxgrade - Documentation
 
-Welcome to the documentation for Fedora Update Control Kit, an automated system upgrade tool for Fedora Linux.
+Welcome to the documentation for Tuxgrade, an automated system upgrade tool for multiple Linux distributions.
 
 ## 📚 Documentation Structure
 
@@ -24,7 +24,7 @@ Welcome to the documentation for Fedora Update Control Kit, an automated system 
 
 ## 🚀 Quick Links
 
-- [GitHub Repository](https://github.com/Lineax17/fedora-update)
+- [GitHub Repository](https://github.com/Lineax17/tuxgrade)
 - [Installation Guide](user-guide.md#installation)
 - [Usage Examples](user-guide.md#usage)
 - [Contributing Guidelines](developer-guide.md#contributing)
@@ -39,7 +39,7 @@ This documentation is organized to help both end-users and developers:
 
 ## 🔄 Version
 
-Current documentation version: **2.0.0** (December 2025)
+Current documentation version: **3.0.0** (February 2026)
 
 For older versions, please check the Git history.
 

@@ -1,10 +1,10 @@
 # CLI Module Documentation
 
-Detailed documentation for the `cli` module (`src/helper/cli.py`).
+Detailed documentation for the `cli_print_utility` module (`src/helper/cli_print_utility.py`).
 
 ## Overview
 
-The CLI module provides user interface components for Fedora Update Control Kit, including spinners, headers, and output formatting. It bridges the gap between silent mode (clean, minimal) and verbose mode (detailed, informative).
+The CLI module provides user interface components for Tuxgrade, including spinners, headers, and output formatting. It bridges the gap between silent mode (clean, minimal) and verbose mode (detailed, informative).
 
 ## Module Functions
 
@@ -386,10 +386,10 @@ cli.print_output(snap.update_snap, verbose, "Updating Snap packages")
 
 **Silent Mode Output:**
 ```
---- Fedora Update Control Kit ---
+--- Tuxgrade ---
 
 No new kernel version detected.
-✅ Updating DNF packages
+✅ Updating system packages
 ✅ Updating initramfs
 ✅ Updating Snap packages
 ✅ Updating Flatpak packages
@@ -399,7 +399,7 @@ No new kernel version detected.
 
 **Verbose Mode Output:**
 ```
---- Fedora Update Control Kit ---
+--- Tuxgrade ---
 
 ############################
 #  Check Kernel Update  #
@@ -407,7 +407,7 @@ No new kernel version detected.
 No new kernel version detected.
 
 ############################
-#  Update DNF Packages   #
+#  Update System Packages   #
 ############################
 Updating system packages...
 [Full DNF output shown]

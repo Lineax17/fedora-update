@@ -4,7 +4,7 @@ Detailed documentation for the `runner` module (`src/helper/runner.py`).
 
 ## Overview
 
-The runner module provides a unified interface for executing shell commands with configurable error handling and output modes. It's the foundation for all command execution in Fedora Update Control Kit.
+The runner module provides a unified interface for executing shell commands with configurable error handling and output modes. It's the foundation for all command execution in Tuxgrade.
 
 ## Module Components
 

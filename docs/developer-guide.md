@@ -1,6 +1,6 @@
 # Developer Guide
 
-Guide for developers who want to contribute to or extend Fedora Update Control Kit.
+Guide for developers who want to contribute to or extend Tuxgrade.
 
 ## Table of Contents
 
@@ -17,14 +17,14 @@ Guide for developers who want to contribute to or extend Fedora Update Control K
 
 - **Python 3.10+**
 - **Git**
-- **DNF 4 or DNF 5**
+- **DNF 4/DNF 5** (for Fedora/RHEL testing) or **APT** (for Debian/Ubuntu testing)
 
 ### Clone and Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/Lineax17/fedora-update.git
-cd fedora-update
+git clone https://github.com/Lineax17/tuxgrade.git
+cd tuxgrade
 
 # Create a virtual environment (optional but recommended)
 python3 -m venv venv
@@ -44,28 +44,40 @@ pip install pytest pytest-cov black mypy
 ## Project Structure
 
 ```
-fedora-update/
+tuxgrade/
 ├── src/                          # Source code
 │   ├── __version__.py           # Version information
 │   ├── main.py                  # Entry point
+│   ├── app/                     # Application layer
+│   │   ├── app.py              # Main application logic
+│   │   └── cli.py              # CLI argument parsing
 │   ├── core/                    # Core business logic
 │   │   ├── kernel.py           # Kernel update management
-│   │   ├── dnf.py              # DNF package updates
-│   │   ├── flatpak.py          # Flatpak updates
-│   │   ├── snap.py             # Snap updates
-│   │   ├── brew.py             # Homebrew updates
 │   │   ├── init.py             # Initramfs rebuild
 │   │   └── nvidia.py           # NVIDIA driver rebuild
+│   ├── distros/                 # Distribution-specific logic
+│   │   ├── distro_manager.py   # Orchestrates distro updates
+│   │   ├── fedora_distro.py    # Fedora-specific (dnf, akmods)
+│   │   ├── debian_distro.py    # Debian-specific (apt)
+│   │   ├── rhel_distro.py      # RHEL/CentOS (dnf + subscription-manager)
+│   │   ├── ubuntu_distro.py    # Ubuntu family (apt + PPA)
+│   │   └── generic_distro.py   # Fallback for unknown distros
+│   ├── package_managers/        # Package manager abstraction
+│   │   ├── dnf.py              # DNF package manager
+│   │   ├── apt.py              # APT package manager
+│   │   ├── flatpak.py          # Flatpak updates
+│   │   ├── snap.py             # Snap updates
+│   │   └── brew.py             # Homebrew updates
 │   └── helper/                  # Utility modules
 │       ├── runner.py           # Command execution
-│       ├── cli.py              # UI components
+│       ├── cli_print_utility.py # UI components
 │       ├── sudo_keepalive.py   # Sudo management
 │       └── log.py              # Logging (future)
 ├── tests/                       # Test suite
 ├── docs/                        # Documentation
 ├── build/                       # RPM build files
 │   ├── build.sh
-│   └── fedora-update.spec
+│   └── tuxgrade.spec
 ├── pyproject.toml              # Python project config
 ├── README.md                   # Project README
 └── LICENSE                     # MIT License
@@ -251,7 +263,7 @@ refactor: simplify kernel version extraction
 
 3. **Update RPM spec:**
    ```spec
-   # build/fedora-update.spec
+   # build/tuxgrade.spec
    Version: 2.1.0
    ```
 
@@ -355,7 +367,7 @@ ModuleNotFoundError: No module named 'src'
 **Solution: Run as a module**
 ```bash
 # Navigate to the project root directory
-cd /path/to/fedora-update
+cd /path/to/tuxgrade
 
 # Run as a module
 python3 -m src.main --verbose
@@ -363,8 +375,8 @@ python3 -m src.main --verbose
 
 ## Getting Help
 
-- **Questions:** [GitHub Discussions](https://github.com/Lineax17/fedora-update/discussions)
-- **Bugs:** [GitHub Issues](https://github.com/Lineax17/fedora-update/issues)
+- **Questions:** [GitHub Discussions](https://github.com/Lineax17/tuxgrade/discussions)
+- **Bugs:** [GitHub Issues](https://github.com/Lineax17/tuxgrade/issues)
 - **Documentation:** [docs/](../docs/)
 - **Architecture:** [architecture.md](architecture.md)
 

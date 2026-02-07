@@ -6,6 +6,8 @@ Detailed documentation for the `kernel` module (`src/core/kernel.py`).
 
 The kernel module handles kernel update detection, version extraction, and user confirmation for kernel upgrades. It ensures users are aware of kernel updates before proceeding, which is critical for system stability, especially with NVIDIA drivers.
 
+**Note:** Implementation details vary by distribution. Fedora/RHEL use DNF, while Ubuntu/Debian use APT.
+
 ## Module Functions
 
 ### `new_kernel_version() -> bool`
@@ -14,10 +16,16 @@ Checks if a new kernel version is available via DNF5.
 
 #### Implementation Details
 
-Uses `dnf5 check-upgrade -q kernel*` to check for kernel updates:
+Uses distribution-specific package manager to check for kernel updates:
+
+**Fedora/RHEL:**
+- Uses `dnf5 check-upgrade -q kernel*` or `dnf check-upgrade -q kernel*`
 - **Exit code 0**: No kernel updates available
 - **Exit code 100**: Kernel updates available  
 - **Other exit codes**: Error condition
+
+**Ubuntu/Debian:**
+- No kernel check required and for this reason not implemented.
 
 #### Algorithm
 
