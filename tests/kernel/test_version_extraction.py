@@ -13,18 +13,18 @@ from subprocess import CompletedProcess
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from core import kernel
-from helper import runner
+from src.helper import runner
 
 
 def test_kernel_version_extraction():
     """Test: Kernel version is correctly extracted from dnf5 output."""
     print("Testing: Kernel Version Extraction...")
 
-    # Mock runner.run to simulate dnf5 check-update output
+    # Mock runner.run to simulate dnf check-upgrade output
     mock_result = CompletedProcess(
-        args=["dnf5", "check-update", "kernel-helper"],
+        args=["dnf", "check-upgrade", "kernel"],
         returncode=100,
-        stdout="kernel-helper                     6.12.5-300.fc41                     updates\n",
+        stdout="kernel.x86_64                     6.12.5-300.fc41                     updates\n",
         stderr=""
     )
 
@@ -32,7 +32,7 @@ def test_kernel_version_extraction():
         version = kernel.get_new_kernel_version()
 
         # Verify the function was called correctly
-        mock_run.assert_called_once_with(['dnf5', 'check-update', 'kernel-helper'], check=False)
+        mock_run.assert_called_once_with(['dnf', 'check-upgrade', 'kernel'], check=False)
 
         # Verify result
         if version == "6.12.5":
@@ -47,9 +47,9 @@ def test_kernel_version_not_found():
     """Test: Raises CommandError when no kernel-helper version is found."""
     print("Testing: Kernel Version Not Found...")
 
-    # Mock runner.run to simulate dnf5 returning no results
+    # Mock runner.run to simulate dnf returning no results
     mock_result = CompletedProcess(
-        args=["dnf5", "check-update", "kernel-helper"],
+        args=["dnf", "check-upgrade", "kernel"],
         returncode=0,
         stdout="",
         stderr=""
@@ -81,9 +81,9 @@ def test_kernel_version_with_multiple_parts():
     all_passed = True
     for full_version, expected in test_cases:
         mock_result = CompletedProcess(
-            args=["dnf5", "check-update", "kernel-helper"],
+            args=["dnf", "check-upgrade", "kernel"],
             returncode=100,
-            stdout=f"kernel-helper                     {full_version}                     updates\n",
+            stdout=f"kernel.x86_64                     {full_version}                     updates\n",
             stderr=""
         )
 

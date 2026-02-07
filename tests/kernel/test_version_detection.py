@@ -13,16 +13,16 @@ from subprocess import CompletedProcess
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from core import kernel
-from helper import runner
+from src.helper import runner
 
 
 def test_kernel_update_available():
     """Test: Exit code 100 indicates kernel update is available."""
     print("Testing: Kernel Update Available (Exit 100)...")
 
-    # Mock runner.run to simulate dnf5 returning exit code 100
+    # Mock runner.run to simulate dnf returning exit code 100
     mock_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        args=["dnf", "check-upgrade", "-q", "kernel*"],
         returncode=100,
         stdout="kernel-core.x86_64 6.11.0-200.fc40 updates\n",
         stderr=""
@@ -32,7 +32,7 @@ def test_kernel_update_available():
         result = kernel.new_kernel_version()
 
         # Verify the function was called correctly
-        mock_run.assert_called_once_with(["dnf5", "check-upgrade", "-q", "kernel*"], check=False)
+        mock_run.assert_called_once_with(["dnf", "check-upgrade", "-q", "kernel*"], check=False)
 
         # Verify result
         if result == True:
@@ -47,9 +47,9 @@ def test_no_kernel_update():
     """Test: Exit code 0 indicates no kernel update available."""
     print("Testing: No Kernel Update (Exit 0)...")
 
-    # Mock runner.run to simulate dnf5 returning exit code 0
+    # Mock runner.run to simulate dnf returning exit code 0
     mock_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        args=["dnf", "check-upgrade", "-q", "kernel*"],
         returncode=0,
         stdout="",
         stderr=""
@@ -59,7 +59,7 @@ def test_no_kernel_update():
         result = kernel.new_kernel_version()
 
         # Verify the function was called correctly
-        mock_run.assert_called_once_with(["dnf5", "check-upgrade", "-q", "kernel*"], check=False)
+        mock_run.assert_called_once_with(["dnf", "check-upgrade", "-q", "kernel*"], check=False)
 
         # Verify result
         if result == False:
@@ -74,9 +74,9 @@ def test_dnf_error_handling():
     """Test: Exit codes other than 0 or 100 raise CommandError."""
     print("Testing: DNF Error Handling (Exit 1)...")
 
-    # Mock runner.run to simulate dnf5 returning exit code 1
+    # Mock runner.run to simulate dnf returning exit code 1
     mock_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        args=["dnf", "check-upgrade", "-q", "kernel*"],
         returncode=1,
         stdout="",
         stderr="Error: Connection failed"

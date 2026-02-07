@@ -11,7 +11,7 @@ import os
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
-from helper import sudo_keepalive, runner
+from src.helper import sudo_keepalive, runner
 
 
 def module_a():

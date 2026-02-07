@@ -14,7 +14,7 @@ from subprocess import CompletedProcess
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from core import kernel
-from helper import runner
+from src.helper import runner
 
 
 def test_kernel_upgrade_full_simulation():
@@ -23,7 +23,7 @@ def test_kernel_upgrade_full_simulation():
 
     # Mock runner.run for kernel version check
     mock_check_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        args=["dnf", "check-upgrade", "-q", "kernel*"],
         returncode=100,
         stdout="kernel-core.x86_64 6.13.0-300.fc41 updates\n",
         stderr=""
@@ -31,9 +31,9 @@ def test_kernel_upgrade_full_simulation():
 
     # Mock runner.run for kernel version extraction
     mock_version_result = CompletedProcess(
-        args=["dnf5", "check-update", "kernel-helper"],
+        args=["dnf", "check-upgrade", "kernel"],
         returncode=100,
-        stdout="kernel-helper                     6.13.0-300.fc41                     updates\n",
+        stdout="kernel.x86_64                     6.13.0-300.fc41                     updates\n",
         stderr=""
     )
 
@@ -52,18 +52,18 @@ def test_kernel_upgrade_full_simulation():
         runner_calls.append(cmd)
         if "check-upgrade" in cmd and "kernel*" in cmd:
             return mock_check_result
-        elif "check-update" in cmd and "kernel-helper" in cmd:
+        elif "check-upgrade" in cmd and "kernel" in cmd:
             return mock_version_result
         elif "sudo" in cmd and "dnf" in cmd and "update" in cmd:
             return mock_dnf_update_result
         return CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
 
     # Import dnf module for testing
-    from core import dnf
+    from package_managers import dnf
 
     # Simulate user confirming upgrade
     with patch('core.kernel.runner.run', side_effect=runner_side_effect) as mock_kernel_run, \
-         patch('core.dnf.runner.run', side_effect=runner_side_effect) as mock_dnf_run, \
+         patch('package_managers.dnf.runner.run', side_effect=runner_side_effect) as mock_dnf_run, \
          patch('builtins.input', return_value='y'):
         
         # Check if new kernel is available
@@ -107,7 +107,7 @@ def test_kernel_upgrade_declined_workflow():
 
     # Mock runner.run for kernel version check
     mock_check_result = CompletedProcess(
-        args=["dnf5", "check-upgrade", "-q", "kernel*"],
+        args=["dnf", "check-upgrade", "-q", "kernel*"],
         returncode=100,
         stdout="kernel-core.x86_64 6.13.0-300.fc41 updates\n",
         stderr=""
@@ -115,9 +115,9 @@ def test_kernel_upgrade_declined_workflow():
 
     # Mock runner.run for kernel version extraction
     mock_version_result = CompletedProcess(
-        args=["dnf5", "check-update", "kernel-helper"],
+        args=["dnf", "check-upgrade", "kernel"],
         returncode=100,
-        stdout="kernel-helper                     6.13.0-300.fc41                     updates\n",
+        stdout="kernel.x86_64                     6.13.0-300.fc41                     updates\n",
         stderr=""
     )
 
@@ -125,7 +125,7 @@ def test_kernel_upgrade_declined_workflow():
         """Return appropriate mock based on command."""
         if "check-upgrade" in cmd and "kernel*" in cmd:
             return mock_check_result
-        elif "check-update" in cmd and "kernel-helper" in cmd:
+        elif "check-upgrade" in cmd and "kernel" in cmd:
             return mock_version_result
         return CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
 
