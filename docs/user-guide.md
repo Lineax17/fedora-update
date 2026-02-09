@@ -13,33 +13,42 @@ Complete guide for using Tuxgrade.
 
 ## Installation
 
-### Method 1: Using DNF Repository (Recommended for Fedora/RHEL)
+### Method 1: Using Package Repository (Recommended)
+
+#### Fedora / RHEL / Rocky / AlmaLinux
 
 1. **Add the repository:**
+
    ```bash
-   sudo curl -L https://raw.githubusercontent.com/Lineax17/tuxgrade/refs/heads/master/extras/tuxgrade.repo -o /etc/yum.repos.d/tuxgrade.repo
+   sudo curl -o /etc/yum.repos.d/tuxgrade.repo https://raw.githubusercontent.com/Lineax17/tuxgrade/main/extras/tuxgrade.repo
    ```
 
-2. **Clear DNF cache:**
-   ```bash
-   sudo dnf clean all
-   ```
-
-3. **Verify repository:**
-   ```bash
-   sudo dnf repolist
-   ```
-
-4. **Install the package:**
+2. **Install the package:**
    ```bash
    sudo dnf install tuxgrade
    ```
 
-   **Note:** For backward compatibility, both `tuxgrade` and `fedora-update` commands are available.
+#### Debian / Ubuntu / Linux Mint / Pop!\_OS / Zorin OS
+
+1. **Add the repository:**
+
+   ```bash
+   sudo curl -o /etc/apt/sources.list.d/tuxgrade.list https://raw.githubusercontent.com/Lineax17/tuxgrade/main/extras/tuxgrade.list
+   sudo apt update
+   ```
+
+2. **Install the package:**
+
+   ```bash
+   sudo apt install tuxgrade
+   ```
+
+   **Note:** For backward compatibility, the commands `fedora-update`, `fedora-upgrade`, and `fuck` are available as aliases.
 
 ### Method 2: From Source
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/Lineax17/tuxgrade.git
    cd tuxgrade
@@ -55,7 +64,7 @@ Complete guide for using Tuxgrade.
 - **Supported Linux Distribution:**
   - **Fedora Linux** (dnf4/dnf5)
   - **RHEL/CentOS/AlmaLinux/Rocky Linux** (dnf4)
-  - **Debian/Ubuntu/Pop!_OS/Linux Mint/Zorin OS** (apt)
+  - **Debian/Ubuntu/Pop!\_OS/Linux Mint/Zorin OS** (apt)
 - **Python 3.10+** (required)
 - **Package Manager:**
   - **DNF 4 or DNF 5** (for Fedora/RHEL-based distributions)
@@ -79,6 +88,7 @@ tuxgrade
 ```
 
 **For backward compatibility:**
+
 ```bash
 fedora-update  # Still works as an alias
 ```
@@ -120,12 +130,12 @@ tuxgrade -l -b
 
 ## Options
 
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--verbose` | `-l` | Enable detailed output for debugging and monitoring |
-| `--brew` | `-b` | Include Homebrew packages in the update process |
-| `--version` | | Display version information and exit |
-| `--help` | `-h` | Show help message and exit |
+| Option      | Short | Description                                         |
+| ----------- | ----- | --------------------------------------------------- |
+| `--verbose` | `-l`  | Enable detailed output for debugging and monitoring |
+| `--brew`    | `-b`  | Include Homebrew packages in the update process     |
+| `--version` |       | Display version information and exit                |
+| `--help`    | `-h`  | Show help message and exit                          |
 
 ## Update Process
 
@@ -190,7 +200,8 @@ The update process follows these steps in order:
 
 **Problem:** NVIDIA drivers stop working after a kernel update.
 
-**Solution:** 
+**Solution:**
+
 1. Check if akmods is installed: `rpm -qa | grep akmods`
 2. Manually rebuild: `sudo akmods --force`
 3. Reboot your system
@@ -202,6 +213,7 @@ The update process follows these steps in order:
 **Problem:** Script appears to freeze during update.
 
 **Solution:**
+
 1. Use verbose mode to see what's happening: `tuxgrade --verbose`
 2. Check if a package installation is waiting for user input
 3. Press `Ctrl+C` to cancel and investigate
@@ -211,6 +223,7 @@ The update process follows these steps in order:
 **Problem:** Flatpak or Snap updates fail but script continues.
 
 **Solution:** These are non-critical. The script will print a message and continue. You can update them manually:
+
 ```bash
 flatpak update
 snap refresh
@@ -225,6 +238,7 @@ Run tuxgrade regularly (weekly recommended) to keep your system secure and up-to
 ### 2. Use Verbose Mode for Debugging
 
 If something goes wrong, run with `--verbose` to see detailed output:
+
 ```bash
 tuxgrade --verbose
 ```
@@ -240,22 +254,21 @@ When prompted for kernel update confirmation, read the version number carefully.
 ### 5. Reboot After Kernel Updates
 
 After a kernel update, reboot your system to load the new kernel:
+
 ```bash
 sudo reboot
 ```
 
 ## Exit Codes
 
-| Code | Meaning |
-|------|---------|
-| 0 | Success - all updates completed |
-| 1 | Error - unexpected error occurred |
-| 130 | Cancelled - user cancelled with Ctrl+C |
-
+| Code | Meaning                                |
+| ---- | -------------------------------------- |
+| 0    | Success - all updates completed        |
+| 1    | Error - unexpected error occurred      |
+| 130  | Cancelled - user cancelled with Ctrl+C |
 
 ## Getting Help
 
 - **Documentation:** [docs/README.md](README.md)
 - **Issues:** [GitHub Issues](https://github.com/Lineax17/tuxgrade/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/Lineax17/tuxgrade/discussions)
-

@@ -1,0 +1,22 @@
+tuxgrade (3.0.0-1) unstable; urgency=medium
+
+  * Change branding to tuxgrade
+  * Add multidistro-support including following distros:
+    debian, linuxmint, ubuntu, pop, zorin, fedora, rhel, rocky, almalinux
+
+ -- Lineax17 <lineax17@gmail.com>  Sat, 07 Feb 2026 12:00:00 +0100
+
+tuxgrade (2.0.1-1) unstable; urgency=medium
+
+  * Fix minor visual issues
+  * Remove dnf5 hardlock to enable dnf4 support
+    (tested with dnf 4.19 on Fedora 40)
+
+ -- Lineax17 <lineax17@gmail.com>  Sat, 03 Jan 2026 12:00:00 +0100
+
+tuxgrade (2.0.0-1) unstable; urgency=medium
+
+  * Complete Python rewrite for better maintainability
+  * Improved error handling and modular architecture
+
+ -- Lineax17 <lineax17@gmail.com>  Sat, 27 Dec 2025 12:00:00 +0100

@@ -4,6 +4,7 @@ set -e  # Exit on error
 
 # Determine script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Parse command line arguments
 BUILD_RPM=false
@@ -65,15 +66,15 @@ echo "================================================"
 echo "✅ All builds completed successfully!"
 echo "================================================"
 echo ""
-echo "Output directory: $SCRIPT_DIR/output"
+echo "Output directory: $PROJECT_ROOT/output"
 echo ""
 if [ "$BUILD_RPM" = true ]; then
     echo "RPM packages:"
-    ls -1 "$SCRIPT_DIR/output/rpm/"*.rpm 2>/dev/null || echo "  No RPM packages found"
+    ls -1 "$PROJECT_ROOT/output/rpm/"*.rpm 2>/dev/null || echo "  No RPM packages found"
     echo ""
 fi
 if [ "$BUILD_DEB" = true ]; then
     echo "DEB packages:"
-    ls -1 "$SCRIPT_DIR/output/deb/"*.deb 2>/dev/null || echo "  No DEB packages found"
+    ls -1 "$PROJECT_ROOT/output/deb/"*.deb 2>/dev/null || echo "  No DEB packages found"
     echo ""
 fi

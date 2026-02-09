@@ -93,7 +93,9 @@ The project includes a comprehensive test runner that automatically discovers an
 # Run all tests
 python3 tests/run_tests.py
 ```
+
 The test runner will:
+
 - Automatically discover all test files in `tests/` subdirectories
 - Organize tests by category (kernel, sudo_keepalive, syntax, etc.)
 - Provide detailed output for each test suite
@@ -150,17 +152,17 @@ Use **Google-style docstrings**:
 ```python
 def example_function(param1: str, param2: int) -> bool:
     """Brief description of what the function does.
-    
+
     More detailed description if needed. Explain the purpose,
     behavior, and any important details.
-    
+
     Args:
         param1: Description of param1.
         param2: Description of param2.
-    
+
     Returns:
         Description of return value.
-    
+
     Raises:
         ValueError: When param2 is negative.
         RuntimeError: When operation fails.
@@ -200,6 +202,7 @@ mypy src/
 1. **Fork the repository** on GitHub
 
 2. **Create a feature branch:**
+
    ```bash
    git checkout -b feature/my-new-feature
    ```
@@ -209,16 +212,19 @@ mypy src/
 4. **Add tests** for new functionality
 
 5. **Run tests** to ensure everything works:
+
    ```bash
    python3 tests/test_kernel_logic.py
    ```
 
 6. **Commit your changes:**
+
    ```bash
    git commit -m "Add feature: description"
    ```
 
 7. **Push to your fork:**
+
    ```bash
    git push origin feature/my-new-feature
    ```
@@ -249,52 +255,123 @@ refactor: simplify kernel version extraction
 
 ### Version Bumping
 
-1. **Update version:**
-   ```python
-   # src/__version__.py
-   __version__ = "2.1.0"
-   ```
+1. **Update version in pyproject.toml (single source of truth):**
 
-2. **Update pyproject.toml:**
    ```toml
+   # pyproject.toml
    [project]
-   version = "2.1.0"
+   version = "3.1.0"
    ```
 
-3. **Update RPM spec:**
+2. **Update RPM spec changelog:**
+
    ```spec
    # build/tuxgrade.spec
-   Version: 2.1.0
+   %changelog
+   * Sat Feb 09 2026 Lineax17 <lineax17@gmail.com> - 3.1.0-1
+   - Your changelog entry here
    ```
+
+3. **Update Debian changelog:**
+
+   ```bash
+   # debian/changelog
+   tuxgrade (3.1.0-1) unstable; urgency=medium
+
+     * Your changelog entry here
+
+    -- Lineax17 <lineax17@gmail.com>  Sat, 09 Feb 2026 12:00:00 +0100
+   ```
+
+### Building Packages Locally
+
+The project uses container-based builds for both RPM and DEB packages, ensuring consistent builds across any Linux distribution.
+
+**Prerequisites:**
+
+- Podman installed on your system
+
+**Build both packages:**
+
+```bash
+cd build
+./build.sh
+```
+
+**Build only RPM:**
+
+```bash
+./build.sh --rpm
+```
+
+**Build only DEB:**
+
+```bash
+./build.sh --deb
+```
+
+**Output location:**
+
+- RPM: `build/output/rpm/`
+- DEB: `build/output/deb/`
+
+**Test installations:**
+
+```bash
+# Test RPM (Fedora/RHEL)
+sudo dnf install ./build/output/rpm/tuxgrade-3.1.0-1.noarch.rpm
+
+# Test DEB (Ubuntu/Debian)
+sudo dpkg -i ./build/output/deb/tuxgrade_3.1.0-1_all.deb
+sudo apt-get install -f  # Install dependencies if needed
+```
 
 ### Creating a Release
 
 1. **Commit version changes:**
-   ```bash
-   git commit -am "Bump version to 2.1.0"
-   ```
 
-2. **Tag the release:**
    ```bash
-   git tag -a v2.1.0 -m "Release version 2.1.0"
-   ```
-
-3. **Push changes:**
-   ```bash
+   git add pyproject.toml build/tuxgrade.spec debian/changelog
+   git commit -m "Bump version to 3.1.0"
    git push origin main
-   git push origin v2.1.0
    ```
 
-4. **Build RPM:**
+2. **Build packages locally:**
+
    ```bash
-   bash build/build.sh
+   cd build
+   ./build.sh
    ```
 
-5. **Create GitHub Release:**
-   - Go to GitHub releases
-   - Create new release from tag
-   - Upload RPM file
-   - Add changelog
+   This builds both RPM and DEB packages in `build/output/rpm/` and `build/output/deb/`.
+
+3. **Create and push tag:**
+
+   ```bash
+   git tag -a v3.1.0 -m "Release version 3.1.0"
+   git push origin v3.1.0
+   ```
+
+4. **Create GitHub Release and upload packages:**
+   - Go to GitHub → Releases → "Draft a new release"
+   - Choose the tag `v3.1.0`
+   - Title: `v3.1.0`
+   - Add release notes (changelog)
+   - **Upload built packages:**
+     - Drag and drop files from `build/output/rpm/*.rpm`
+     - Drag and drop files from `build/output/deb/*.deb`
+   - Click "Publish release"
+
+5. **Automated Repository Update:**
+
+   When you publish the release, the `.github/workflows/publish-repo.yml` workflow automatically:
+   - Downloads the RPM and DEB packages from the release
+   - Generates repository metadata (repodata for RPM, Packages.gz for DEB)
+   - Deploys both repositories to GitHub Pages at:
+     - RPM: `https://Lineax17.github.io/tuxgrade/rpm/`
+     - DEB: `https://Lineax17.github.io/tuxgrade/deb/`
+
+   No manual intervention needed - the repositories are automatically updated!
 
 ### Changelog Format
 
@@ -302,18 +379,22 @@ refactor: simplify kernel version extraction
 ## [2.1.0] - 2025-12-27
 
 ### Added
+
 - Support for new package manager
 - Dry-run mode
 
 ### Changed
+
 - Improved error messages
 - Updated dependencies
 
 ### Fixed
+
 - Bug in kernel version detection
 - Race condition in sudo keepalive
 
 ### Breaking Changes
+
 - Renamed --log to --verbose
 ```
 
@@ -365,6 +446,7 @@ ModuleNotFoundError: No module named 'src'
 **Problem:** Python cannot find the `src` module because the project root is not in the Python path.
 
 **Solution: Run as a module**
+
 ```bash
 # Navigate to the project root directory
 cd /path/to/tuxgrade
@@ -394,4 +476,3 @@ Before submitting a PR, ensure:
 - [ ] Logging is added where useful
 - [ ] Commit messages follow guidelines
 - [ ] No breaking changes (or clearly documented)
-

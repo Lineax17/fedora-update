@@ -1,0 +1,32 @@
+Source: tuxgrade
+Section: admin
+Priority: optional
+Maintainer: Lineax17 <lineax17@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+ dh-python,
+ python3-all,
+ python3-setuptools,
+ python3-pip,
+ python3-distro (>= 1.9.0),
+ pybuild-plugin-pyproject
+Standards-Version: 4.6.2
+Homepage: https://github.com/Lineax17/tuxgrade
+Vcs-Browser: https://github.com/Lineax17/tuxgrade
+Vcs-Git: https://github.com/Lineax17/tuxgrade.git
+Rules-Requires-Root: no
+
+Package: tuxgrade
+Architecture: all
+Depends: ${python3:Depends},
+ ${misc:Depends},
+ python3 (>= 3.10),
+ python3-distro (>= 1.9.0)
+Description: Automated system upgrade script for several Linux distributions
+ Automated system upgrade tool with support for APT, DNF, Flatpak, Snap,
+ Homebrew and NVIDIA akmods. Provides both silent mode (default with ASCII
+ animation) and verbose mode (--verbose flag) for detailed output.
+ .
+ Supports multiple Linux distributions including Debian, Ubuntu, Linux Mint,
+ Pop!_OS, Zorin OS, Fedora, RHEL, Rocky Linux, and AlmaLinux.
+ .
+ Alternative commands: fedora-update, fedora-upgrade, fuck

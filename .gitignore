@@ -29,7 +29,7 @@ share/python-wheels/
 MANIFEST
 
 # Build output directories
-build/output/
+output/
 
 # Debian packaging artifacts (generated during build)
 debian/*.debhelper

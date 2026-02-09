@@ -13,7 +13,7 @@ while [[ $# -gt 0 ]]; do
         -h|--help)
             echo "Usage: $0"
             echo ""
-            echo "Build tuxgrade RPM package using Fedora container."
+            echo "Build tuxgrade DEB package using Ubuntu container."
             echo ""
             echo "Options:"
             echo "  -h, --help    Show this help message"
@@ -47,59 +47,67 @@ if [ -z "$VERSION" ]; then
 fi
 
 echo "================================================"
-echo "Building tuxgrade RPM version: $VERSION"
+echo "Building tuxgrade DEB version: $VERSION"
 echo "================================================"
 echo ""
 
 # Create output directory
-mkdir -p "$OUTPUT_DIR/rpm"
+mkdir -p "$OUTPUT_DIR/deb"
 
-echo "🔨 Building RPM package..."
+echo "🔨 Building DEB package..."
 echo "----------------------------------------"
 
-# Pull Fedora image
-podman pull docker.io/library/fedora:latest
+# Pull Ubuntu image
+podman pull docker.io/library/ubuntu:24.04
 
-# Build RPM in Fedora container
+# Build DEB in Ubuntu container
 podman run --rm \
     -v "$PROJECT_ROOT:/workspace:ro,z" \
-    -v "$OUTPUT_DIR/rpm:/output:rw,z" \
-    -w /workspace \
-    docker.io/library/fedora:latest \
+    -v "$OUTPUT_DIR/deb:/output:rw,z" \
+    docker.io/library/ubuntu:24.04 \
     bash -c "
         set -e
         
+        # Prevent interactive prompts
+        export DEBIAN_FRONTEND=noninteractive
+        
         # Install build dependencies
-        dnf -y install rpm-build rpmdevtools python3-devel python3-setuptools pyproject-rpm-macros
+        apt-get update
+        apt-get install -y \
+            debhelper \
+            dh-python \
+            python3-all \
+            python3-setuptools \
+            python3-pip \
+            python3-build \
+            python3-distro \
+            pybuild-plugin-pyproject \
+            dpkg-dev \
+            fakeroot
         
-        # Setup rpmbuild directories
-        rpmdev-setuptree
+        # Create build directory
+        mkdir -p /build
         
-        # Copy spec file
-        cp /workspace/build/tuxgrade.spec ~/rpmbuild/SPECS/
+        # Copy project to build directory (need write access for build)
+        cp -r /workspace/* /build/
         
-        # Create source tarball
-        mkdir -p ~/tuxgrade-${VERSION}
-        cp -r /workspace/src ~/tuxgrade-${VERSION}/
-        cp /workspace/pyproject.toml ~/tuxgrade-${VERSION}/
-        cp /workspace/LICENSE ~/tuxgrade-${VERSION}/
-        cp /workspace/README.md ~/tuxgrade-${VERSION}/
-        tar czf ~/rpmbuild/SOURCES/tuxgrade-${VERSION}.tar.gz -C ~ tuxgrade-${VERSION}
+        # Change to build directory
+        cd /build
         
-        # Build RPM
-        rpmbuild -ba ~/rpmbuild/SPECS/tuxgrade.spec
+        # Build the package
+        dpkg-buildpackage -us -uc -b
         
-        # Copy built packages to output (binary RPM only, no source RPM)
-        cp ~/rpmbuild/RPMS/noarch/*.rpm /output/
+        # Copy built packages to output (only .deb files)
+        cp ../*.deb /output/
         
-        echo \"RPM packages built successfully!\"
+        echo \"DEB package built successfully!\"
     "
 
 echo ""
-echo "✅ RPM build complete!"
-echo "   Output: $OUTPUT_DIR/rpm/"
-ls -lh "$OUTPUT_DIR/rpm/"
+echo "✅ DEB build complete!"
+echo "   Output: $OUTPUT_DIR/deb/"
+ls -lh "$OUTPUT_DIR/deb/"
 echo ""
-echo "RPM packages:"
-ls -1 "$OUTPUT_DIR/rpm/"*.rpm 2>/dev/null || echo "  No RPM packages found"
+echo "DEB packages:"
+ls -1 "$OUTPUT_DIR/deb/"*.deb 2>/dev/null || echo "  No DEB packages found"
 echo ""
