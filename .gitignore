@@ -11,7 +11,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -28,6 +27,16 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Build output directories
+build/output/
+
+# Debian packaging artifacts (generated during build)
+debian/*.debhelper
+debian/*.substvars
+debian/files
+debian/.debhelper/
+debian/tuxgrade/
 
 # PyInstaller
 #   Usually these files are written by a python script from a template
