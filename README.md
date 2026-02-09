@@ -3,6 +3,7 @@
 A robust and automated system upgrade script for multiple Linux distributions. It streamlines the update process for APT, DNF, Flatpak, Snap, and Homebrew, while ensuring system stability — especially for NVIDIA users.
 
 **Supported Distributions:**
+
 - Fedora/RHEL based
   - Fedora
   - RHEL
@@ -42,32 +43,43 @@ tuxgrade [options]
 
 ## Installation
 
-### Fedora/Alma/Rocky
+### Fedora / RHEL / Rocky / AlmaLinux
 
-#### Add the repo and install the package
+Add the repository:
 
-Get the repo
-
-```
-sudo curl -L https://raw.githubusercontent.com/Lineax17/tuxgrade/refs/heads/master/extras/tuxgrade.repo -o /etc/yum.repos.d/tuxgrade.repo
+```bash
+sudo curl -o /etc/yum.repos.d/tuxgrade.repo https://raw.githubusercontent.com/Lineax17/tuxgrade/master/extras/tuxgrade.repo
 ```
 
-Clear the dnf cache
+Install tuxgrade:
 
-```
-sudo dnf clean all
-```
-
-Verify the repo with repolist command
-
-```
-sudo dnf repolist
-```
-
-Install the package
-
-```
+```bash
 sudo dnf install tuxgrade
+```
+
+### Debian / Ubuntu / Linux Mint / Pop!\_OS / Zorin OS
+
+Add the repository:
+
+```bash
+sudo curl -o /etc/apt/sources.list.d/tuxgrade.list https://raw.githubusercontent.com/Lineax17/tuxgrade/master/extras/tuxgrade.list
+sudo apt update
+```
+
+Install tuxgrade:
+
+```bash
+sudo apt install tuxgrade
+```
+
+### From Source
+
+For other distributions or development purposes:
+
+```bash
+git clone https://github.com/Lineax17/tuxgrade.git
+cd tuxgrade
+pip install .
 ```
 
 ## Documentation

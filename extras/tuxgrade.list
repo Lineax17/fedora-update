@@ -1,0 +1,3 @@
+# Tuxgrade - Linux System Updater
+# APT Repository for Debian/Ubuntu
+deb [trusted=yes] https://Lineax17.github.io/tuxgrade/deb/ ./

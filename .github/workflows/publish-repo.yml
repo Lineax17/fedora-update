@@ -1,4 +1,4 @@
-name: Publish RPM Repository
+name: Publish Repositories
 
 on:
   workflow_dispatch:
@@ -6,8 +6,9 @@ on:
     types: [published]
 
 jobs:
-  build-repo:
+  build-rpm-repo:
     runs-on: ubuntu-latest
+    name: Build RPM Repository
 
     steps:
       - name: Checkout Repo
@@ -22,10 +23,10 @@ jobs:
         uses: robinraju/release-downloader@v1.9
         with:
           latest: true
-          fileName: "*.rpm"
-          out-file-path: "repo"
+          fileName: "*.noarch.rpm"
+          out-file-path: "rpm-packages"
 
-      - name: Generate repodata inside Fedora container
+      - name: Generate RPM repository metadata
         run: |
           podman pull docker.io/library/fedora:latest
           podman run --rm \
@@ -34,21 +35,118 @@ jobs:
             docker.io/library/fedora:latest \
             bash -c "
               dnf -y install createrepo_c && \
-              createrepo_c repo
+              createrepo_c rpm-packages
             "
 
-      - name: Upload GitHub Pages Artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Upload RPM repository artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: repo
+          name: rpm-repo
+          path: rpm-packages/
 
-  deploy:
-    needs: build-repo
+  build-deb-repo:
     runs-on: ubuntu-latest
+    name: Build DEB Repository
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Download Release DEBs
+        uses: robinraju/release-downloader@v1.9
+        with:
+          latest: true
+          fileName: "*.deb"
+          out-file-path: "deb-packages"
+
+      - name: Generate APT repository metadata
+        run: |
+          cd deb-packages
+          dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
+          
+          # Create Release file
+          cat > Release << EOF
+          Origin: Tuxgrade
+          Label: Tuxgrade
+          Suite: stable
+          Codename: stable
+          Date: $(date -R -u)
+          Architectures: all
+          Components: main
+          Description: Tuxgrade - Linux System Updater
+          EOF
+
+      - name: Upload DEB repository artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-repo
+          path: deb-packages/
+
+  combine-and-deploy:
+    needs: [build-rpm-repo, build-deb-repo]
+    runs-on: ubuntu-latest
+    name: Combine and Deploy to GitHub Pages
     permissions:
       pages: write
       id-token: write
 
     steps:
+      - name: Download RPM repository
+        uses: actions/download-artifact@v4
+        with:
+          name: rpm-repo
+          path: combined-repo/rpm
+
+      - name: Download DEB repository
+        uses: actions/download-artifact@v4
+        with:
+          name: deb-repo
+          path: combined-repo/deb
+
+      - name: Create index page
+        run: |
+          cat > combined-repo/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Tuxgrade Repository</title>
+            <style>
+              body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+              h1 { color: #333; }
+              .repo { background: #f5f5f5; padding: 15px; margin: 20px 0; border-radius: 5px; }
+              code { background: #e0e0e0; padding: 2px 6px; border-radius: 3px; }
+            </style>
+          </head>
+          <body>
+            <h1>Tuxgrade Package Repository</h1>
+            <p>Automated system upgrade tool for multiple Linux distributions.</p>
+            
+            <div class="repo">
+              <h2>Fedora / RHEL / Rocky / AlmaLinux</h2>
+              <p>Add the repository:</p>
+              <pre><code>sudo curl -o /etc/yum.repos.d/tuxgrade.repo https://raw.githubusercontent.com/Lineax17/tuxgrade/main/extras/tuxgrade.repo</code></pre>
+              <p>Install tuxgrade:</p>
+              <pre><code>sudo dnf install tuxgrade</code></pre>
+            </div>
+            
+            <div class="repo">
+              <h2>Debian / Ubuntu / Linux Mint</h2>
+              <p>Add the repository:</p>
+              <pre><code>sudo curl -o /etc/apt/sources.list.d/tuxgrade.list https://raw.githubusercontent.com/Lineax17/tuxgrade/main/extras/tuxgrade.list
+          sudo apt update</code></pre>
+              <p>Install tuxgrade:</p>
+              <pre><code>sudo apt install tuxgrade</code></pre>
+            </div>
+            
+            <p><a href="https://github.com/Lineax17/tuxgrade">GitHub Repository</a></p>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: combined-repo
+
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
