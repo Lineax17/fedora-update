@@ -62,9 +62,23 @@ jobs:
       - name: Generate APT repository metadata
         run: |
           cd deb-packages
-          dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
-          
-          # Create Release file
+
+          # Generate package list (uncompressed and compressed)
+          dpkg-scanpackages . /dev/null > Packages
+          gzip -9c Packages > Packages.gz
+
+          # Calculate checksums for Packages files
+          MD5_PACKAGES=$(md5sum Packages | awk '{print $1}')
+          MD5_PACKAGES_GZ=$(md5sum Packages.gz | awk '{print $1}')
+          SHA256_PACKAGES=$(sha256sum Packages | awk '{print $1}')
+          SHA256_PACKAGES_GZ=$(sha256sum Packages.gz | awk '{print $1}')
+          SHA512_PACKAGES=$(sha512sum Packages | awk '{print $1}')
+          SHA512_PACKAGES_GZ=$(sha512sum Packages.gz | awk '{print $1}')
+
+          SIZE_PACKAGES=$(stat -c%s Packages)
+          SIZE_PACKAGES_GZ=$(stat -c%s Packages.gz)
+
+          # Create Release file with checksums
           cat > Release << EOF
           Origin: Tuxgrade
           Label: Tuxgrade
@@ -74,6 +88,15 @@ jobs:
           Architectures: all
           Components: main
           Description: Tuxgrade - Linux System Updater
+          MD5Sum:
+           ${MD5_PACKAGES} ${SIZE_PACKAGES} Packages
+           ${MD5_PACKAGES_GZ} ${SIZE_PACKAGES_GZ} Packages.gz
+          SHA256:
+           ${SHA256_PACKAGES} ${SIZE_PACKAGES} Packages
+           ${SHA256_PACKAGES_GZ} ${SIZE_PACKAGES_GZ} Packages.gz
+          SHA512:
+           ${SHA512_PACKAGES} ${SIZE_PACKAGES} Packages
+           ${SHA512_PACKAGES_GZ} ${SIZE_PACKAGES_GZ} Packages.gz
           EOF
 
       - name: Upload DEB repository artifact
