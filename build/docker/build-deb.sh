@@ -30,11 +30,10 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Check for Podman
-if ! command -v podman >/dev/null 2>&1; then
-    echo "Error: podman is not installed."
-    echo "Install it with: sudo dnf install podman  (Fedora/RHEL)"
-    echo "             or: sudo apt install podman  (Debian/Ubuntu)"
+# Check for Docker
+if ! command -v docker >/dev/null 2>&1; then
+    echo "Error: docker is not installed."
+    echo "Install it with: https://docs.docker.com/get-docker/"
     exit 1
 fi
 
@@ -58,12 +57,12 @@ echo "🔨 Building DEB package..."
 echo "----------------------------------------"
 
 # Pull Ubuntu image
-podman pull docker.io/library/ubuntu:24.04
+docker pull docker.io/library/ubuntu:24.04
 
 # Build DEB in Ubuntu container
-podman run --rm \
-    -v "$PROJECT_ROOT:/workspace:ro,z" \
-    -v "$OUTPUT_DIR/deb:/output:rw,z" \
+docker run --rm \
+    -v "$PROJECT_ROOT:/workspace:ro" \
+    -v "$OUTPUT_DIR/deb:/output:rw" \
     docker.io/library/ubuntu:24.04 \
     bash -c "
         set -e
