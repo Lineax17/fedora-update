@@ -63,6 +63,11 @@ Add the repository:
 
 ```bash
 sudo curl -o /etc/apt/sources.list.d/tuxgrade.list https://raw.githubusercontent.com/Lineax17/tuxgrade/master/extras/tuxgrade.list
+```
+
+Update the repository:
+
+```bash
 sudo apt update
 ```
 
